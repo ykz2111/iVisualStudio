@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iDE Brand Studio v2 — Brand Your Pocket IDE Project</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./brand/ide-icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./brand/ide-icon-16.png" />
+  <!-- Canonical tokens consumed directly; the inline :root below is a 1:1
+       portable fallback with identical values (no parallel palette). -->
+  <link rel="stylesheet" href="./brand/tokens.css" />
+  <style>
+    /* ==================================================================
+       CANONICAL TOKENS — mirrors brand/tokens.css 1:1 (no invented hex).
+       Semantic brand roles (--accent, --blade, --pillar, --dot, --tile)
+       are assigned from this palette by the editor, never invented.
+       ================================================================== */
+    :root {
+      --ide-bg-oled-true: #000000;
+      --ide-bg-canvas: #05080E;
+      --ide-bg-chassis: #0A0F18;
+      --ide-bg-elevated: #111926;
+      --ide-bg-thumb-bar: #131E2E;
+
+      --ide-ink-primary: #F4F9FD;
+      --ide-ink-secondary: #9BB0C5;
+      --ide-ink-muted: #64748B;
+
+      --ide-signal-azure: #38BDF8;
+      --ide-signal-vscode: #007ACC;
+      --ide-signal-cyan: #14F1D9;
+      --ide-signal-emerald: #34D399;
+      --ide-signal-violet: #A855F7;
+      --ide-signal-amber: #FBBF24;
+      --ide-signal-coral: #FC6D26;
+
+      --ide-hit-min-ios: 44px;
+      --ide-hit-recommended: 48px;
+      --ide-hit-gap-min: 8px;
+      --ide-safe-top-island: 59px;
+      --ide-safe-bottom-home: 34px;
+
+      --ide-space-1: 4px;
+      --ide-space-2: 8px;
+      --ide-space-3: 12px;
+      --ide-space-4: 16px;
+      --ide-space-6: 24px;
+      --ide-space-8: 32px;
+
+      --ide-font-sans: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+      --ide-font-mono: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+      --ide-type-large-title: 34px;
+      --ide-type-title-1: 28px;
+      --ide-type-title-2: 22px;
+      --ide-type-headline: 17px;
+      --ide-type-body: 17px;
+      --ide-type-code: 13.5px;
+      --ide-type-caption: 12px;
+
+      /* Semantic brand roles (editor-assigned, palette-only) */
+      --accent: var(--ide-signal-azure);
+      --blade: var(--ide-signal-vscode);
+      --pillar: var(--ide-signal-cyan);
+      --dot: var(--ide-signal-emerald);
+      --tile: var(--ide-bg-chassis);
+
+      /* Studio chrome radius scale (documented studio-local, 8pt grid) */
+      --studio-radius-sm: 8px;
+      --studio-radius-md: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: var(--ide-bg-canvas);
+      color: var(--ide-ink-primary);
+      font-family: var(--ide-font-sans);
+      font-size: var(--ide-type-code);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    button, select, input { font: inherit; color: inherit; }
+
+    button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    /* ---------------- Top instrument bar ---------------- */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--ide-space-3);
+      padding: var(--ide-space-2) var(--ide-space-4);
+      border-bottom: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-chassis);
+      flex-wrap: wrap;
+    }
+    .topbar-left { display: flex; align-items: center; gap: var(--ide-space-3); flex-wrap: wrap; }
+    .brand-title { font-size: var(--ide-type-headline); font-weight: 700; letter-spacing: 0.01em; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: 28px; padding: 3px 10px;
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-canvas);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-secondary);
+    }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dot); flex-shrink: 0; }
+    .topbar-actions { display: flex; align-items: center; gap: var(--ide-space-2); flex-wrap: wrap; }
+
+    .btn {
+      min-height: var(--ide-hit-min-ios);
+      padding: 8px 14px;
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-ink-muted);
+      background: var(--ide-bg-elevated);
+      color: var(--ide-ink-primary);
+      font-size: var(--ide-type-code);
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background-color 120ms ease, border-color 120ms ease;
+    }
+    .btn:hover { background: var(--ide-bg-thumb-bar); border-color: var(--ide-ink-secondary); }
+    .btn[aria-pressed="true"] {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: var(--accent);
+      color: var(--ide-ink-primary);
+    }
+    .btn-primary {
+      background: var(--ide-ink-primary);
+      color: var(--ide-bg-canvas);
+      border-color: var(--ide-ink-primary);
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: var(--ide-ink-secondary); border-color: var(--ide-ink-secondary); }
+    .kbd {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--ide-ink-muted);
+      color: var(--ide-ink-secondary);
+    }
+
+    /* ---------------- Workbench grid (Configure surface) ---------------- */
+    .playground-grid {
+      display: grid;
+      grid-template-columns: minmax(420px, 1.05fr) minmax(400px, 1.05fr) minmax(340px, 0.9fr);
+      border-bottom: 1px solid var(--ide-bg-elevated);
+    }
+    .col-phone, .col-brand { border-right: 1px solid var(--ide-bg-elevated); display: flex; flex-direction: column; }
+    .col-inspect { display: flex; flex-direction: column; background: var(--ide-bg-chassis); }
+
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--ide-space-2);
+      padding: var(--ide-space-2) var(--ide-space-4);
+      border-bottom: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-chassis);
+      min-height: 52px;
+    }
+    .panel-label {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ide-ink-secondary);
+    }
+
+    /* ==================================================================
+       COLUMN 1 · INTERACTIVE iPHONE SIMULATOR (HIG-corrected)
+       44pt tabs · 48pt coding keys · 8pt gaps · 59px/34px safe areas
+       ================================================================== */
+    .phone-stage {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: var(--ide-space-4);
+      background: radial-gradient(circle at 50% 42%, var(--ide-bg-elevated) 0%, var(--ide-bg-canvas) 62%, var(--ide-bg-oled-true) 100%);
+      gap: var(--ide-space-3);
+    }
+    .iphone-chassis {
+      width: 368px; height: 800px;
+      border-radius: 56px;
+      padding: 11px;
+      background: linear-gradient(145deg, var(--ide-ink-primary) 0%, var(--ide-ink-secondary) 48%, var(--ide-ink-muted) 100%);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.65), inset 0 0 0 2px rgba(244, 249, 253, 0.35);
+    }
+    .iphone-screen {
+      width: 100%; height: 100%;
+      border-radius: 46px;
+      background: var(--ide-bg-canvas);
+      color: var(--ide-ink-primary);
+      display: flex; flex-direction: column;
+      overflow: hidden; position: relative;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+    .iphone-screen[data-theme="trueBlack"] { background: var(--ide-bg-oled-true); }
+    .iphone-screen[data-theme="chassis"] { background: var(--ide-bg-chassis); }
+    .iphone-screen[data-theme="elevated"] { background: var(--ide-bg-elevated); }
+    .iphone-screen[data-theme="paper"] { background: var(--ide-ink-primary); color: var(--ide-bg-canvas); }
+
+    .ios-status-bar {
+      height: var(--ide-safe-top-island);
+      padding: 0 var(--ide-space-6);
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .dynamic-island {
+      min-height: var(--ide-hit-min-ios);
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: var(--ide-bg-chassis);
+      border: 1px solid rgba(20, 241, 217, 0.55);
+      color: var(--pillar);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    }
+    .dynamic-island:hover { border-color: var(--pillar); }
+    .iphone-screen[data-theme="paper"] .dynamic-island {
+      background: var(--ide-bg-canvas); color: var(--ide-signal-vscode);
+      border-color: var(--ide-signal-vscode);
+    }
+
+    .ide-tabs {
+      display: flex; gap: var(--ide-hit-gap-min);
+      padding: var(--ide-space-1) var(--ide-space-2);
+      border-bottom: 1px solid rgba(155, 176, 197, 0.16);
+      background: rgba(10, 15, 24, 0.55);
+      overflow-x: auto; flex-shrink: 0;
+    }
+    .ide-tab {
+      min-height: var(--ide-hit-min-ios);
+      padding: 8px 12px;
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ide-ink-secondary);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .ide-tab[aria-selected="true"] {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.45);
+      color: var(--ide-ink-primary);
+      font-weight: 700;
+    }
+    .iphone-screen[data-theme="paper"] .ide-tabs { background: rgba(5, 8, 14, 0.06); border-bottom-color: rgba(5, 8, 14, 0.18); }
+    .iphone-screen[data-theme="paper"] .ide-tab { color: var(--ide-ink-muted); }
+    .iphone-screen[data-theme="paper"] .ide-tab[aria-selected="true"] {
+      background: rgba(0, 122, 204, 0.12); border-color: var(--ide-signal-vscode); color: var(--ide-bg-canvas);
+    }
+
+    .ide-editor {
+      flex: 1;
+      padding: var(--ide-space-2) var(--ide-space-3);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-code);
+      line-height: 1.6;
+      overflow-y: auto;
+    }
+    .code-line {
+      display: grid; grid-template-columns: 24px 1fr; gap: var(--ide-space-2);
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .code-line-active { background: rgba(56, 189, 248, 0.14); box-shadow: inset 2px 0 0 var(--accent); }
+    .line-num { color: var(--ide-ink-secondary); user-select: none; text-align: right; font-size: var(--ide-type-caption); }
+
+    .syn-kw { color: var(--ide-signal-violet); font-weight: 700; }
+    .syn-fn { color: var(--ide-signal-cyan); }
+    .syn-ty { color: var(--ide-signal-azure); }
+    .syn-st { color: var(--ide-signal-emerald); }
+    .syn-nm { color: var(--ide-signal-amber); }
+    .syn-cm { color: var(--ide-ink-muted); font-style: italic; }
+    .iphone-screen[data-theme="paper"] .syn-kw { color: var(--ide-bg-canvas); }
+    .iphone-screen[data-theme="paper"] .syn-fn { color: var(--ide-bg-canvas); font-weight: 700; }
+    .iphone-screen[data-theme="paper"] .syn-ty { color: var(--ide-signal-vscode); font-weight: 700; }
+    .iphone-screen[data-theme="paper"] .syn-st { color: var(--ide-ink-muted); }
+    .iphone-screen[data-theme="paper"] .syn-nm { color: var(--ide-bg-canvas); font-weight: 700; }
+    .iphone-screen[data-theme="paper"] .code-line-active { background: rgba(0, 122, 204, 0.12); box-shadow: inset 2px 0 0 var(--ide-signal-vscode); }
+
+    /* Dynamic Type preview — token ramp scaled, layout reflows */
+    .iphone-screen[data-dt="large"] .ide-editor { font-size: calc(var(--ide-type-code) * 1.15); }
+    .iphone-screen[data-dt="large"] .ide-tab,
+    .iphone-screen[data-dt="large"] .sheet-log,
+    .iphone-screen[data-dt="large"] .sheet-head { font-size: calc(var(--ide-type-caption) * 1.15); }
+    .iphone-screen[data-dt="ax"] .ide-editor { font-size: calc(var(--ide-type-code) * 1.35); }
+    .iphone-screen[data-dt="ax"] .ide-tab,
+    .iphone-screen[data-dt="ax"] .sheet-log,
+    .iphone-screen[data-dt="ax"] .sheet-head { font-size: calc(var(--ide-type-caption) * 1.35); }
+
+    .ide-sheet {
+      margin: 0 var(--ide-space-2) 6px;
+      border-radius: var(--studio-radius-md);
+      background: var(--ide-bg-chassis);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: var(--ide-space-2) var(--ide-space-3);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      display: flex; flex-direction: column; gap: var(--ide-space-1);
+      flex-shrink: 0;
+    }
+    .iphone-screen[data-theme="paper"] .ide-sheet { background: rgba(5, 8, 14, 0.05); border-color: rgba(0, 122, 204, 0.4); }
+    .sheet-handle {
+      min-height: var(--ide-hit-min-ios);
+      width: 100%;
+      background: none; border: 0; padding: 0;
+      display: flex; flex-direction: column; align-items: stretch; justify-content: center;
+      gap: var(--ide-space-1);
+      cursor: grab;
+    }
+    .sheet-handle:active { cursor: grabbing; }
+    .sheet-grabber { width: 36px; height: 4px; border-radius: 2px; background: var(--ide-ink-muted); align-self: center; }
+    .sheet-head {
+      display: flex; justify-content: space-between; align-items: center; gap: var(--ide-space-2);
+      color: var(--pillar); font-size: var(--ide-type-caption); font-weight: 700; letter-spacing: 0.05em;
+    }
+    .ide-sheet[data-expanded="true"] .sheet-log { min-height: 108px; }
+    .iphone-screen[data-theme="paper"] .sheet-head { color: var(--ide-signal-vscode); }
+    .sheet-log { color: var(--ide-ink-secondary); font-size: var(--ide-type-caption); min-height: 36px; white-space: pre-wrap; }
+    .iphone-screen[data-theme="paper"] .sheet-log { color: var(--ide-ink-muted); }
+
+    .thumb-coding-bar {
+      padding: var(--ide-space-2);
+      background: var(--ide-bg-thumb-bar);
+      border-top: 1px solid rgba(56, 189, 248, 0.22);
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--ide-hit-gap-min);
+      flex-shrink: 0;
+    }
+    .iphone-screen[data-theme="paper"] .thumb-coding-bar { background: rgba(5, 8, 14, 0.08); border-top-color: rgba(0, 122, 204, 0.35); }
+    .thumb-key {
+      min-height: var(--ide-hit-recommended);
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid rgba(155, 176, 197, 0.28);
+      background: var(--ide-bg-elevated);
+      color: var(--ide-ink-primary);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-code);
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+      transition: transform 80ms ease, background-color 100ms ease;
+    }
+    .thumb-key:active { transform: scale(0.95); }
+    .thumb-key:hover { border-color: var(--accent); background: var(--ide-bg-thumb-bar); }
+    .thumb-key-sub { font-size: var(--ide-type-caption); color: var(--ide-ink-secondary); font-weight: 500; }
+    .thumb-key-primary { background: rgba(52, 211, 153, 0.12); border-color: var(--dot); color: var(--dot); }
+    .thumb-key-primary .thumb-key-sub { color: var(--dot); }
+    .iphone-screen[data-theme="paper"] .thumb-key { background: var(--ide-ink-primary); color: var(--ide-bg-canvas); border-color: rgba(5, 8, 14, 0.35); }
+    .iphone-screen[data-theme="paper"] .thumb-key-sub { color: var(--ide-ink-muted); }
+    .iphone-screen[data-theme="paper"] .thumb-key-primary { background: rgba(52, 211, 153, 0.16); border-color: var(--ide-signal-emerald); color: var(--ide-bg-canvas); }
+
+    .ios-home-indicator {
+      height: var(--ide-safe-bottom-home);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ios-home-pill { width: 124px; height: 5px; border-radius: 3px; background: rgba(244, 249, 253, 0.55); }
+    .iphone-screen[data-theme="paper"] .ios-home-pill { background: rgba(5, 8, 14, 0.5); }
+
+    /* Fitts' Law heatmap — bottom 35% = primary thumb arc (token rule) */
+    .thumb-heatmap-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; flex-direction: column; z-index: 20; }
+    .thumb-heatmap-overlay[hidden] { display: none; }
+    .zone-stretch {
+      height: 40%;
+      background: rgba(252, 109, 38, 0.16);
+      border-bottom: 1.5px dashed var(--ide-signal-coral);
+      padding: var(--ide-safe-top-island) 14px 8px;
+      font-family: var(--ide-font-mono); font-size: var(--ide-type-caption); font-weight: 700;
+      color: var(--ide-signal-coral);
+    }
+    .zone-natural {
+      height: 25%;
+      background: rgba(251, 191, 36, 0.12);
+      border-bottom: 1.5px dashed var(--ide-signal-amber);
+      padding: 10px 14px;
+      font-family: var(--ide-font-mono); font-size: var(--ide-type-caption); font-weight: 700;
+      color: var(--ide-signal-amber);
+    }
+    .zone-easy {
+      flex: 1;
+      background: rgba(52, 211, 153, 0.16);
+      padding: 10px 14px;
+      font-family: var(--ide-font-mono); font-size: var(--ide-type-caption); font-weight: 700;
+      color: var(--ide-signal-emerald);
+    }
+
+    .cmd-palette-sheet {
+      position: absolute; left: 10px; right: 10px; bottom: 44px;
+      border-radius: 18px;
+      background: var(--ide-bg-elevated);
+      border: 1.5px solid var(--accent);
+      box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.75);
+      padding: var(--ide-space-3);
+      z-index: 25;
+      display: flex; flex-direction: column; gap: var(--ide-space-2);
+    }
+    .cmd-palette-sheet[hidden] { display: none; }
+    .cmd-item {
+      min-height: var(--ide-hit-min-ios);
+      padding: 8px 12px;
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid rgba(155, 176, 197, 0.2);
+      background: var(--ide-bg-thumb-bar);
+      color: var(--ide-ink-primary);
+      text-align: left; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: var(--ide-type-code);
+    }
+    .cmd-item:hover { border-color: var(--pillar); }
+
+    /* ==================================================================
+       COLUMN 2 · BRAND EDITOR (identity · marks · palette · wordmark)
+       ================================================================== */
+    .brand-scroll { overflow-y: auto; }
+    .editor-block { padding: var(--ide-space-3) var(--ide-space-4); border-bottom: 1px solid var(--ide-bg-elevated); display: flex; flex-direction: column; gap: var(--ide-space-2); }
+    .field-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ide-space-2); }
+    .field-row { display: flex; flex-direction: column; gap: var(--ide-space-1); }
+    .field-label { font-size: var(--ide-type-caption); color: var(--ide-ink-secondary); display: flex; justify-content: space-between; gap: var(--ide-space-2); }
+    .field-label code { color: var(--ide-ink-primary); font-family: var(--ide-font-mono); }
+
+    .studio-input, .studio-select {
+      min-height: var(--ide-hit-min-ios);
+      padding: 8px 10px;
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-ink-muted);
+      background: var(--ide-bg-canvas);
+      font-size: var(--ide-type-code);
+      width: 100%;
+    }
+    .studio-select { cursor: pointer; }
+    input[type="range"] { accent-color: var(--accent); min-height: 28px; }
+
+    .variants-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--ide-bg-elevated); border: 1px solid var(--ide-bg-elevated); border-radius: var(--studio-radius-sm); overflow: hidden; }
+    .variant-card {
+      text-align: left; border: 0;
+      background: var(--ide-bg-chassis);
+      padding: var(--ide-space-2);
+      min-height: 64px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: var(--ide-space-2);
+    }
+    .variant-card:hover { background: var(--ide-bg-elevated); }
+    .variant-card[aria-pressed="true"] { background: var(--ide-bg-elevated); box-shadow: inset 3px 0 0 var(--accent); }
+    .variant-thumb { width: 44px; height: 44px; flex-shrink: 0; }
+    .variant-thumb svg { width: 100%; height: 100%; display: block; }
+    .variant-name { font-size: var(--ide-type-caption); font-weight: 700; color: var(--ide-ink-primary); }
+    .variant-desc { font-size: var(--ide-type-caption); color: var(--ide-ink-secondary); line-height: 1.35; }
+    .variant-new { color: var(--pillar); font-family: var(--ide-font-mono); font-size: var(--ide-type-caption); font-weight: 700; }
+
+    .role-row { display: flex; flex-direction: column; gap: var(--ide-space-1); }
+    .swatch-row { display: flex; gap: var(--ide-hit-gap-min); align-items: center; flex-wrap: wrap; }
+    .swatch-btn {
+      width: var(--ide-hit-min-ios); height: var(--ide-hit-min-ios);
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-bg-elevated);
+      background: transparent; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0;
+    }
+    .swatch-btn:hover { border-color: var(--ide-ink-secondary); }
+    .swatch-chip { width: 28px; height: 28px; border-radius: 6px; border: 2px solid transparent; display: block; }
+    .swatch-btn[aria-pressed="true"] { border-color: var(--accent); }
+    .swatch-btn[aria-pressed="true"] .swatch-chip { border-color: var(--ide-ink-primary); }
+
+    .icon-stage-box {
+      min-height: 260px;
+      display: flex; align-items: center; justify-content: center;
+      padding: var(--ide-space-4);
+      background: radial-gradient(circle at 50% 45%, var(--ide-bg-elevated) 0%, var(--ide-bg-canvas) 72%);
+    }
+    .icon-specimen { width: 224px; height: 224px; }
+    .icon-specimen svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.5)); }
+
+    .wordmark-frame {
+      border-radius: var(--studio-radius-md);
+      border: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-canvas);
+      padding: var(--ide-space-3);
+      overflow-x: auto;
+    }
+    .wordmark-frame[data-paper="true"] { background: var(--ide-ink-primary); }
+    .wordmark-frame svg { display: block; max-width: 100%; height: auto; }
+
+    /* ==================================================================
+       COLUMN 3 · INSPECT & EXPORT
+       ================================================================== */
+    .inspect-block { border-bottom: 1px solid var(--ide-bg-elevated); padding: var(--ide-space-3) var(--ide-space-4); display: flex; flex-direction: column; gap: var(--ide-space-2); }
+    .size-ladder {
+      display: flex; align-items: flex-end; gap: var(--ide-space-4); flex-wrap: wrap;
+      padding: var(--ide-space-3);
+      border-radius: var(--studio-radius-md);
+      background: var(--ide-bg-canvas);
+      border: 1px solid var(--ide-bg-elevated);
+    }
+    .size-slot { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .size-slot svg { width: 100%; height: 100%; display: block; }
+    .size-slot-label { font-family: var(--ide-font-mono); font-size: var(--ide-type-caption); color: var(--ide-ink-secondary); }
+    .home-label { font-size: var(--ide-type-caption); color: var(--ide-ink-primary); max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+
+    .loupe-row { display: grid; grid-template-columns: auto 1fr; gap: var(--ide-space-3); align-items: center; }
+    #loupeCanvas {
+      width: 96px; height: 96px;
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-ink-muted);
+      image-rendering: pixelated;
+      background: var(--ide-bg-canvas);
+    }
+    .loupe-copy { font-size: var(--ide-type-caption); color: var(--ide-ink-secondary); }
+    .loupe-copy strong { color: var(--ide-ink-primary); }
+
+    .check-list { display: flex; flex-direction: column; gap: var(--ide-space-1); }
+    .check-item {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--ide-space-2);
+      font-family: var(--ide-font-mono); font-size: var(--ide-type-caption);
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: var(--ide-bg-canvas);
+      border: 1px solid var(--ide-bg-elevated);
+    }
+    .check-name { color: var(--ide-ink-secondary); }
+    .check-val { font-weight: 700; }
+    .check-pass { color: var(--ide-signal-emerald); }
+    .check-fail { color: var(--ide-signal-coral); }
+
+    .token-preview {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-secondary);
+      background: var(--ide-bg-canvas);
+      border: 1px solid var(--ide-bg-elevated);
+      border-radius: var(--studio-radius-sm);
+      padding: var(--ide-space-2);
+      max-height: 180px; overflow: auto;
+      white-space: pre;
+    }
+    .export-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ide-space-2); }
+
+    details.audit-notes { border: 1px solid var(--ide-bg-elevated); border-radius: var(--studio-radius-sm); background: var(--ide-bg-canvas); }
+    details.audit-notes summary { cursor: pointer; padding: var(--ide-space-2); font-size: var(--ide-type-caption); font-weight: 700; color: var(--ide-ink-secondary); min-height: var(--ide-hit-min-ios); display: flex; align-items: center; }
+    details.audit-notes ul { padding: 0 var(--ide-space-4) var(--ide-space-3); list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    details.audit-notes li { font-size: var(--ide-type-caption); color: var(--ide-ink-secondary); line-height: 1.4; }
+    details.audit-notes li::before { content: "✓ "; color: var(--ide-signal-emerald); font-weight: 700; }
+
+    /* ---------------- Live social previews band ---------------- */
+    .two-col-band { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid var(--ide-bg-elevated); }
+    .band-cell { padding: var(--ide-space-4); border-right: 1px solid var(--ide-bg-elevated); display: flex; flex-direction: column; gap: var(--ide-space-2); }
+    .band-cell:last-child { border-right: 0; }
+    .media-frame { border-radius: var(--studio-radius-md); border: 1px solid var(--ide-bg-elevated); overflow: hidden; background: var(--ide-bg-canvas); }
+    .media-frame svg { width: 100%; height: auto; display: block; }
+
+    .footnote {
+      padding: var(--ide-space-3) var(--ide-space-4);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-muted);
+    }
+
+    @media (max-width: 1180px) {
+      .playground-grid, .two-col-band { grid-template-columns: 1fr; }
+      .col-phone, .col-brand, .band-cell { border-right: 0; border-bottom: 1px solid var(--ide-bg-elevated); }
+      .iphone-chassis { width: 340px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand-title" id="studioTitle">iDE Brand Studio v2</span>
+      <span class="badge"><span class="badge-dot"></span><span id="liveNameBadge">iDE_CONCEPT</span></span>
+      <span class="badge">token-only palette · 48pt thumb bar</span>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn" id="toggleHeatmapBtn" aria-pressed="false">Thumb-Zone Map <span class="kbd">H</span></button>
+      <button type="button" class="btn" id="toggleCmdPaletteBtn" aria-pressed="false">iOS Command Sheet <span class="kbd">⌘P</span></button>
+      <button type="button" class="btn" id="resetBtn">Reset Brand</button>
+      <button type="button" class="btn btn-primary" id="exportKitBtn">Export tokens.css</button>
+    </div>
+  </header>
+
+  <main class="playground-grid">
+    <!-- ============ COLUMN 1 · iPHONE SIMULATOR ============ -->
+    <section class="col-phone" aria-label="Interactive iPhone Pocket IDE simulator">
+      <div class="panel-header">
+        <span class="panel-label">01 · Live App Preview — your brand on device</span>
+        <span style="display:inline-flex;gap:8px;align-items:center;">
+          <select class="studio-select" id="dtSelect" style="width:auto;min-height:44px;" aria-label="Dynamic Type preview size">
+            <option value="default">Aa · Default</option>
+            <option value="large">Aa · Large</option>
+            <option value="ax">Aa · AX</option>
+          </select>
+          <select class="studio-select" id="themeSelect" style="width:auto;min-height:44px;" aria-label="Screen theme">
+            <option value="obsidian">Obsidian Canvas #05080E</option>
+            <option value="trueBlack">True-Black OLED #000000</option>
+            <option value="chassis">Chassis #0A0F18</option>
+            <option value="elevated">Elevated #111926</option>
+            <option value="paper">Paper (ink-inverse, outdoor)</option>
+          </select>
+        </span>
+      </div>
+
+      <div class="phone-stage">
+        <div class="iphone-chassis">
+          <div class="iphone-screen" id="iphoneScreen" data-theme="obsidian">
+            <div class="thumb-heatmap-overlay" id="thumbHeatmap" hidden>
+              <div class="zone-stretch">STRETCH 40% — status &amp; passive telemetry only</div>
+              <div class="zone-natural">NATURAL 25% — scrollable code buffer</div>
+              <div class="zone-easy">EASY THUMB ARC · BOTTOM 35% — 48pt keys, ⌘P sheet, terminal</div>
+            </div>
+
+            <div class="ios-status-bar">
+              <span>9:41</span>
+              <button type="button" class="dynamic-island" id="islandBtn" title="Tap to switch remote IDE host">
+                <span class="badge-dot" id="islandDot"></span>
+                <span id="islandText">codespace-main · 14ms</span>
+              </button>
+              <span>5G · 98%</span>
+            </div>
+
+            <div class="ide-tabs" role="tablist" aria-label="Open files">
+              <button type="button" class="ide-tab" data-file="swift" role="tab" aria-selected="true">MobileIDE.swift</button>
+              <button type="button" class="ide-tab" data-file="devcontainer" role="tab" aria-selected="false">devcontainer.json</button>
+              <button type="button" class="ide-tab" data-file="agent" role="tab" aria-selected="false">lpbot-agent.ts</button>
+            </div>
+
+            <div class="ide-editor" id="ideEditorViewport"></div>
+
+            <div class="ide-sheet" id="ideTerminalSheet" data-expanded="false">
+              <button type="button" class="sheet-handle" id="sheetHandle" aria-expanded="false" aria-label="Terminal sheet handle — tap to expand or collapse">
+                <span class="sheet-grabber"></span>
+                <span class="sheet-head">
+                  <span id="sheetTitle">TERMINAL · ZSH (CODESPACE-MAIN)</span>
+                  <span style="color:var(--ide-signal-emerald);">● PORT 3000 LIVE</span>
+                </span>
+              </button>
+              <div class="sheet-log" id="terminalLog">$ codespace attach --host gitlab.com/ykz2111/ide_concept
+✓ Connected (14ms RTT · LSP TypeScript + Swift active)</div>
+            </div>
+
+            <div class="thumb-coding-bar" aria-label="Thumb-zone coding keyboard, 48pt keys">
+              <button type="button" class="thumb-key" data-key-action="snippet" data-haptic="keyTap"><span>{ }</span><span class="thumb-key-sub">Block</span></button>
+              <button type="button" class="thumb-key" data-key-action="arrow" data-haptic="keyTap"><span>=&gt;</span><span class="thumb-key-sub">Lambda</span></button>
+              <button type="button" class="thumb-key" data-key-action="palette" data-haptic="keyTap"><span>⌘P</span><span class="thumb-key-sub">Palette</span></button>
+              <button type="button" class="thumb-key thumb-key-primary" data-key-action="run" data-haptic="buildSuccess"><span>RUN ▶</span><span class="thumb-key-sub">Build</span></button>
+              <button type="button" class="thumb-key" data-key-action="lpbot" data-haptic="commandRun"><span style="color:var(--pillar);">lpBOT</span><span class="thumb-key-sub">AI Fix</span></button>
+              <button type="button" class="thumb-key" data-key-action="port" data-haptic="commandRun"><span>3000</span><span class="thumb-key-sub">Preview</span></button>
+              <button type="button" class="thumb-key" data-key-action="git" data-haptic="commandRun"><span>GIT</span><span class="thumb-key-sub">Push</span></button>
+              <button type="button" class="thumb-key" data-key-action="host" data-haptic="commandRun"><span>SSH</span><span class="thumb-key-sub">Switch</span></button>
+            </div>
+
+            <div class="cmd-palette-sheet" id="cmdPaletteSheet" role="dialog" aria-modal="true" aria-label="Command palette" hidden>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--ide-font-mono);font-size:var(--ide-type-caption);color:var(--accent);">
+                <span id="cmdSheetTitle">⌘P · THUMB-ZONE COMMAND PALETTE</span>
+                <button type="button" class="btn" id="closeCmdBtn" style="min-height:44px;padding:4px 12px;">Esc</button>
+              </div>
+              <button type="button" class="cmd-item" data-cmd="Connect GitHub Codespace (4-vCPU)"><span>Codespaces: Connect Remote Container</span><span class="kbd">⏎</span></button>
+              <button type="button" class="cmd-item" data-cmd="Attach OpenVSCode Server (localhost:3000)"><span>OpenVSCode: Attach Tunnel</span><span class="kbd">⏎</span></button>
+              <button type="button" class="cmd-item" data-cmd="Ask lpBOT Agent to Refactor Active File"><span>lpBOT AI: Refactor &amp; Verify Types</span><span class="kbd">⏎</span></button>
+            </div>
+
+            <div class="ios-home-indicator"><div class="ios-home-pill"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COLUMN 2 · BRAND EDITOR ============ -->
+    <section class="col-brand" aria-label="Brand editor">
+      <div class="panel-header">
+        <span class="panel-label">02 · Brand Editor — identity, mark, palette, wordmark</span>
+        <span class="panel-label">Keys 1–8</span>
+      </div>
+
+      <div class="brand-scroll">
+        <div class="editor-block">
+          <span class="panel-label">Project identity</span>
+          <div class="field-grid-2">
+            <div class="field-row">
+              <label class="field-label" for="nameInput">Project name (wordmark)</label>
+              <input class="studio-input" id="nameInput" maxlength="20" value="iDE_CONCEPT" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="field-row">
+              <label class="field-label" for="orgInput">Organization</label>
+              <input class="studio-input" id="orgInput" maxlength="40" value="GROOVE LABS // YKZ21" autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+          <div class="field-row">
+            <label class="field-label" for="taglineInput">Tagline (OG card + lockup)</label>
+            <input class="studio-input" id="taglineInput" maxlength="64" value="POCKET VS CODE &amp; CLOUD IDE FOR IOS" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="editor-block">
+          <span class="panel-label">Icon stage</span>
+          <div class="icon-stage-box"><div class="icon-specimen" id="mainIconSpecimen"></div></div>
+        </div>
+
+        <div class="editor-block">
+          <span class="panel-label">Mark directions — 4 shipped + 4 new</span>
+          <div class="variants-grid" id="variantsGrid"></div>
+        </div>
+
+        <div class="editor-block">
+          <span class="panel-label">Palette roles — assigned from brand tokens only</span>
+          <div class="role-row">
+            <span class="field-label">Accent · hero blade &amp; highlights</span>
+            <div class="swatch-row" data-role="accent"></div>
+          </div>
+          <div class="role-row">
+            <span class="field-label">Blade · folded ribbon back</span>
+            <div class="swatch-row" data-role="blade"></div>
+          </div>
+          <div class="role-row">
+            <span class="field-label">Pillar · the “i” touch cursor</span>
+            <div class="swatch-row" data-role="pillar"></div>
+          </div>
+          <div class="role-row">
+            <span class="field-label">Dot · status / cursor tittle</span>
+            <div class="swatch-row" data-role="dot"></div>
+          </div>
+          <div class="role-row">
+            <span class="field-label">Tile · icon background surface</span>
+            <div class="swatch-row" data-role="tile"></div>
+          </div>
+          <div class="field-grid-2">
+            <div class="field-row">
+              <label class="field-label" for="tiltRange"><span>Icon tilt</span><code id="tiltVal">0°</code></label>
+              <input type="range" id="tiltRange" min="-12" max="12" value="0" />
+            </div>
+            <div class="field-row">
+              <label class="field-label" for="cornerMode"><span>Tile corners</span></label>
+              <select class="studio-select" id="cornerMode">
+                <option value="squircle">iOS continuous squircle</option>
+                <option value="rounded">Rounded rect (radius below)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row" id="radiusRow" hidden>
+            <label class="field-label" for="radiusRange"><span>Corner radius</span><code id="radiusVal">228px</code></label>
+            <input type="range" id="radiusRange" min="0" max="512" step="4" value="228" />
+          </div>
+        </div>
+
+        <div class="editor-block">
+          <span class="panel-label">Vector wordmark — same architectural glyph library as brand kit</span>
+          <div class="wordmark-frame" id="wordmarkFrame" data-paper="false"></div>
+          <div class="field-grid-2">
+            <div class="field-row">
+              <label class="field-label" for="wordmarkStyle">Lockup style</label>
+              <select class="studio-select" id="wordmarkStyle">
+                <option value="dark">Dark lockup + tagline</option>
+                <option value="light">Light / paper lockup</option>
+                <option value="compact">Compact navbar</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Supported glyphs</span>
+              <span class="field-label" style="color:var(--ide-ink-muted);">A–Z · 0–9 · _ - . space (others fall back to SF Mono)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COLUMN 3 · INSPECT & EXPORT ============ -->
+    <aside class="col-inspect" aria-label="Optical inspection, compliance and exports">
+      <div class="inspect-block">
+        <span class="panel-label">1:1 optical ladder — home screen → favicon</span>
+        <div class="size-ladder">
+          <div class="size-slot"><div id="slot-120" style="width:96px;height:96px;"></div><span class="size-slot-label">iPhone @2x</span></div>
+          <div class="size-slot"><div id="slot-60" style="width:60px;height:60px;"></div><span class="size-slot-label">60pt</span><span class="home-label" id="homeLabel">iDE_CONCEPT</span></div>
+          <div class="size-slot"><div id="slot-32" style="width:32px;height:32px;"></div><span class="size-slot-label">32px</span></div>
+          <div class="size-slot"><div id="slot-16" style="width:16px;height:16px;"></div><span class="size-slot-label">16px</span></div>
+        </div>
+        <div class="loupe-row">
+          <canvas id="loupeCanvas" width="96" height="96"></canvas>
+          <div class="loupe-copy"><strong>8× pixel loupe (16×16)</strong><br />Check the bezel, “i” pillar and ribbon stay legible at favicon size. New marks v5–v8 are drawn for this test.</div>
+        </div>
+      </div>
+
+      <div class="inspect-block">
+        <span class="panel-label">Live HIG compliance — measured from the simulator DOM</span>
+        <div class="check-list" id="checkList"></div>
+      </div>
+
+      <div class="inspect-block">
+        <span class="panel-label">Contrast audit (WCAG 2.1, computed)</span>
+        <div class="check-list" id="contrastList"></div>
+      </div>
+
+      <div class="inspect-block">
+        <span class="panel-label">Generated tokens.css — parity with DTCG JSON by construction</span>
+        <pre class="token-preview" id="tokenPreview"></pre>
+        <div class="export-grid">
+          <button type="button" class="btn" id="expCssBtn">tokens.css</button>
+          <button type="button" class="btn" id="expJsonBtn">design-tokens.json</button>
+          <button type="button" class="btn" id="copySvgBtn">Copy icon SVG</button>
+          <button type="button" class="btn" id="downloadSvgBtn">Icon SVG</button>
+          <button type="button" class="btn" id="exp1024Btn">1024 AppIcon PNG</button>
+          <button type="button" class="btn" id="exp512Btn">512 PNG</button>
+          <button type="button" class="btn" id="exp180Btn">180 touch PNG</button>
+          <button type="button" class="btn" id="expWordmarkBtn">Wordmark SVG</button>
+          <button type="button" class="btn" id="expOgBtn">OG 1200×630 PNG</button>
+          <button type="button" class="btn" id="expBannerBtn">Banner 1280×360 PNG</button>
+        </div>
+      </div>
+
+      <div class="inspect-block">
+        <details class="audit-notes">
+          <summary>v2 audit fixes — web-design-reviewer · type-design-analyzer · ios-ui-designer</summary>
+          <ul>
+            <li>Tabs raised 38 → 44pt; coding keys 46 → 48pt; gaps locked to the 8px token.</li>
+            <li>Safe areas now use the tokens: 59px island top, 34px home bottom.</li>
+            <li>Heatmap corrected to the bottom-35% primary thumb arc (was 38%).</li>
+            <li>Every hex now comes from brand/tokens.css — oklch chrome and ~20 invented hex values removed.</li>
+            <li>Type restricted to the token ramp (34/28/22/17/13.5/12) — no more 8.5–11.5px labels.</li>
+            <li>Muted ink #64748B flagged at its true ≈4.2:1 ratio — decorative use only.</li>
+            <li>DTCG export now emits real $value/$type objects; CSS + JSON generated from one model.</li>
+            <li>Off-token “sunlight” palette replaced with token-inverse Paper mode.</li>
+          </ul>
+        </details>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ============ LIVE SOCIAL PREVIEWS (rendered from your brand state) ============ -->
+  <section class="two-col-band" aria-label="Live OpenGraph and repository banner previews">
+    <div class="band-cell">
+      <span class="panel-label">OpenGraph card · 1200×630 · live from your brand</span>
+      <div class="media-frame" id="ogPreview"></div>
+    </div>
+    <div class="band-cell">
+      <span class="panel-label">GitLab / GitHub repo banner · 1280×360 · live from your brand</span>
+      <div class="media-frame" id="bannerPreview"></div>
+    </div>
+  </section>
+
+  <footer class="footnote">
+    iDE (ide_concept) · Groove Labs // YkZ21 · brand studio v2 — state persists in this browser · all assets export token-parity guaranteed
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ================================================================
+         CANONICAL TOKEN MODEL — single source of truth.
+         Both tokens.css and DTCG JSON exports are emitted from this
+         object, so parity is true by construction.
+         ================================================================ */
+      const TOKENS = {
+        surfaces: {
+          oledTrue: "#000000", canvas: "#05080E", chassis: "#0A0F18",
+          elevated: "#111926", thumbBar: "#131E2E"
+        },
+        inks: { primary: "#F4F9FD", secondary: "#9BB0C5", muted: "#64748B" },
+        signals: {
+          azure: "#38BDF8", vscode: "#007ACC", cyan: "#14F1D9", emerald: "#34D399",
+          violet: "#A855F7", amber: "#FBBF24", coral: "#FC6D26"
+        },
+        touch: { min: 44, recommended: 48, gapMin: 8 },
+        safe: { topIsland: 59, bottomHome: 34 },
+        space: [4, 8, 12, 16, 24, 32],
+        type: {
+          largeTitle: { size: 34, weight: 700, lineHeight: 1.2, tracking: 0 },
+          title1: { size: 28, weight: 700, lineHeight: 1.2, tracking: 0 },
+          title2: { size: 22, weight: 600, lineHeight: 1.25, tracking: 0 },
+          headline: { size: 17, weight: 600, lineHeight: 1.35, tracking: 0 },
+          body: { size: 17, weight: 400, lineHeight: 1.45, tracking: 0 },
+          code: { size: 13.5, weight: 400, lineHeight: 1.6, tracking: 0, family: "mono" },
+          caption: { size: 12, weight: 400, lineHeight: 1.35, tracking: 0.2 }
+        },
+        fonts: {
+          sans: '"SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif',
+          mono: '"SF Mono", "JetBrains Mono", ui-monospace, Menlo, monospace'
+        },
+        haptics: {
+          keyTap: "UIImpactFeedbackGenerator(.light)",
+          commandRun: "UIImpactFeedbackGenerator(.medium)",
+          buildSuccess: "UINotificationFeedbackGenerator(.success)"
+        }
+      };
+
+      const SIGNAL_KEYS = Object.keys(TOKENS.signals);
+      const SURFACE_KEYS = Object.keys(TOKENS.surfaces);
+
+      const DEFAULT_BRAND = {
+        name: "iDE_CONCEPT",
+        org: "GROOVE LABS // YKZ21",
+        tagline: "POCKET VS CODE & CLOUD IDE FOR IOS",
+        variant: "v1",
+        accent: "#38BDF8",
+        blade: "#007ACC",
+        pillar: "#14F1D9",
+        dot: "#34D399",
+        tile: "#0A0F18",
+        tilt: 0,
+        cornerMode: "squircle",
+        radius: 228,
+        theme: "obsidian",
+        dt: "default",
+        wordmarkStyle: "dark"
+      };
+
+      let brand = Object.assign({}, DEFAULT_BRAND);
+      try {
+        const saved = JSON.parse(localStorage.getItem("ide-brand-studio-v2") || "null");
+        if (saved && typeof saved === "object") brand = Object.assign({}, DEFAULT_BRAND, saved);
+      } catch (e) { /* corrupted state -> defaults */ }
+
+      function saveBrand() {
+        try { localStorage.setItem("ide-brand-studio-v2", JSON.stringify(brand)); } catch (e) { /* private mode */ }
+      }
+
+      function slug() {
+        return (brand.name || "ide").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "ide";
+      }
+
+      function esc(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      }
+
+      /* ================================================================
+         ARCHITECTURAL GLYPH LIBRARY — shipped brand kit glyphs
+         (cap height 100, stroke 20) extended to full A–Z + 0–9.
+         ================================================================ */
+      const GLYPHS = {
+        "i": { w: 28, d: "M 4 0 H 24 V 20 H 4 Z M 4 32 H 24 V 100 H 4 Z" },
+        "I": { w: 36, d: "M 0 0 H 36 V 20 H 28 V 80 H 36 V 100 H 0 V 80 H 8 V 20 H 0 Z" },
+        "D": { w: 74, d: "M 0 0 H 54 L 74 20 V 80 L 54 100 H 0 Z M 20 20 V 80 H 52 V 20 Z" },
+        "E": { w: 66, d: "M 0 0 H 66 L 56 20 H 20 V 40 H 54 V 60 H 20 V 80 H 66 V 100 H 0 Z" },
+        "C": { w: 68, d: "M 14 0 H 68 L 58 20 H 20 V 80 H 58 L 68 100 H 14 L 0 86 V 14 Z" },
+        "O": { w: 74, d: "M 14 0 H 60 L 74 14 V 86 L 60 100 H 14 L 0 86 V 14 Z M 20 20 V 80 H 54 V 20 Z" },
+        "N": { w: 76, d: "M 0 0 H 20 L 56 64 V 0 H 76 V 100 H 56 L 20 36 V 100 H 0 Z" },
+        "P": { w: 70, d: "M 0 0 H 56 L 70 14 V 50 L 56 64 H 20 V 100 H 0 Z M 20 20 V 44 H 50 V 20 Z" },
+        "T": { w: 72, d: "M 0 0 H 72 L 62 20 H 46 V 100 H 26 V 20 H 0 Z" },
+        "M": { w: 86, d: "M 0 0 H 22 L 43 44 L 64 0 H 86 V 100 H 66 V 42 L 48 76 H 38 L 20 42 V 100 H 0 Z" },
+        "B": { w: 72, d: "M 0 0 H 56 L 70 14 V 42 L 58 50 L 72 60 V 86 L 58 100 H 0 Z M 20 18 V 41 H 50 V 18 Z M 20 59 V 82 H 52 V 59 Z" },
+        "L": { w: 64, d: "M 0 0 H 20 V 80 H 64 L 54 100 H 0 Z" },
+        "S": { w: 72, d: "M 12 0 H 70 L 60 20 H 20 V 40 L 60 46 L 72 58 V 88 L 60 100 H 2 L 12 80 H 52 V 60 L 12 54 L 0 42 V 12 Z" },
+        "_": { w: 56, d: "M 0 84 H 56 V 100 H 0 Z" },
+        " ": { w: 34, d: "" },
+        "A": { w: 74, d: "M 0 100 L 26 0 H 48 L 74 100 H 54 L 48 78 H 26 L 20 100 Z M 30 60 H 44 L 37 28 Z" },
+        "F": { w: 62, d: "M 0 0 H 62 L 52 20 H 20 V 40 H 50 V 60 H 20 V 100 H 0 Z" },
+        "G": { w: 74, d: "M 14 0 H 68 L 58 20 H 20 V 80 H 54 V 60 H 38 V 42 H 74 V 86 L 60 100 H 14 L 0 86 V 14 Z" },
+        "H": { w: 74, d: "M 0 0 H 20 V 40 H 54 V 0 H 74 V 100 H 54 V 60 H 20 V 100 H 0 Z" },
+        "J": { w: 64, d: "M 14 0 H 64 V 86 L 50 100 H 14 L 0 86 V 60 H 20 V 80 H 44 V 20 H 14 Z" },
+        "K": { w: 74, d: "M 0 0 H 20 V 40 L 50 0 H 74 L 40 46 L 74 100 H 52 L 20 52 V 100 H 0 Z" },
+        "Q": { w: 76, d: "M 14 0 H 60 L 74 14 V 86 L 60 100 H 14 L 0 86 V 14 Z M 20 20 V 80 H 54 V 20 Z M 46 68 H 66 L 78 100 H 56 Z" },
+        "R": { w: 74, d: "M 0 0 H 56 L 70 14 V 50 L 58 62 L 74 100 H 52 L 38 64 H 20 V 100 H 0 Z M 20 20 V 44 H 50 V 20 Z" },
+        "U": { w: 74, d: "M 0 0 H 20 V 80 H 54 V 0 H 74 V 86 L 60 100 H 14 L 0 86 Z" },
+        "V": { w: 74, d: "M 0 0 H 21 L 37 72 L 53 0 H 74 L 48 100 H 26 Z" },
+        "W": { w: 96, d: "M 0 0 H 20 L 30 70 L 42 0 H 54 L 66 70 L 76 0 H 96 L 80 100 H 60 L 48 34 L 36 100 H 16 Z" },
+        "X": { w: 72, d: "M 0 0 H 22 L 36 32 L 50 0 H 72 L 47 50 L 72 100 H 50 L 36 68 L 22 100 H 0 L 25 50 Z" },
+        "Y": { w: 72, d: "M 0 0 H 22 L 36 34 L 50 0 H 72 L 46 56 V 100 H 26 V 56 Z" },
+        "Z": { w: 68, d: "M 0 0 H 68 V 18 L 26 80 H 68 V 100 H 0 V 82 L 42 20 H 0 Z" },
+        "0": { w: 74, d: "M 14 0 H 60 L 74 14 V 86 L 60 100 H 14 L 0 86 V 14 Z M 20 20 V 80 H 54 V 20 Z" },
+        "1": { w: 44, d: "M 4 20 L 24 0 H 40 V 100 H 20 V 28 L 4 36 Z" },
+        "2": { w: 68, d: "M 0 14 L 14 0 H 54 L 68 14 V 38 L 20 80 H 68 V 100 H 0 V 82 L 48 36 V 20 H 20 V 30 H 0 Z" },
+        "3": { w: 68, d: "M 0 0 H 54 L 68 14 V 40 L 56 50 L 68 60 V 86 L 54 100 H 0 L 10 80 H 48 V 60 H 24 V 42 H 48 V 20 H 10 Z" },
+        "4": { w: 70, d: "M 34 0 H 54 V 56 H 70 V 76 H 54 V 100 H 34 V 76 H 0 V 58 Z M 20 56 H 34 V 28 Z" },
+        "5": { w: 68, d: "M 0 0 H 64 L 54 20 H 20 V 40 H 54 L 68 54 V 86 L 54 100 H 0 L 10 80 H 48 V 60 H 0 Z" },
+        "6": { w: 70, d: "M 14 0 H 60 L 50 20 H 20 V 40 H 56 L 70 54 V 86 L 56 100 H 14 L 0 86 V 14 Z M 20 60 V 80 H 50 V 60 Z" },
+        "7": { w: 66, d: "M 0 0 H 66 V 18 L 34 100 H 12 L 44 20 H 0 Z" },
+        "8": { w: 72, d: "M 14 0 H 58 L 72 14 V 40 L 60 50 L 72 60 V 86 L 58 100 H 14 L 0 86 V 60 L 12 50 L 0 40 V 14 Z M 20 20 V 40 H 52 V 20 Z M 20 60 V 80 H 52 V 60 Z" },
+        "9": { w: 70, d: "M 14 0 H 56 L 70 14 V 86 L 56 100 H 10 L 20 80 H 50 V 60 H 14 L 0 46 V 14 Z M 20 20 V 40 H 50 V 20 Z" },
+        "-": { w: 52, d: "M 0 42 H 52 V 60 H 0 Z" },
+        ".": { w: 24, d: "M 0 80 H 24 V 100 H 0 Z" }
+      };
+
+      function renderVectorWord(text, accentHex, gap) {
+        gap = gap == null ? 12 : gap;
+        let x = 0;
+        const parts = [];
+        const upper = String(text).toUpperCase();
+        for (const ch of upper) {
+          const g = GLYPHS[ch];
+          if (g) {
+            if (g.d) {
+              const fillAttr = (ch === "I" && x === 0) || ch === "_" ? ' fill="' + accentHex + '"' : "";
+              parts.push('<g transform="translate(' + x + ', 0)"' + fillAttr + '><path d="' + g.d + '"/></g>');
+            }
+            x += g.w + gap;
+          } else {
+            parts.push('<text x="' + x + '" y="100" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="100" font-weight="700">' + esc(ch) + "</text>");
+            x += 64 + gap;
+          }
+        }
+        return { svg: parts.join(""), width: Math.max(0, x - gap) };
+      }
+
+      /* ================================================================
+         PARAMETRIC ICON ENGINE — 8 directions.
+         v1–v4 shipped; v5–v8 new (mapped for 16px legibility).
+         Every fill is a brand token or a brand role.
+         ================================================================ */
+      const SQUIRCLE = "M 320 0 H 704 C 836 0, 908 12, 960 64 C 1012 116, 1024 188, 1024 320 V 704 C 1024 836, 1012 908, 960 960 C 908 1012, 836 1024, 704 1024 H 320 C 188 1024, 116 1012, 64 960 C 12 908, 0 836, 0 704 V 320 C 0 188, 12 116, 64 64 C 116 12, 188 0, 320 0 Z";
+
+      const VARIANTS = {
+        v1: { name: "01 · Pocket Code Ribbon", desc: "Shipped master — titanium bezel, island, folded ribbon, “i” pillar.", isNew: false },
+        v2: { name: "02 · Mobile Coder lpBOT", desc: "Shipped mascot — walking lpBOT with ribbon visor.", isNew: false },
+        v3: { name: "03 · Geometric Prism", desc: "Shipped minimal — architectural “i” + folded ribbon.", isNew: false },
+        v4: { name: "04 · DevContainer Pod", desc: "Shipped — hexagonal codespace container + dock.", isNew: false },
+        v5: { name: "05 · Prompt Cursor", desc: "NEW — the “i” pillar becomes a terminal prompt chevron. Strongest at 16px.", isNew: true },
+        v6: { name: "06 · Tunnel Island", desc: "NEW — Dynamic Island pill as hero: live latency dots, ribbon threading through.", isNew: true },
+        v7: { name: "07 · Thumb Arc", desc: "NEW — Fitts' Law reach arcs over the 4-key bar. The ergonomics story as a mark.", isNew: true },
+        v8: { name: "08 · lpBOT Micro", desc: "NEW — mascot head reduced to 7 shapes / 2 inks + tile, per ip-as-logo 32px budget.", isNew: true }
+      };
+
+      function buildIconSvg(opts, uid) {
+        const acc = opts.accent, blade = opts.blade, pillar = opts.pillar, dot = opts.dot, bg = opts.tile;
+        const tilt = opts.tilt;
+        const ink = TOKENS.inks.primary, ink2 = TOKENS.inks.secondary, ink3 = TOKENS.inks.muted;
+        const canvas = TOKENS.surfaces.canvas, elevated = TOKENS.surfaces.elevated;
+
+        let fg = "";
+        if (opts.variant === "v1") {
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<rect x="284" y="172" width="456" height="680" rx="56" fill="' + canvas + '"/>' +
+            '<path fill="' + ink + '" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>' +
+            '<rect x="424" y="212" width="176" height="36" rx="18" fill="' + elevated + '" stroke="' + acc + '" stroke-width="3"/>' +
+            '<circle cx="454" cy="230" r="8" fill="' + dot + '"/>' +
+            '<path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="' + blade + '"/>' +
+            '<path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="' + acc + '"/>' +
+            '<rect x="192" y="388" width="68" height="248" rx="20" fill="' + pillar + '"/>' +
+            '<circle cx="226" cy="328" r="34" fill="' + dot + '"/>' +
+            '<rect x="432" y="806" width="160" height="10" rx="5" fill="' + ink + '" fill-opacity="0.65"/>' +
+            "</g>";
+        } else if (opts.variant === "v2") {
+          fg = '<g transform="rotate(' + (tilt - 4) + ' 512 512)">' +
+            '<g fill="none" stroke="' + ink2 + '" stroke-width="112" stroke-linecap="round" stroke-linejoin="round">' +
+            '<path d="M 412 740 L 336 936 L 264 936"/><path d="M 608 740 Q 656 856 604 964 L 648 964"/></g>' +
+            '<rect x="116" y="340" width="56" height="248" rx="26" fill="' + ink + '"/>' +
+            '<rect x="852" y="340" width="56" height="248" rx="26" fill="' + ink + '"/>' +
+            '<rect x="148" y="168" width="728" height="636" rx="168" fill="' + ink + '"/>' +
+            '<rect x="196" y="212" width="632" height="444" rx="128" fill="' + ink2 + '"/>' +
+            '<rect x="232" y="244" width="560" height="380" rx="100" fill="' + canvas + '"/>' +
+            '<path d="M 316 396 A 52 52 0 0 1 420 396 Z" fill="' + acc + '"/>' +
+            '<path d="M 604 396 A 52 52 0 0 1 708 396 Z" fill="' + acc + '"/>' +
+            '<path d="M 396 548 L 604 424 L 644 448 V 572 L 604 596 L 396 472 Z" fill="' + blade + '"/>' +
+            '<path d="M 396 556 L 604 424 L 644 448 L 436 584 Z" fill="' + pillar + '"/>' +
+            '<circle cx="272" cy="712" r="24" fill="' + dot + '"/>' +
+            '<circle cx="368" cy="708" r="34" fill="' + ink2 + '"/>' +
+            '<rect x="540" y="676" width="210" height="56" rx="14" fill="' + canvas + '" stroke="' + acc + '" stroke-width="3"/>' +
+            '<text x="645" y="714" text-anchor="middle" fill="' + acc + '" font-family="SF Mono, ui-monospace, Menlo, monospace" font-size="30" font-weight="800">iDE</text>' +
+            "</g>";
+        } else if (opts.variant === "v3") {
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<rect x="164" y="380" width="84" height="380" rx="20" fill="' + pillar + '"/>' +
+            '<circle cx="206" cy="284" r="46" fill="' + dot + '"/>' +
+            '<path d="M 332 340 L 420 264 L 780 564 V 248 L 884 304 V 720 L 780 776 L 332 356 Z" fill="' + blade + '"/>' +
+            '<path d="M 332 684 L 780 248 L 884 304 L 420 760 Z" fill="' + acc + '"/>' +
+            "</g>";
+        } else if (opts.variant === "v4") {
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<polygon points="512,172 812,344 812,680 512,852 212,680 212,344" fill="' + elevated + '" stroke="' + ink + '" stroke-width="28" stroke-linejoin="round"/>' +
+            '<path d="M 348 420 L 412 368 L 644 560 V 356 L 716 396 V 628 L 644 668 L 348 432 Z" fill="' + blade + '"/>' +
+            '<path d="M 348 612 L 644 356 L 716 396 L 412 664 Z" fill="' + acc + '"/>' +
+            '<circle cx="512" cy="172" r="28" fill="' + dot + '"/>' +
+            '<circle cx="812" cy="344" r="28" fill="' + acc + '"/>' +
+            '<circle cx="212" cy="344" r="28" fill="' + TOKENS.signals.violet + '"/>' +
+            "</g>";
+        } else if (opts.variant === "v5") {
+          /* Prompt Cursor — i pillar + terminal chevron. 3 masses, reads at 16px. */
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<rect x="176" y="368" width="96" height="392" rx="28" fill="' + pillar + '"/>' +
+            '<circle cx="224" cy="264" r="52" fill="' + dot + '"/>' +
+            '<path d="M 400 268 L 828 512 L 400 756 L 400 560 L 560 512 L 400 464 Z" fill="' + acc + '"/>' +
+            '<rect x="400" y="800" width="428" height="56" rx="16" fill="' + blade + '"/>' +
+            "</g>";
+        } else if (opts.variant === "v6") {
+          /* Tunnel Island — the Dynamic Island pill is the hero. */
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<path d="M 236 656 L 560 376 L 640 420 L 316 700 Z" fill="' + blade + '" fill-opacity="0.9"/>' +
+            '<path d="M 700 300 L 788 348 L 464 628 L 376 580 Z" fill="' + acc + '" fill-opacity="0.9"/>' +
+            '<rect x="144" y="400" width="736" height="224" rx="112" fill="' + elevated + '" stroke="' + acc + '" stroke-width="12"/>' +
+            '<circle cx="268" cy="512" r="34" fill="' + dot + '"/>' +
+            '<circle cx="368" cy="512" r="34" fill="' + pillar + '"/>' +
+            '<rect x="452" y="480" width="56" height="64" rx="10" fill="' + acc + '" fill-opacity="0.55"/>' +
+            '<rect x="532" y="456" width="56" height="88" rx="10" fill="' + acc + '" fill-opacity="0.75"/>' +
+            '<rect x="612" y="432" width="56" height="112" rx="10" fill="' + acc + '"/>' +
+            '<rect x="716" y="488" width="112" height="48" rx="24" fill="' + ink + '" fill-opacity="0.85"/>' +
+            '<rect x="432" y="800" width="160" height="14" rx="7" fill="' + ink + '" fill-opacity="0.65"/>' +
+            "</g>";
+        } else if (opts.variant === "v7") {
+          /* Thumb Arc — reach zones radiating from the home corner. */
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<path d="M 64 1024 A 448 448 0 0 1 960 1024" fill="none" stroke="' + ink3 + '" stroke-opacity="0.5" stroke-width="56"/>' +
+            '<path d="M 224 1024 A 288 288 0 0 1 800 1024" fill="none" stroke="' + acc + '" stroke-opacity="0.65" stroke-width="56"/>' +
+            '<path d="M 384 1024 A 128 128 0 0 1 640 1024" fill="none" stroke="' + dot + '" stroke-width="56"/>' +
+            '<g fill="' + elevated + '" stroke="' + acc + '" stroke-width="6">' +
+            '<rect x="256" y="700" width="120" height="88" rx="20"/>' +
+            '<rect x="400" y="700" width="120" height="88" rx="20"/>' +
+            '<rect x="544" y="700" width="120" height="88" rx="20"/>' +
+            '<rect x="688" y="700" width="120" height="88" rx="20" fill="' + dot + '" fill-opacity="0.2" stroke="' + dot + '"/></g>' +
+            '<circle cx="316" cy="744" r="16" fill="' + pillar + '"/>' +
+            '<circle cx="460" cy="744" r="16" fill="' + acc + '"/>' +
+            '<circle cx="604" cy="744" r="16" fill="' + blade + '"/>' +
+            '<path d="M 726 730 L 770 744 L 726 758 Z" fill="' + dot + '"/>' +
+            '<rect x="176" y="236" width="84" height="300" rx="24" fill="' + pillar + '"/>' +
+            '<circle cx="218" cy="160" r="44" fill="' + dot + '"/>' +
+            "</g>";
+        } else {
+          /* lpBOT Micro — head only: 7 shapes, 2 inks + tile, 32px-safe. */
+          fg = '<g transform="rotate(' + tilt + ' 512 512)">' +
+            '<rect x="472" y="148" width="80" height="112" rx="24" fill="' + ink2 + '"/>' +
+            '<circle cx="512" cy="128" r="44" fill="' + dot + '"/>' +
+            '<rect x="128" y="420" width="72" height="200" rx="32" fill="' + ink2 + '"/>' +
+            '<rect x="824" y="420" width="72" height="200" rx="32" fill="' + ink2 + '"/>' +
+            '<rect x="192" y="252" width="640" height="560" rx="160" fill="' + ink + '"/>' +
+            '<rect x="264" y="356" width="496" height="248" rx="96" fill="' + canvas + '"/>' +
+            '<circle cx="392" cy="480" r="52" fill="' + acc + '"/>' +
+            '<circle cx="632" cy="480" r="52" fill="' + acc + '"/>' +
+            '<rect x="432" y="688" width="160" height="28" rx="14" fill="' + pillar + '"/>' +
+            "</g>";
+        }
+
+        const clip = opts.cornerMode === "squircle"
+          ? '<clipPath id="c_' + uid + '"><path d="' + SQUIRCLE + '"/></clipPath>'
+          : '<clipPath id="c_' + uid + '"><rect width="1024" height="1024" rx="' + opts.radius + '"/></clipPath>';
+
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="' + esc(brand.name) + ' icon">' +
+          "<defs>" + clip + "</defs>" +
+          '<g clip-path="url(#c_' + uid + ')">' +
+          '<rect width="1024" height="1024" fill="' + bg + '"/>' +
+          fg +
+          '<rect x="2" y="2" width="1020" height="1020" rx="' + (opts.cornerMode === "squircle" ? 320 : Math.max(0, opts.radius - 2)) + '" fill="none" stroke="' + ink + '" stroke-opacity="0.18" stroke-width="4"/>' +
+          "</g></svg>";
+      }
+
+      /* ================================================================
+         WORDMARK LOCKUPS — icon tile + vector word + tagline.
+         ================================================================ */
+      function iconInnerScaled() {
+        /* Compact icon core (no tile chrome) used inside lockups, scaled from 1024. */
+        const acc = brand.accent, blade = brand.blade, pillar = brand.pillar, dot = brand.dot;
+        const canvas = TOKENS.surfaces.canvas, ink = TOKENS.inks.primary;
+        return '<rect x="284" y="172" width="456" height="680" rx="56" fill="' + canvas + '"/>' +
+          '<path fill="' + ink + '" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>' +
+          '<rect x="424" y="212" width="176" height="36" rx="18" fill="' + pillar + '"/>' +
+          '<path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="' + blade + '"/>' +
+          '<path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="' + acc + '"/>' +
+          '<rect x="192" y="388" width="68" height="248" rx="20" fill="' + pillar + '"/>' +
+          '<circle cx="226" cy="328" r="34" fill="' + dot + '"/>';
+      }
+
+      function buildWordmarkSvg(style) {
+        const paper = style === "light";
+        const ink = paper ? TOKENS.surfaces.canvas : TOKENS.inks.primary;
+        const tileFill = paper ? TOKENS.inks.primary : TOKENS.surfaces.chassis;
+        const name = brand.name || "iDE";
+        const word = renderVectorWord(name, brand.pillar);
+        const compact = style === "compact";
+        const scale = compact ? 0.52 : 0.64;
+        const wordW = word.width * scale;
+        const tile = compact ? 96 : 160;
+        const pad = compact ? 8 : 24;
+        const gapX = compact ? 20 : 32;
+        const taglineText = (brand.tagline + " // " + brand.org).toUpperCase();
+        /* 13.5px mono + 2px tracking ≈ 10.1px/char — canvas must fit the tagline too */
+        const taglineW = compact ? 0 : taglineText.length * 10.1 + 4;
+        const totalW = Math.ceil(Math.max(pad * 2 + tile + gapX + wordW, pad + tile + gapX + taglineW));
+        const totalH = compact ? 112 : 220;
+        const tileY = compact ? 8 : 30;
+        const wordY = compact ? 28 : 46;
+        const tagline = compact ? "" :
+          '<text x="' + (pad + tile + gapX + 2) + '" y="' + (wordY + 108) + '" fill="' + (paper ? TOKENS.inks.muted : TOKENS.inks.secondary) + '" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" font-weight="600" letter-spacing="2">' + esc(taglineText) + "</text>";
+
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="' + totalW + '" height="' + totalH + '" viewBox="0 0 ' + totalW + " " + totalH + '" role="img" aria-label="' + esc(name) + ' wordmark">' +
+          '<g transform="translate(' + pad + ", " + tileY + ')">' +
+          '<rect width="' + tile + '" height="' + tile + '" rx="' + Math.round(tile * 0.225) + '" fill="' + tileFill + '" stroke="' + brand.accent + '" stroke-opacity="0.4" stroke-width="2"/>' +
+          '<g transform="scale(' + (tile / 1024) + ')">' + iconInnerScaled() + "</g></g>" +
+          '<g transform="translate(' + (pad + tile + gapX) + ", " + wordY + ") scale(" + scale + ')" fill="' + ink + '" fill-rule="evenodd">' + word.svg + "</g>" +
+          tagline +
+          "</svg>";
+      }
+
+      /* ================================================================
+         SOCIAL ASSETS — OG 1200×630 and banner 1280×360, live.
+         ================================================================ */
+      function socialDefs(uid) {
+        return '<defs>' +
+          '<radialGradient id="bg_' + uid + '" gradientUnits="userSpaceOnUse" cx="380" cy="140" r="1050">' +
+          '<stop offset="0%" stop-color="' + TOKENS.surfaces.elevated + '"/>' +
+          '<stop offset="55%" stop-color="' + TOKENS.surfaces.chassis + '"/>' +
+          '<stop offset="100%" stop-color="' + TOKENS.surfaces.canvas + '"/></radialGradient>' +
+          '<pattern id="grid_' + uid + '" width="48" height="48" patternUnits="userSpaceOnUse">' +
+          '<path d="M 48 0 H 0 V 48" fill="none" stroke="' + brand.accent + '" stroke-opacity="0.06" stroke-width="1"/></pattern>' +
+          "</defs>";
+      }
+
+      function buildOgSvg(uid) {
+        const word = renderVectorWord(brand.name || "iDE", brand.pillar);
+        const scale = Math.min(0.54, 620 / Math.max(1, word.width));
+        const orgText = brand.org.toUpperCase() + " · IOS HIG + THUMB-ZONE IDE";
+        const pillW = Math.min(1048, Math.ceil(96 + orgText.length * 9.6));
+        /* Nested <svg> keeps the icon's own squircle clip intact */
+        const phoneIcon = buildIconSvg(Object.assign({}, brand, { tilt: 0 }), uid + "_ph")
+          .replace('width="1024" height="1024"', 'x="860" y="150" width="300" height="300"');
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="' + esc(brand.name) + ' OpenGraph card">' +
+          socialDefs(uid) +
+          '<rect width="1200" height="630" fill="url(#bg_' + uid + ')"/>' +
+          '<rect width="1200" height="630" fill="url(#grid_' + uid + ')"/>' +
+          '<rect x="36" y="36" width="1128" height="558" rx="18" fill="none" stroke="' + brand.accent + '" stroke-opacity="0.22" stroke-width="1.5"/>' +
+          '<g transform="translate(76, 78)">' +
+          '<rect width="' + pillW + '" height="36" rx="8" fill="' + TOKENS.surfaces.canvas + '" stroke="' + brand.accent + '" stroke-opacity="0.4"/>' +
+          '<circle cx="22" cy="18" r="5" fill="' + brand.dot + '"/>' +
+          '<circle cx="40" cy="18" r="5" fill="' + brand.accent + '"/>' +
+          '<circle cx="58" cy="18" r="5" fill="' + TOKENS.signals.coral + '"/>' +
+          '<text x="78" y="23" fill="' + TOKENS.inks.secondary + '" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" font-weight="600" letter-spacing="1.3">' + esc(orgText) + "</text></g>" +
+          '<g transform="translate(76, 150)">' +
+          '<rect width="112" height="112" rx="25" fill="' + brand.tile + '" stroke="' + brand.accent + '" stroke-opacity="0.42" stroke-width="1.5"/>' +
+          '<g transform="scale(0.109375)">' + iconInnerScaled() + "</g>" +
+          '<g transform="translate(132, 14) scale(' + scale + ')" fill="' + TOKENS.inks.primary + '" fill-rule="evenodd">' + word.svg + "</g>" +
+          '<text x="134" y="98" fill="' + brand.accent + '" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" font-weight="600" letter-spacing="2.2">' + esc(brand.tagline.toUpperCase()) + "</text></g>" +
+          '<text x="76" y="330" fill="' + TOKENS.inks.primary + '" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="600">Full desktop IDE power, re-engineered for one-handed iOS touch.</text>' +
+          '<text x="76" y="372" fill="' + TOKENS.inks.secondary + '" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="17">GitHub Codespaces · OpenVSCode Server · SSH DevContainers · JetBrains Gateway</text>' +
+          '<text x="76" y="400" fill="' + TOKENS.inks.secondary + '" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="17">48pt thumb-zone coding bar · Dynamic Island tunnel telemetry · true-black OLED</text>' +
+          '<g transform="translate(76, 488)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" font-weight="600" letter-spacing="0.7">' +
+          '<rect x="0" y="0" width="230" height="36" rx="8" fill="' + TOKENS.surfaces.canvas + '" stroke="' + TOKENS.signals.emerald + '" stroke-opacity="0.5"/>' +
+          '<text x="16" y="23" fill="' + TOKENS.signals.emerald + '">● 48PT THUMB-ZONE BAR</text>' +
+          '<rect x="246" y="0" width="250" height="36" rx="8" fill="' + TOKENS.surfaces.canvas + '" stroke="' + brand.accent + '" stroke-opacity="0.5"/>' +
+          '<text x="262" y="23" fill="' + brand.accent + '">● CODESPACES + SSH + LSP</text>' +
+          '<rect x="512" y="0" width="240" height="36" rx="8" fill="' + TOKENS.surfaces.canvas + '" stroke="' + brand.pillar + '" stroke-opacity="0.5"/>' +
+          '<text x="528" y="23" fill="' + brand.pillar + '">● OLED 0%-SMEAR DARK</text></g>' +
+          phoneIcon +
+          "</svg>";
+      }
+
+      function buildBannerSvg(uid) {
+        const word = renderVectorWord(brand.name || "iDE", brand.pillar);
+        const scale = Math.min(0.62, 600 / Math.max(1, word.width));
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-label="' + esc(brand.name) + ' repository banner">' +
+          socialDefs(uid) +
+          '<rect width="1280" height="360" fill="url(#bg_' + uid + ')"/>' +
+          '<rect width="1280" height="360" fill="url(#grid_' + uid + ')"/>' +
+          '<rect x="24" y="24" width="1232" height="312" rx="16" fill="none" stroke="' + brand.accent + '" stroke-opacity="0.2" stroke-width="1.5"/>' +
+          '<g transform="translate(64, 60)">' +
+          '<rect width="240" height="240" rx="54" fill="' + brand.tile + '" stroke="' + brand.accent + '" stroke-opacity="0.4" stroke-width="2"/>' +
+          '<g transform="scale(0.234375)">' + iconInnerScaled() + "</g></g>" +
+          '<g transform="translate(352, 96) scale(' + scale + ')" fill="' + TOKENS.inks.primary + '" fill-rule="evenodd">' + word.svg + "</g>" +
+          '<text x="354" y="238" fill="' + brand.accent + '" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" font-weight="600" letter-spacing="2.4">' + esc(brand.tagline.toUpperCase()) + "</text>" +
+          '<text x="354" y="274" fill="' + TOKENS.inks.secondary + '" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13.5" font-weight="600" letter-spacing="1.6">' + esc(brand.org.toUpperCase()) + " · 44PT+ HIG · OLED TRUE BLACK</text>" +
+          "</svg>";
+      }
+
+      /* ================================================================
+         TOKEN EXPORTS — one model, two formats, parity by construction.
+         ================================================================ */
+      function generateTokensCss() {
+        const t = TOKENS;
+        const lines = [];
+        lines.push("/**");
+        lines.push(" * " + brand.name + " — generated by iDE Brand Studio v2");
+        lines.push(" * Organization: " + brand.org);
+        lines.push(" * Primitives mirror brand/tokens.css; semantic roles are brand-assigned.");
+        lines.push(" * Do not edit by hand — regenerate from the studio (parity with design-tokens.json).");
+        lines.push(" */");
+        lines.push(":root {");
+        lines.push("  /* OLED surfaces */");
+        lines.push("  --ide-bg-oled-true: " + t.surfaces.oledTrue + ";");
+        lines.push("  --ide-bg-canvas: " + t.surfaces.canvas + ";");
+        lines.push("  --ide-bg-chassis: " + t.surfaces.chassis + ";");
+        lines.push("  --ide-bg-elevated: " + t.surfaces.elevated + ";");
+        lines.push("  --ide-bg-thumb-bar: " + t.surfaces.thumbBar + ";");
+        lines.push("");
+        lines.push("  /* Semantic inks (muted is decorative-only: ~4.2:1 on canvas) */");
+        lines.push("  --ide-ink-primary: " + t.inks.primary + ";");
+        lines.push("  --ide-ink-secondary: " + t.inks.secondary + ";");
+        lines.push("  --ide-ink-muted: " + t.inks.muted + ";");
+        lines.push("");
+        lines.push("  /* Brand signals */");
+        Object.keys(t.signals).forEach(function (k) {
+          lines.push("  --ide-signal-" + k.replace(/([A-Z])/g, "-$1").toLowerCase() + ": " + t.signals[k] + ";");
+        });
+        lines.push("");
+        lines.push("  /* Semantic brand roles (assigned in studio) */");
+        lines.push("  --ide-accent: " + brand.accent + ";");
+        lines.push("  --ide-accent-blade: " + brand.blade + ";");
+        lines.push("  --ide-pillar: " + brand.pillar + ";");
+        lines.push("  --ide-status-dot: " + brand.dot + ";");
+        lines.push("  --ide-icon-tile: " + brand.tile + ";");
+        lines.push("");
+        lines.push("  /* iOS HIG touch & safe-area ergonomics */");
+        lines.push("  --ide-hit-min-ios: " + t.touch.min + "px;");
+        lines.push("  --ide-hit-recommended: " + t.touch.recommended + "px;");
+        lines.push("  --ide-hit-gap-min: " + t.touch.gapMin + "px;");
+        lines.push("  --ide-safe-top-island: " + t.safe.topIsland + "px;");
+        lines.push("  --ide-safe-bottom-home: " + t.safe.bottomHome + "px;");
+        lines.push("");
+        lines.push("  /* 8pt spatial grid */");
+        t.space.forEach(function (s, i) {
+          const name = [1, 2, 3, 4, 6, 8][i];
+          lines.push("  --ide-space-" + name + ": " + s + "px;");
+        });
+        lines.push("");
+        lines.push("  /* iOS Dynamic Type scale (SF Pro & SF Mono) */");
+        lines.push("  --ide-font-sans: " + t.fonts.sans + ";");
+        lines.push("  --ide-font-mono: " + t.fonts.mono + ";");
+        const typeNames = { largeTitle: "large-title", title1: "title-1", title2: "title-2", headline: "headline", body: "body", code: "code", caption: "caption" };
+        Object.keys(typeNames).forEach(function (k) {
+          lines.push("  --ide-type-" + typeNames[k] + ": " + t.type[k].size + "px;");
+          lines.push("  --ide-type-" + typeNames[k] + "-weight: " + t.type[k].weight + ";");
+          lines.push("  --ide-type-" + typeNames[k] + "-line-height: " + t.type[k].lineHeight + ";");
+        });
+        lines.push("}");
+        return lines.join("\n");
+      }
+
+      function generateDtcgJson() {
+        const t = TOKENS;
+        const color = function (v) { return { $value: v, $type: "color" }; };
+        const dim = function (v) { return { $value: v + "px", $type: "dimension" }; };
+        const doc = {
+          $schema: "https://tr.designtokens.org/format/",
+          meta: {
+            project: brand.name,
+            organization: brand.org,
+            platform: "iOS 18+ (iPhone & iPad)",
+            generator: "iDE Brand Studio v2"
+          },
+          color: {
+            oledTrueBlack: color(t.surfaces.oledTrue),
+            obsidianCanvas: color(t.surfaces.canvas),
+            chassis: color(t.surfaces.chassis),
+            elevatedSurface: color(t.surfaces.elevated),
+            thumbBar: color(t.surfaces.thumbBar),
+            inkPrimary: color(t.inks.primary),
+            inkSecondary: color(t.inks.secondary),
+            inkMuted: color(t.inks.muted),
+            electricSky: color(t.signals.azure),
+            vscodeAzure: color(t.signals.vscode),
+            phosphorCyan: color(t.signals.cyan),
+            safeEmerald: color(t.signals.emerald),
+            irisViolet: color(t.signals.violet),
+            signalAmber: color(t.signals.amber),
+            signalCoral: color(t.signals.coral)
+          },
+          brand: {
+            accent: color(brand.accent),
+            accentBlade: color(brand.blade),
+            pillar: color(brand.pillar),
+            statusDot: color(brand.dot),
+            iconTile: color(brand.tile)
+          },
+          ergonomics: {
+            minTouchTarget: dim(t.touch.min),
+            recommendedTouchTarget: dim(t.touch.recommended),
+            minTargetGap: dim(t.touch.gapMin),
+            safeTopIsland: dim(t.safe.topIsland),
+            safeBottomHome: dim(t.safe.bottomHome),
+            primaryThumbZone: { $value: "bottom-arc-35-percent", $type: "string" },
+            haptics: {
+              keyTap: { $value: t.haptics.keyTap, $type: "string" },
+              commandRun: { $value: t.haptics.commandRun, $type: "string" },
+              buildSuccess: { $value: t.haptics.buildSuccess, $type: "string" }
+            }
+          },
+          space: {},
+          typography: {}
+        };
+        t.space.forEach(function (s, i) {
+          doc.space["step-" + [1, 2, 3, 4, 6, 8][i]] = dim(s);
+        });
+        Object.keys(t.type).forEach(function (k) {
+          const ty = t.type[k];
+          doc.typography[k] = {
+            $value: {
+              fontFamily: ty.family === "mono" ? t.fonts.mono : t.fonts.sans,
+              fontSize: ty.size + "px",
+              fontWeight: ty.weight,
+              lineHeight: ty.lineHeight,
+              letterSpacing: ty.tracking + "px"
+            },
+            $type: "typography"
+          };
+        });
+        return JSON.stringify(doc, null, 2);
+      }
+
+      /* ================================================================
+         PHONE SIMULATOR
+         ================================================================ */
+      const FILES = {
+        swift: [
+          { html: '<span class="syn-kw">import</span> <span class="syn-ty">SwiftUI</span>' },
+          { html: '<span class="syn-kw">import</span> <span class="syn-fn">CodespaceTunnelKit</span>' },
+          { html: '<span class="syn-cm">// 48pt thumb-zone IDE bar · bottom-35% arc</span>' },
+          { html: '<span class="syn-kw">struct</span> <span class="syn-ty">PocketVSCodeView</span>: <span class="syn-ty">View</span> {' },
+          { html: '  <span class="syn-kw">let</span> host = <span class="syn-st">"codespace://groovelabs/main"</span>' },
+          { html: '  <span class="syn-kw">let</span> minHitTargetPt = <span class="syn-nm">48.0</span>', active: true },
+          { html: '  <span class="syn-kw">func</span> <span class="syn-fn">attachLSP</span>() <span class="syn-kw">async</span> -> <span class="syn-ty">Bool</span> {' },
+          { html: '    <span class="syn-kw">return</span> <span class="syn-kw">await</span> Tunnel.connect(host)' },
+          { html: "  }" },
+          { html: "}" }
+        ],
+        devcontainer: [
+          { html: "{" },
+          { html: '  <span class="syn-ty">"name"</span>: <span class="syn-st">"ide-mobile-codespace"</span>,' },
+          { html: '  <span class="syn-ty">"image"</span>: <span class="syn-st">"mcr.microsoft.com/devcontainers/universal:2"</span>,' },
+          { html: '  <span class="syn-ty">"forwardPorts"</span>: [<span class="syn-nm">3000</span>, <span class="syn-nm">8080</span>],' },
+          { html: '  <span class="syn-ty">"customizations"</span>: {', active: true },
+          { html: '    <span class="syn-ty">"vscode"</span>: { <span class="syn-ty">"extensions"</span>: [<span class="syn-st">"groovelabs.lpbot"</span>] }' },
+          { html: "  }" },
+          { html: "}" }
+        ],
+        agent: [
+          { html: '<span class="syn-kw">import</span> { lpBOT } <span class="syn-kw">from</span> <span class="syn-st">"@groovelabs/agent-nursery"</span>;' },
+          { html: '<span class="syn-kw">export async function</span> <span class="syn-fn">assistOnPhone</span>(ctx) {' },
+          { html: '  <span class="syn-kw">const</span> patch = <span class="syn-kw">await</span> lpBOT.<span class="syn-fn">proposeFix</span>(ctx);', active: true },
+          { html: '  <span class="syn-kw">return</span> patch.<span class="syn-fn">applyWithHaptic</span>(<span class="syn-st">"success"</span>);' },
+          { html: "}" }
+        ]
+      };
+
+      const HOSTS = ["codespace-main · 14ms", "openvscode-srv · 9ms", "ssh://mac-studio · 4ms", "jetbrains-gw · 17ms"];
+      let activeFile = "swift";
+      let hostIdx = 0;
+      let extraLines = [];
+
+      function renderPhoneEditor() {
+        const vp = document.getElementById("ideEditorViewport");
+        const rows = FILES[activeFile].concat(extraLines);
+        vp.innerHTML = rows.map(function (row, idx) {
+          const cls = row.active ? "code-line code-line-active" : "code-line";
+          const num = String(idx + 1).padStart(2, "0");
+          return '<div class="' + cls + '"><span class="line-num">' + num + "</span><span>" + row.html + "</span></div>";
+        }).join("");
+      }
+
+      const tabButtons = Array.prototype.slice.call(document.querySelectorAll("[data-file]"));
+
+      function selectTab(tab) {
+        activeFile = tab.getAttribute("data-file");
+        extraLines = [];
+        tabButtons.forEach(function (t) {
+          const selected = t === tab;
+          t.setAttribute("aria-selected", String(selected));
+          t.tabIndex = selected ? 0 : -1;
+        });
+        renderPhoneEditor();
+      }
+
+      tabButtons.forEach(function (tab, i) {
+        tab.tabIndex = tab.getAttribute("aria-selected") === "true" ? 0 : -1;
+        tab.addEventListener("click", function () { selectTab(tab); });
+        tab.addEventListener("keydown", function (e) {
+          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+          e.preventDefault();
+          const dir = e.key === "ArrowRight" ? 1 : -1;
+          const next = tabButtons[(i + dir + tabButtons.length) % tabButtons.length];
+          selectTab(next);
+          next.focus();
+        });
+      });
+
+      document.getElementById("islandBtn").addEventListener("click", function () {
+        hostIdx = (hostIdx + 1) % HOSTS.length;
+        const h = HOSTS[hostIdx];
+        document.getElementById("islandText").textContent = h;
+        document.getElementById("terminalLog").textContent = "$ tunnel switch -> " + h + "\n✓ Zero-drop reconnect complete · 60fps stream locked";
+      });
+
+      document.getElementById("themeSelect").addEventListener("change", function (e) {
+        brand.theme = e.target.value;
+        document.getElementById("iphoneScreen").setAttribute("data-theme", brand.theme);
+        saveBrand();
+        runCompliance();
+      });
+
+      document.getElementById("dtSelect").addEventListener("change", function (e) {
+        brand.dt = e.target.value;
+        document.getElementById("iphoneScreen").setAttribute("data-dt", brand.dt);
+        saveBrand();
+        runCompliance();
+      });
+
+      function toggleHeatmap() {
+        const hm = document.getElementById("thumbHeatmap");
+        const btn = document.getElementById("toggleHeatmapBtn");
+        hm.hidden = !hm.hidden;
+        btn.setAttribute("aria-pressed", String(!hm.hidden));
+      }
+      document.getElementById("toggleHeatmapBtn").addEventListener("click", toggleHeatmap);
+
+      let lastFocusBeforePalette = null;
+
+      function toggleCmdPalette(forceState) {
+        const sheet = document.getElementById("cmdPaletteSheet");
+        const btn = document.getElementById("toggleCmdPaletteBtn");
+        const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
+        sheet.hidden = !willOpen;
+        btn.setAttribute("aria-pressed", String(willOpen));
+        if (willOpen) {
+          lastFocusBeforePalette = document.activeElement;
+          const first = sheet.querySelector(".cmd-item");
+          if (first) first.focus();
+        } else if (lastFocusBeforePalette && typeof lastFocusBeforePalette.focus === "function") {
+          lastFocusBeforePalette.focus();
+          lastFocusBeforePalette = null;
+        }
+      }
+
+      /* Focus trap inside the ⌘P dialog */
+      document.getElementById("cmdPaletteSheet").addEventListener("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        const sheet = e.currentTarget;
+        const focusables = Array.prototype.slice.call(sheet.querySelectorAll("button"));
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+
+      document.getElementById("toggleCmdPaletteBtn").addEventListener("click", function () { toggleCmdPalette(); });
+      document.getElementById("closeCmdBtn").addEventListener("click", function () { toggleCmdPalette(false); });
+
+      /* Terminal sheet handle — 44pt grab region, tap to expand */
+      document.getElementById("sheetHandle").addEventListener("click", function () {
+        const sheet = document.getElementById("ideTerminalSheet");
+        const expanded = sheet.getAttribute("data-expanded") !== "true";
+        sheet.setAttribute("data-expanded", String(expanded));
+        this.setAttribute("aria-expanded", String(expanded));
+        runCompliance();
+      });
+
+      document.querySelectorAll("[data-cmd]").forEach(function (item) {
+        item.addEventListener("click", function () {
+          const cmd = item.getAttribute("data-cmd");
+          toggleCmdPalette(false);
+          document.getElementById("terminalLog").textContent = "> Executed: " + cmd + "\n✓ Completed in 24ms (Haptic: .success)";
+        });
+      });
+
+      function hapticFor(keyBtn) {
+        const role = keyBtn ? keyBtn.getAttribute("data-haptic") : "keyTap";
+        return TOKENS.haptics[role] || TOKENS.haptics.keyTap;
+      }
+
+      function handleThumbKeyAction(action, keyBtn) {
+        const log = document.getElementById("terminalLog");
+        const haptic = hapticFor(keyBtn);
+        switch (action) {
+          case "snippet":
+            extraLines.push({ html: '  <span class="syn-kw">guard let</span> session = activeTunnel <span class="syn-kw">else</span> { <span class="syn-kw">return</span> }' });
+            renderPhoneEditor();
+            log.textContent = "Inserted guard-block snippet via 48pt Thumb Bar\nHaptic: " + haptic;
+            break;
+          case "arrow":
+            extraLines.push({ html: '  <span class="syn-ty">Task</span> { <span class="syn-kw">await</span> session.<span class="syn-fn">syncBuffer</span>() }' });
+            renderPhoneEditor();
+            log.textContent = "Inserted async Task closure via Thumb Bar\nHaptic: " + haptic;
+            break;
+          case "palette":
+            toggleCmdPalette();
+            break;
+          case "run":
+            log.textContent = "$ swift build && npm run test\n✓ Build succeeded (0 warnings) · Live preview updated\nHaptic: " + haptic;
+            break;
+          case "lpbot":
+            extraLines.push({ html: '  <span class="syn-cm">// ✓ lpBOT verified: 0 memory leaks, 48pt hit targets</span>' });
+            renderPhoneEditor();
+            log.textContent = "lpBOT Agent: Verified file AST & applied mobile-design guardrails\nHaptic: " + haptic;
+            break;
+          case "port":
+            log.textContent = "Forwarded remote port 3000 -> iOS split-sheet WebView preview\nHaptic: " + haptic;
+            break;
+          case "git":
+            log.textContent = "$ git push origin main\n✓ Pushed to gitlab.com/ykz2111/ide_concept\nHaptic: " + haptic;
+            break;
+          case "host":
+            document.getElementById("islandBtn").click();
+            break;
+        }
+      }
+
+      document.querySelectorAll("[data-key-action]").forEach(function (keyBtn) {
+        keyBtn.addEventListener("click", function () {
+          handleThumbKeyAction(keyBtn.getAttribute("data-key-action"), keyBtn);
+        });
+      });
+
+      /* ================================================================
+         WCAG CONTRAST + LIVE HIG COMPLIANCE (measured, not claimed)
+         ================================================================ */
+      function hexToRgb(hex) {
+        const h = hex.replace("#", "");
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      function luminance(hex) {
+        const rgb = hexToRgb(hex).map(function (v) {
+          const c = v / 255;
+          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+      }
+      function contrast(a, b) {
+        const l1 = luminance(a), l2 = luminance(b);
+        const hi = Math.max(l1, l2), lo = Math.min(l1, l2);
+        return (hi + 0.05) / (lo + 0.05);
+      }
+
+      function renderContrastAudit() {
+        const pairs = [
+          ["ink-primary / canvas", TOKENS.inks.primary, TOKENS.surfaces.canvas, 4.5],
+          ["ink-secondary / canvas", TOKENS.inks.secondary, TOKENS.surfaces.canvas, 4.5],
+          ["ink-muted / canvas (decor)", TOKENS.inks.muted, TOKENS.surfaces.canvas, 3.0],
+          ["accent / thumb-bar", brand.accent, TOKENS.surfaces.thumbBar, 4.5],
+          ["pillar / chassis (island)", brand.pillar, TOKENS.surfaces.chassis, 4.5],
+          ["dot / thumb-bar (RUN)", brand.dot, TOKENS.surfaces.thumbBar, 4.5]
+        ];
+        document.getElementById("contrastList").innerHTML = pairs.map(function (p) {
+          const ratio = contrast(p[1], p[2]);
+          const pass = ratio >= p[3];
+          return '<div class="check-item"><span class="check-name">' + p[0] + '</span><span class="check-val ' + (pass ? "check-pass" : "check-fail") + '">' + ratio.toFixed(2) + ":1 " + (pass ? "PASS" : "LOW") + "</span></div>";
+        }).join("");
+      }
+
+      function measureCompliance() {
+        const screen = document.getElementById("iphoneScreen");
+        const screenH = screen.clientHeight;
+        const keys = Array.prototype.slice.call(document.querySelectorAll(".thumb-key"));
+        const tabs = Array.prototype.slice.call(document.querySelectorAll(".ide-tab"));
+        const island = document.getElementById("islandBtn");
+        const bar = document.querySelector(".thumb-coding-bar");
+        const sheet = document.getElementById("ideTerminalSheet");
+        const statusBar = document.querySelector(".ios-status-bar");
+        const home = document.querySelector(".ios-home-indicator");
+
+        const keyH = keys.length ? Math.min.apply(null, keys.map(function (k) { return k.getBoundingClientRect().height; })) : 0;
+        const tabH = tabs.length ? Math.min.apply(null, tabs.map(function (k) { return k.getBoundingClientRect().height; })) : 0;
+        const islandH = island.getBoundingClientRect().height;
+        const gap = keys.length > 1 ? keys[1].getBoundingClientRect().left - keys[0].getBoundingClientRect().right : 0;
+        const barTop = bar.getBoundingClientRect().top - screen.getBoundingClientRect().top;
+        const sheetTop = sheet.getBoundingClientRect().top - screen.getBoundingClientRect().top;
+        const arcStart = screenH * 0.65;
+        const primaryInArc = barTop >= arcStart - 1 && sheetTop >= arcStart - 1;
+        const safeTop = statusBar.getBoundingClientRect().height;
+        const safeBottom = home.getBoundingClientRect().height;
+
+        const checks = [
+          ["Coding keys ≥ 48pt", keyH >= 48, keyH.toFixed(0) + "px"],
+          ["File tabs ≥ 44pt", tabH >= 44, tabH.toFixed(0) + "px"],
+          ["Island button ≥ 44pt", islandH >= 44, islandH.toFixed(0) + "px"],
+          ["Key gaps ≥ 8pt", gap >= 8, gap.toFixed(0) + "px"],
+          ["Primary controls in bottom 35%", primaryInArc, "bar @" + Math.round((barTop / screenH) * 100) + "%"],
+          ["Island safe-top = 59px", Math.abs(safeTop - 59) <= 1, safeTop.toFixed(0) + "px"],
+          ["Home safe-bottom = 34px", Math.abs(safeBottom - 34) <= 1, safeBottom.toFixed(0) + "px"]
+        ];
+        document.getElementById("checkList").innerHTML = checks.map(function (c) {
+          return '<div class="check-item"><span class="check-name">' + c[0] + '</span><span class="check-val ' + (c[1] ? "check-pass" : "check-fail") + '">' + c[2] + " " + (c[1] ? "PASS" : "FAIL") + "</span></div>";
+        }).join("");
+      }
+
+      function runCompliance() {
+        /* getBoundingClientRect forces layout, so measure synchronously;
+           rAF is a second pass only (it can be throttled in hidden tabs). */
+        measureCompliance();
+        requestAnimationFrame(measureCompliance);
+      }
+
+      let resizeTimer = null;
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(runCompliance, 150);
+      });
+
+      /* ================================================================
+         LOUPE
+         ================================================================ */
+      function updateLoupe(svgMarkup) {
+        const canvas = document.getElementById("loupeCanvas");
+        const ctx = canvas.getContext("2d");
+        const off = document.createElement("canvas");
+        off.width = 16; off.height = 16;
+        const offCtx = off.getContext("2d");
+        const img = new Image();
+        const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        img.onload = function () {
+          offCtx.clearRect(0, 0, 16, 16);
+          offCtx.drawImage(img, 0, 0, 16, 16);
+          URL.revokeObjectURL(url);
+          ctx.clearRect(0, 0, 96, 96);
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(off, 0, 0, 16, 16, 0, 0, 96, 96);
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); };
+        img.src = url;
+      }
+
+      /* ================================================================
+         STUDIO RENDER
+         ================================================================ */
+      function applyRoleVars() {
+        const root = document.documentElement;
+        root.style.setProperty("--accent", brand.accent);
+        root.style.setProperty("--blade", brand.blade);
+        root.style.setProperty("--pillar", brand.pillar);
+        root.style.setProperty("--dot", brand.dot);
+        root.style.setProperty("--tile", brand.tile);
+      }
+
+      function renderStudio() {
+        applyRoleVars();
+
+        document.getElementById("liveNameBadge").textContent = brand.name || "iDE";
+        document.getElementById("studioTitle").textContent = (brand.name || "iDE") + " · Brand Studio v2";
+        document.getElementById("homeLabel").textContent = brand.name || "iDE";
+        document.getElementById("sheetTitle").textContent = "TERMINAL · ZSH (" + (brand.name || "IDE").toUpperCase().replace(/[^A-Z0-9]+/g, "-") + ")";
+        document.getElementById("cmdSheetTitle").textContent = "⌘P · " + (brand.name || "iDE").toUpperCase() + " COMMANDS";
+
+        const svg = buildIconSvg(brand, "main");
+        document.getElementById("mainIconSpecimen").innerHTML = svg;
+        document.getElementById("slot-120").innerHTML = buildIconSvg(brand, "s120");
+        document.getElementById("slot-60").innerHTML = buildIconSvg(brand, "s60");
+        document.getElementById("slot-32").innerHTML = buildIconSvg(brand, "s32");
+        document.getElementById("slot-16").innerHTML = buildIconSvg(brand, "s16");
+        updateLoupe(svg);
+
+        Object.keys(VARIANTS).forEach(function (vk) {
+          const el = document.getElementById("thumb-" + vk);
+          if (el) el.innerHTML = buildIconSvg(Object.assign({}, brand, { variant: vk, tilt: 0 }), "th_" + vk);
+        });
+        document.querySelectorAll("[data-variant]").forEach(function (el) {
+          el.setAttribute("aria-pressed", String(el.getAttribute("data-variant") === brand.variant));
+        });
+
+        const wmStyle = brand.wordmarkStyle;
+        const frame = document.getElementById("wordmarkFrame");
+        frame.setAttribute("data-paper", String(wmStyle === "light"));
+        frame.innerHTML = buildWordmarkSvg(wmStyle);
+
+        document.getElementById("ogPreview").innerHTML = buildOgSvg("og");
+        document.getElementById("bannerPreview").innerHTML = buildBannerSvg("bn");
+
+        document.getElementById("tokenPreview").textContent = generateTokensCss();
+        renderContrastAudit();
+        saveBrand();
+      }
+
+      /* ---------------- Build variant cards + swatch rows ---------------- */
+      const variantsGrid = document.getElementById("variantsGrid");
+      variantsGrid.innerHTML = Object.keys(VARIANTS).map(function (vk, i) {
+        const v = VARIANTS[vk];
+        return '<button type="button" class="variant-card" data-variant="' + vk + '" aria-pressed="false">' +
+          '<div class="variant-thumb" id="thumb-' + vk + '"></div>' +
+          '<div><div class="variant-name">' + v.name + (v.isNew ? ' <span class="variant-new">NEW</span>' : "") + "</div>" +
+          '<div class="variant-desc">' + v.desc + "</div>" +
+          '<div class="variant-desc" style="color:var(--ide-ink-muted);">Key ' + (i + 1) + "</div></div></button>";
+      }).join("");
+
+      variantsGrid.querySelectorAll("[data-variant]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          brand.variant = btn.getAttribute("data-variant");
+          renderStudio();
+        });
+      });
+
+      function buildSwatchRow(rowEl, palette, role) {
+        rowEl.innerHTML = palette.map(function (hex) {
+          return '<button type="button" class="swatch-btn" data-hex="' + hex + '" aria-pressed="false" aria-label="Set ' + role + ' to ' + hex + '" title="' + hex + '">' +
+            '<span class="swatch-chip" style="background:' + hex + ';"></span></button>';
+        }).join("");
+        rowEl.querySelectorAll(".swatch-btn").forEach(function (chip) {
+          chip.addEventListener("click", function () {
+            brand[role] = chip.getAttribute("data-hex");
+            syncSwatches();
+            renderStudio();
+          });
+        });
+      }
+
+      const signalPalette = SIGNAL_KEYS.map(function (k) { return TOKENS.signals[k]; });
+      const surfacePalette = SURFACE_KEYS.map(function (k) { return TOKENS.surfaces[k]; });
+      document.querySelectorAll("[data-role]").forEach(function (rowEl) {
+        const role = rowEl.getAttribute("data-role");
+        buildSwatchRow(rowEl, role === "tile" ? surfacePalette : signalPalette, role);
+      });
+
+      function syncSwatches() {
+        document.querySelectorAll("[data-role]").forEach(function (rowEl) {
+          const role = rowEl.getAttribute("data-role");
+          rowEl.querySelectorAll(".swatch-btn").forEach(function (chip) {
+            chip.setAttribute("aria-pressed", String(chip.getAttribute("data-hex") === brand[role]));
+          });
+        });
+      }
+
+      /* ---------------- Identity + sliders ---------------- */
+      const nameInput = document.getElementById("nameInput");
+      const orgInput = document.getElementById("orgInput");
+      const taglineInput = document.getElementById("taglineInput");
+      nameInput.value = brand.name;
+      orgInput.value = brand.org;
+      taglineInput.value = brand.tagline;
+
+      let identityTimer = null;
+      function onIdentityInput() {
+        clearTimeout(identityTimer);
+        identityTimer = setTimeout(function () {
+          brand.name = nameInput.value.trim() || "iDE";
+          brand.org = orgInput.value.trim() || "GROOVE LABS";
+          brand.tagline = taglineInput.value.trim() || "POCKET IDE";
+          renderStudio();
+        }, 200);
+      }
+      [nameInput, orgInput, taglineInput].forEach(function (inp) {
+        inp.addEventListener("input", onIdentityInput);
+      });
+
+      const tiltRange = document.getElementById("tiltRange");
+      const radiusRange = document.getElementById("radiusRange");
+      const cornerMode = document.getElementById("cornerMode");
+      tiltRange.value = brand.tilt;
+      radiusRange.value = brand.radius;
+      cornerMode.value = brand.cornerMode;
+      document.getElementById("tiltVal").textContent = brand.tilt + "°";
+      document.getElementById("radiusVal").textContent = brand.radius + "px";
+      document.getElementById("radiusRow").hidden = brand.cornerMode === "squircle";
+
+      tiltRange.addEventListener("input", function (e) {
+        brand.tilt = Number(e.target.value);
+        document.getElementById("tiltVal").textContent = brand.tilt + "°";
+        renderStudio();
+      });
+      radiusRange.addEventListener("input", function (e) {
+        brand.radius = Number(e.target.value);
+        document.getElementById("radiusVal").textContent = brand.radius + "px";
+        renderStudio();
+      });
+      cornerMode.addEventListener("change", function (e) {
+        brand.cornerMode = e.target.value;
+        document.getElementById("radiusRow").hidden = brand.cornerMode === "squircle";
+        renderStudio();
+      });
+
+      document.getElementById("wordmarkStyle").value = brand.wordmarkStyle;
+      document.getElementById("wordmarkStyle").addEventListener("change", function (e) {
+        brand.wordmarkStyle = e.target.value;
+        renderStudio();
+      });
+
+      document.getElementById("themeSelect").value = brand.theme;
+      document.getElementById("dtSelect").value = brand.dt || "default";
+      document.getElementById("iphoneScreen").setAttribute("data-theme", brand.theme);
+      document.getElementById("iphoneScreen").setAttribute("data-dt", brand.dt || "default");
+
+      /* ================================================================
+         EXPORTS
+         ================================================================ */
+      function triggerDownload(blob, filename) {
+        const u = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = u;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(u); }, 1000);
+      }
+
+      function exportSvgAsPng(svgMarkup, w, h, filename) {
+        const img = new Image();
+        const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        img.onload = function () {
+          const c = document.createElement("canvas");
+          c.width = w; c.height = h;
+          c.getContext("2d").drawImage(img, 0, 0, w, h);
+          URL.revokeObjectURL(url);
+          c.toBlob(function (b) { if (b) triggerDownload(b, filename); }, "image/png");
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); };
+        img.src = url;
+      }
+
+      function exportText(text, filename, mime) {
+        triggerDownload(new Blob([text], { type: mime }), filename);
+      }
+
+      document.getElementById("copySvgBtn").addEventListener("click", function () {
+        const svg = buildIconSvg(brand, "copy");
+        if (navigator.clipboard) navigator.clipboard.writeText(svg);
+      });
+      document.getElementById("downloadSvgBtn").addEventListener("click", function () {
+        exportText(buildIconSvg(brand, "dl"), slug() + "-" + brand.variant + ".svg", "image/svg+xml");
+      });
+      document.getElementById("exp1024Btn").addEventListener("click", function () {
+        exportSvgAsPng(buildIconSvg(brand, "e1024"), 1024, 1024, slug() + "-" + brand.variant + "-1024.png");
+      });
+      document.getElementById("exp512Btn").addEventListener("click", function () {
+        exportSvgAsPng(buildIconSvg(brand, "e512"), 512, 512, slug() + "-" + brand.variant + "-512.png");
+      });
+      document.getElementById("exp180Btn").addEventListener("click", function () {
+        exportSvgAsPng(buildIconSvg(brand, "e180"), 180, 180, "apple-touch-icon.png");
+      });
+      document.getElementById("expWordmarkBtn").addEventListener("click", function () {
+        exportText(buildWordmarkSvg(brand.wordmarkStyle), slug() + "-wordmark-" + brand.wordmarkStyle + ".svg", "image/svg+xml");
+      });
+      document.getElementById("expOgBtn").addEventListener("click", function () {
+        exportSvgAsPng(buildOgSvg("ogx"), 1200, 630, slug() + "-og-1200x630.png");
+      });
+      document.getElementById("expBannerBtn").addEventListener("click", function () {
+        exportSvgAsPng(buildBannerSvg("bnx"), 1280, 360, slug() + "-banner-1280x360.png");
+      });
+      document.getElementById("expCssBtn").addEventListener("click", function () {
+        exportText(generateTokensCss(), "tokens.css", "text/css");
+      });
+      document.getElementById("exportKitBtn").addEventListener("click", function () {
+        exportText(generateTokensCss(), "tokens.css", "text/css");
+      });
+      document.getElementById("expJsonBtn").addEventListener("click", function () {
+        exportText(generateDtcgJson(), "design-tokens.json", "application/json");
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", function () {
+        brand = Object.assign({}, DEFAULT_BRAND);
+        nameInput.value = brand.name;
+        orgInput.value = brand.org;
+        taglineInput.value = brand.tagline;
+        tiltRange.value = brand.tilt;
+        radiusRange.value = brand.radius;
+        cornerMode.value = brand.cornerMode;
+        document.getElementById("tiltVal").textContent = brand.tilt + "°";
+        document.getElementById("radiusVal").textContent = brand.radius + "px";
+        document.getElementById("radiusRow").hidden = true;
+        document.getElementById("wordmarkStyle").value = brand.wordmarkStyle;
+        document.getElementById("themeSelect").value = brand.theme;
+        document.getElementById("dtSelect").value = brand.dt;
+        document.getElementById("iphoneScreen").setAttribute("data-theme", brand.theme);
+        document.getElementById("iphoneScreen").setAttribute("data-dt", brand.dt);
+        syncSwatches();
+        renderStudio();
+        runCompliance();
+      });
+
+      /* ---------------- Keyboard ---------------- */
+      window.addEventListener("keydown", function (e) {
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "p") {
+          e.preventDefault();
+          toggleCmdPalette();
+          return;
+        }
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "h") toggleHeatmap();
+        else if (k === "escape") toggleCmdPalette(false);
+        else if (k >= "1" && k <= "8") {
+          const vk = "v" + k;
+          if (VARIANTS[vk]) { brand.variant = vk; renderStudio(); }
+        }
+      });
+
+      /* ---------------- Init ---------------- */
+      syncSwatches();
+      renderPhoneEditor();
+      renderStudio();
+      runCompliance();
+    })();
+  </script>
+</body>
+</html>
