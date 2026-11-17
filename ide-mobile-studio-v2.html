@@ -927,6 +927,12 @@
         if (saved && typeof saved === "object") brand = Object.assign({}, DEFAULT_BRAND, saved);
       } catch (e) { /* corrupted state -> defaults */ }
 
+      /* Validate persisted color roles before they reach raw SVG attributes. */
+      const HEX6 = /^#[0-9a-f]{6}$/i;
+      ["accent","blade","pillar","dot","tile"].forEach(function (k) {
+        if (!HEX6.test(brand[k])) brand[k] = DEFAULT_BRAND[k];
+      });
+
       function saveBrand() {
         try { localStorage.setItem("ide-brand-studio-v2", JSON.stringify(brand)); } catch (e) { /* private mode */ }
       }
