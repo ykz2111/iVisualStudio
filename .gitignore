@@ -2,3 +2,4 @@
 
 # Codex system skills linked into project (discovered via ~/.config/opencode/skills)
 .opencode/skills/*
+.gitlab/duo/

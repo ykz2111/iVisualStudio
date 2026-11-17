@@ -9,7 +9,7 @@ All locally installed AI skills are indexed. Do not reinstall them and do not do
 - Full learn-index: `.opencode/skills-catalog.md` (human) and `.opencode/skills-catalog.json` (machine). 734 unique skills.
 - Routing memory: `.opencode/learned-skills.md`
 - Design stack profile: `.opencode/skill-stack.json`
-- Project links created because OpenCode skips hidden directories: `.opencode/skills/{imagegen,openai-docs,review-agent,skill-installer}`
+- No project-local `.opencode/skills` links are checked in; load relevant globally discovered skills by ID.
 - Already discovered without copying: `~/.config/opencode/skills` (follows the marketplace symlink), `~/.claude/skills`, `~/.agents/skills`. Hermes copies are duplicates.
 
 Load a skill with the skill tool only when the current task matches its description. Do not paste the catalog into a design prompt.

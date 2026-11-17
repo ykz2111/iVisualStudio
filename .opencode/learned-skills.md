@@ -2,7 +2,7 @@
 
 Learned 2026-11-17. Unique skills observed: **734**.
 
-Source index: `.opencode/skills-catalog.md` and `.opencode/skills-catalog.json`. Category counts sum to 734 (460 + 55 + 40 + 19 + 18 + 18 + 17 + 16 + 16 + 11 + 9 + 8 + 6 + 5 + 4 + 3 + 3 + 3 + 3 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1). `.opencode/skill-stack.json` still says `total_available_in_openclaude: 730`. That figure is stale. Do not shrink this index to match it.
+Source index: `.opencode/skills-catalog.md` and `.opencode/skills-catalog.json`. The catalog contains 734 unique skills; keep the stack total aligned with it.
 
 This file is routing memory for the next architect. It is not a second catalog. Product surface today is `ide-mobile-studio.html` plus `brand/`. Remotes are GitLab (`gitlab.com/ykz2111/codespaced`, fetch + push) and GitHub (`github.com/ykz2111/iVisualStudio`, push), consolidated under a single `iVisualStudio` remote. GitLab is the fetch source of truth.
 
@@ -93,7 +93,7 @@ Ignore means: do not browse that group looking for a skill. Load a named id from
 - **software-development (18):** GitHub CLI, TDD, debugging, exploratory QA, spikes. Do not ignore for implementation, review, and test work. Skip Hermes DOM inspection and language debuggers this repo does not run.
 - **research (17):** Papers, OSINT, scraping, feeds. Ignore. `grounded-citations` only when a claim must be sourced outside the repo.
 - **mlops (16):** GPU training and fine-tunes. Ignore. `obliteratus` is in this group and is denied.
-- **root (16):** Codex, Paseo, Harbor, and lpm host tools, plus the four skills linked at `.opencode/skills` (`imagegen`, `openai-docs`, `review-agent`, `skill-installer`). Do not ignore those four when their job matches. Ignore `harbor`, `lpm`, `lpm-cli`, `lpm-config`, `lpm-memory`, and `paseo*` unless the user is operating those apps. Do not load `skill-installer` unless asked. `openai-docs` is for Codex or ChatGPT Work behavior, not for iDE UI.
+- **root (16):** Codex, Paseo, Harbor, and lpm host tools, plus `imagegen`, `openai-docs`, `review-agent`, and `skill-installer`. No project-local `.opencode/skills` links are checked in; load an available skill by ID when its job matches. Ignore `harbor`, `lpm`, `lpm-cli`, `lpm-config`, `lpm-memory`, and `paseo*` unless the user is operating those apps. Do not load `skill-installer` unless asked. `openai-docs` is for Codex or ChatGPT Work behavior, not for iDE UI.
 - **autonomous-ai-agents (11):** Delegating work to other CLIs (`claude-code`, `codex`, `grok`, `opencode-cli`, and others). Ignore unless the user asks to hand the task to that CLI.
 - **finance (9):** Valuation workbooks, markets, decks. Ignore.
 - **devops (8):** Docker, tunnels, watchers, Hermes container supervision. Ignore. `pinggy-tunnel` is not the product's SSH or DevContainer client.
