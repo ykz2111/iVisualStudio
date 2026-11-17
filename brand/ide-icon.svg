@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="ideTitle ideDesc">
+  <title id="ideTitle">iDE — Mobile Codespaces &amp; Cloud IDE for iOS</title>
+  <desc id="ideDesc">Titanium-Ice iPhone chassis with an active Dynamic Island tunnel pill framing a folded Electric-Azure and Phosphor-Cyan Visual Studio Code geometric ribbon and thumb-zone command bar on a machined dark obsidian superellipse.</desc>
+
+  <defs>
+    <path id="squirclePath" d="M 320 0 H 704 C 836 0, 908 12, 960 64 C 1012 116, 1024 188, 1024 320 V 704 C 1024 836, 1012 908, 960 960 C 908 1012, 836 1024, 704 1024 H 320 C 188 1024, 116 1012, 64 960 C 12 908, 0 836, 0 704 V 320 C 0 188, 12 116, 64 64 C 116 12, 188 0, 320 0 Z"/>
+    <clipPath id="tileClip"><use href="#squirclePath"/></clipPath>
+
+    <radialGradient id="chassisBg" gradientUnits="userSpaceOnUse" cx="512" cy="220" r="900">
+      <stop offset="0%"   stop-color="#132030"/>
+      <stop offset="52%"  stop-color="#0A0F18"/>
+      <stop offset="100%" stop-color="#04060A"/>
+    </radialGradient>
+
+    <radialGradient id="ideAmbient" gradientUnits="userSpaceOnUse" cx="520" cy="512" r="410">
+      <stop offset="0%"   stop-color="#007ACC" stop-opacity="0.24"/>
+      <stop offset="48%"  stop-color="#14F1D9" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="gridFade" gradientUnits="userSpaceOnUse" cx="512" cy="512" r="460">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="65%"  stop-color="#FFFFFF" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="gridMask"><rect width="1024" height="1024" fill="url(#gridFade)"/></mask>
+
+    <pattern id="instrumentGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 H 0 V 64" fill="none" stroke="#7DD3FC" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+
+    <linearGradient id="titaniumPhone" gradientUnits="userSpaceOnUse" x1="512" y1="128" x2="512" y2="896">
+      <stop offset="0%"   stop-color="#F7FBFE"/>
+      <stop offset="55%"  stop-color="#DCE7F2"/>
+      <stop offset="100%" stop-color="#B4C6D8"/>
+    </linearGradient>
+
+    <linearGradient id="vscodeAzure" gradientUnits="userSpaceOnUse" x1="340" y1="320" x2="720" y2="690">
+      <stop offset="0%"   stop-color="#38BDF8"/>
+      <stop offset="52%"  stop-color="#007ACC"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+
+    <linearGradient id="vscodeCyanBlade" gradientUnits="userSpaceOnUse" x1="340" y1="660" x2="720" y2="330">
+      <stop offset="0%"   stop-color="#64FAE7"/>
+      <stop offset="50%"  stop-color="#14F1D9"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+
+    <linearGradient id="bezelRim" gradientUnits="userSpaceOnUse" x1="512" y1="0" x2="512" y2="1024">
+      <stop offset="0%"   stop-color="#E2F2FA" stop-opacity="0.24"/>
+      <stop offset="50%"  stop-color="#38BDF8" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#14F1D9" stop-opacity="0.22"/>
+    </linearGradient>
+
+    <filter id="glyphShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <feDropShadow dx="0" dy="14" stdDeviation="15" flood-color="#020408" flood-opacity="0.68"/>
+    </filter>
+    <filter id="ribbonGlow" filterUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+
+    <!-- Titanium iPhone Handset Frame (Split Left/Right/Top/Bottom with Kerf Aperture for the Code Ribbon) -->
+    <path id="phoneShell" fill-rule="evenodd" d="
+      M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z
+      M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z
+    "/>
+
+    <!-- Folded VS Code / iDE Geometric Ribbon (Breaking out of the screen with 3D depth) -->
+    <!-- Lower-right descending ribbon + right vertical pillar -->
+    <path id="ribbonBack" d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z"/>
+    <!-- Upper-right ascending Phosphor-Cyan hero blade -->
+    <path id="ribbonFront" d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z"/>
+  </defs>
+
+  <g id="iconRoot" clip-path="url(#tileClip)">
+    <rect width="1024" height="1024" fill="url(#chassisBg)"/>
+    <rect width="1024" height="1024" fill="url(#ideAmbient)"/>
+    <rect width="1024" height="1024" fill="url(#instrumentGrid)" mask="url(#gridMask)"/>
+
+    <g id="foregroundMark">
+      <!-- Precision corner reticles -->
+      <g stroke="#38BDF8" stroke-opacity="0.26" stroke-width="2" fill="none" stroke-linecap="square">
+        <path d="M 148 184 V 160 H 172"/><path d="M 876 184 V 160 H 852"/>
+        <path d="M 148 840 V 864 H 172"/><path d="M 876 840 V 864 H 852"/>
+      </g>
+
+      <!-- Inner OLED Screen Well -->
+      <rect x="284" y="172" width="456" height="680" rx="56" fill="#060A10"/>
+
+      <!-- Dynamic Island Live Codespace Tunnel Pill -->
+      <rect x="424" y="212" width="176" height="36" rx="18" fill="#111A27" stroke="#14F1D9" stroke-opacity="0.55" stroke-width="2"/>
+      <circle cx="452" cy="230" r="7" fill="#34D399"/>
+      <circle cx="476" cy="230" r="7" fill="#14F1D9"/>
+      <rect x="498" y="225" width="78" height="10" rx="5" fill="#38BDF8" fill-opacity="0.75"/>
+
+      <!-- Subtle Code Lines in Screen Background -->
+      <g fill="#38BDF8" fill-opacity="0.18">
+        <rect x="336" y="284" width="96" height="12" rx="4"/>
+        <rect x="336" y="308" width="148" height="10" rx="4"/>
+        <rect x="336" y="704" width="164" height="10" rx="4"/>
+        <rect x="516" y="704" width="112" height="10" rx="4" fill="#14F1D9" fill-opacity="0.32"/>
+      </g>
+
+      <!-- Titanium iPhone Bezel -->
+      <g filter="url(#glyphShadow)">
+        <use href="#phoneShell" fill="url(#titaniumPhone)"/>
+      </g>
+
+      <!-- Sub-surface glow behind the VS Code / iDE Ribbon -->
+      <use href="#ribbonFront" fill="#14F1D9" opacity="0.34" filter="url(#ribbonGlow)"/>
+
+      <!-- Folded VS Code / iDE Geometric Ribbon -->
+      <g filter="url(#glyphShadow)">
+        <use href="#ribbonBack" fill="url(#vscodeAzure)"/>
+        <use href="#ribbonFront" fill="url(#vscodeCyanBlade)"/>
+      </g>
+
+      <!-- Left Touch-Cursor Pillar ('i' in iDE) -->
+      <g filter="url(#glyphShadow)">
+        <rect x="192" y="388" width="68" height="248" rx="20" fill="#14F1D9"/>
+        <circle cx="226" cy="328" r="34" fill="#34D399"/>
+      </g>
+
+      <!-- Thumb-Zone Coding Key Pill Bar + iOS Home Indicator -->
+      <g fill="#162234" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="1.5">
+        <rect x="332" y="742" width="76" height="36" rx="8"/>
+        <rect x="422" y="742" width="76" height="36" rx="8"/>
+        <rect x="512" y="742" width="76" height="36" rx="8"/>
+        <rect x="602" y="742" width="88" height="36" rx="8" fill="#0B262A" stroke="#14F1D9" stroke-opacity="0.65"/>
+      </g>
+      <text x="370" y="765" text-anchor="middle" fill="#9BB0C5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">TAB</text>
+      <text x="460" y="765" text-anchor="middle" fill="#64FAE7" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">{ }</text>
+      <text x="550" y="765" text-anchor="middle" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">⌘P</text>
+      <text x="646" y="765" text-anchor="middle" fill="#6EE7B7" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700">RUN ▶</text>
+
+      <!-- iOS Home Indicator Bar -->
+      <rect x="432" y="806" width="160" height="10" rx="5" fill="#F7FBFE" fill-opacity="0.65"/>
+    </g>
+
+    <path id="chassisRim" d="M 320 3 H 704 C 834 3, 906 15, 957.5 66.5 C 1009 118, 1021 190, 1021 320 V 704 C 1021 834, 1009 906, 957.5 957.5 C 906 1009, 834 1021, 704 1021 H 320 C 190 1021, 118 1009, 66.5 957.5 C 15 906, 3 834, 3 704 V 320 C 3 190, 15 118, 66.5 66.5 C 118 15, 190 3, 320 3 Z" fill="none" stroke="url(#bezelRim)" stroke-width="3"/>
+  </g>
+</svg>

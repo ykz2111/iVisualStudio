@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="204" height="26" viewBox="0 0 204 26" role="img" aria-label="OLED TRUE-BLACK · 60FPS">
+  <rect x="0.5" y="0.5" width="203" height="25" rx="5" fill="#101324" stroke="#8B5CF6" stroke-opacity="0.48"/>
+  <circle cx="14" cy="13" r="3.5" fill="#8B5CF6"/>
+  <text x="25" y="16.8" fill="#C4B5FD" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" letter-spacing="0.7">OLED TRUE-BLACK · 60FPS</text>
+</svg>

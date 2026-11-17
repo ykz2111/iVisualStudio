@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iDE (ide_concept) — Interactive iOS Pocket VS Code Simulator &amp; Brand Studio</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./brand/ide-icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./brand/ide-icon-16.png" />
+  <style>
+    :root {
+      --bg-canvas: oklch(0.12 0.01 255);
+      --bg-panel: oklch(0.155 0.012 255);
+      --bg-elevated: oklch(0.19 0.014 255);
+      --bg-input: oklch(0.105 0.009 255);
+      --border-hairline: oklch(0.25 0.015 255);
+      --border-strong: oklch(0.34 0.018 255);
+      --ink-primary: oklch(0.96 0.006 250);
+      --ink-secondary: oklch(0.74 0.012 255);
+      --ink-muted: oklch(0.55 0.014 255);
+      --signal: #38BDF8;
+      --cyan: #14F1D9;
+      --emerald: #34D399;
+      --violet: #A855F7;
+      --font-sans: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    button, select, input {
+      font: inherit;
+      color: inherit;
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+    }
+
+    /* Sticky Top Instrument Bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-panel);
+      flex-wrap: wrap;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-elevated);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 34px;
+      padding: 5px 11px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-elevated);
+      color: var(--ink-primary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 120ms ease, border-color 120ms ease;
+    }
+
+    .btn:hover {
+      background: oklch(0.24 0.015 255);
+      border-color: oklch(0.42 0.02 255);
+    }
+
+    .btn[aria-pressed="true"] {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: var(--signal);
+      color: #BAE6FD;
+    }
+
+    .btn-primary {
+      background: var(--ink-primary);
+      color: oklch(0.12 0.01 255);
+      border-color: var(--ink-primary);
+      font-weight: 600;
+    }
+
+    .kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      border: 1px solid var(--border-strong);
+      color: var(--ink-secondary);
+    }
+
+    /* Main 3-Column Playground Layout:
+       Col 1: Interactive iPhone 16 Pro "Pocket VS Code" Simulator (@mobile-design)
+       Col 2: Icon Specimen Stage + 4 Variants + Parametric Customizer
+       Col 3: Optical Ladder, 8x Loupe, Xcode AppIcon Matrix & One-Click Exports */
+    .playground-grid {
+      display: grid;
+      grid-template-columns: minmax(410px, 1.08fr) minmax(380px, 1.02fr) minmax(330px, 0.9fr);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .col-phone,
+    .col-icon-studio {
+      border-right: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col-inspect {
+      display: flex;
+      flex-direction: column;
+      background: oklch(0.135 0.009 255);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-panel);
+    }
+
+    .panel-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+    }
+
+    /* ====================================================================
+       INTERACTIVE IPHONE 16 PRO POCKET VS CODE SIMULATOR (@mobile-design)
+       ==================================================================== */
+    .phone-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      background: radial-gradient(circle at 50% 45%, #131F30 0%, #090D15 70%, #05070B 100%);
+      position: relative;
+      gap: 14px;
+    }
+
+    .iphone-chassis {
+      width: 356px;
+      height: 716px;
+      border-radius: 54px;
+      padding: 11px;
+      background: linear-gradient(145deg, #CBD5E1 0%, #64748B 48%, #334155 100%);
+      box-shadow:
+        0 28px 60px rgba(0, 0, 0, 0.65),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+      position: relative;
+    }
+
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 44px;
+      background: #05080E;
+      color: #F4F9FD;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+
+    .iphone-screen[data-oled="trueBlack"] {
+      background: #000000;
+    }
+
+    .iphone-screen[data-oled="vscodeDark"] {
+      background: #1E1E1E;
+    }
+
+    .iphone-screen[data-oled="sunlight"] {
+      background: #F8FAFC;
+      color: #0F172A;
+    }
+
+    /* Top Safe Area + Interactive Dynamic Island Tunnel Pill */
+    .ios-status-bar {
+      padding: 12px 22px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .dynamic-island {
+      min-height: 32px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #0D1522;
+      border: 1px solid rgba(20, 241, 217, 0.55);
+      color: #64FAE7;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    }
+
+    .dynamic-island:hover {
+      border-color: #14F1D9;
+      background: #121E30;
+    }
+
+    /* File Tabs Strip (44pt height minimum per iOS HIG) */
+    .ide-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px 10px;
+      border-bottom: 1px solid rgba(148, 184, 208, 0.14);
+      background: rgba(15, 23, 36, 0.55);
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+
+    .ide-tab {
+      min-height: 38px;
+      padding: 6px 11px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ide-tab[aria-selected="true"] {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.45);
+      color: #F4F9FD;
+      font-weight: 600;
+    }
+
+    .iphone-screen[data-oled="sunlight"] .ide-tab[aria-selected="true"] {
+      background: #E0F2FE;
+      border-color: #0284C7;
+      color: #0F172A;
+    }
+
+    /* Code Editor Area */
+    .ide-editor {
+      flex: 1;
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 8px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .code-line-active {
+      background: rgba(56, 189, 248, 0.14);
+      box-shadow: inset 2px 0 0 #38BDF8;
+    }
+
+    .line-num {
+      color: #475569;
+      user-select: none;
+      text-align: right;
+      font-size: 11px;
+    }
+
+    .syn-kw { color: #C4B5FD; font-weight: 600; }
+    .syn-fn { color: #64FAE7; }
+    .syn-ty { color: #38BDF8; }
+    .syn-st { color: #6EE7B7; }
+    .syn-nm { color: #FBBF24; }
+    .syn-cm { color: #64748B; font-style: italic; }
+
+    .iphone-screen[data-oled="sunlight"] .syn-kw { color: #6D28D9; }
+    .iphone-screen[data-oled="sunlight"] .syn-fn { color: #0F766E; }
+    .iphone-screen[data-oled="sunlight"] .syn-ty { color: #0369A1; }
+    .iphone-screen[data-oled="sunlight"] .syn-st { color: #047857; }
+    .iphone-screen[data-oled="sunlight"] .syn-nm { color: #B45309; }
+
+    /* Pull-Up Integrated Terminal / lpBOT AI Sheet (In Thumb Zone) */
+    .ide-sheet {
+      margin: 0 8px 6px;
+      border-radius: 12px;
+      background: #0B121E;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 8px 12px 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .sheet-grabber {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: #475569;
+      align-self: center;
+      margin-bottom: 3px;
+    }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #64FAE7;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sheet-log {
+      color: #CBD5E1;
+      font-size: 11px;
+      min-height: 36px;
+      white-space: pre-wrap;
+    }
+
+    /* Thumb-Zone Coding Key Accessory Bar (48pt height, >=8px gap per @mobile-design!) */
+    .thumb-coding-bar {
+      padding: 8px 10px;
+      background: #0E1726;
+      border-top: 1px solid rgba(56, 189, 248, 0.22);
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .thumb-key {
+      min-height: 46px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 184, 208, 0.24);
+      background: #162234;
+      color: #F4F9FD;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      transition: transform 80ms ease, background-color 100ms ease;
+    }
+
+    .thumb-key:active {
+      transform: scale(0.95);
+    }
+
+    .thumb-key:hover {
+      border-color: #38BDF8;
+      background: #1C2C44;
+    }
+
+    .thumb-key-sub {
+      font-size: 8.5px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .thumb-key-primary {
+      background: #092622;
+      border-color: #34D399;
+      color: #6EE7B7;
+    }
+
+    .ios-home-indicator {
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ios-home-pill {
+      width: 124px;
+      height: 5px;
+      border-radius: 2.5px;
+      background: rgba(244, 249, 253, 0.55);
+    }
+
+    /* Fitts' Law Thumb-Zone Heatmap Overlay (Toggleable) */
+    .thumb-heatmap-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+    }
+
+    .thumb-heatmap-overlay[hidden] {
+      display: none;
+    }
+
+    .zone-stretch {
+      height: 28%;
+      background: rgba(248, 113, 113, 0.18);
+      border-bottom: 1.5px dashed #F87171;
+      padding: 46px 14px 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: #FCA5A5;
+    }
+
+    .zone-natural {
+      height: 34%;
+      background: rgba(251, 191, 36, 0.14);
+      border-bottom: 1.5px dashed #FBBF24;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: #FDE68A;
+    }
+
+    .zone-easy {
+      flex: 1;
+      background: rgba(52, 211, 153, 0.18);
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: #6EE7B7;
+    }
+
+    /* Command Palette Bottom Sheet Overlay inside iPhone */
+    .cmd-palette-sheet {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 28px;
+      border-radius: 18px;
+      background: #0F1726;
+      border: 1.5px solid #38BDF8;
+      box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.75);
+      padding: 12px;
+      z-index: 25;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cmd-palette-sheet[hidden] {
+      display: none;
+    }
+
+    .cmd-item {
+      min-height: 44px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 184, 208, 0.16);
+      background: #162234;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .cmd-item:hover {
+      border-color: #14F1D9;
+    }
+
+    /* Column 2: Icon Stage & Customizer */
+    .icon-stage-box {
+      min-height: 290px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: radial-gradient(circle at 50% 45%, #162234 0%, #0B0F17 70%);
+      position: relative;
+    }
+
+    .icon-specimen {
+      width: 236px;
+      height: 236px;
+    }
+
+    .icon-specimen svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.5));
+    }
+
+    .variants-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 1px solid var(--border-hairline);
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-panel);
+    }
+
+    .variant-card {
+      text-align: left;
+      border: 0;
+      border-right: 1px solid var(--border-hairline);
+      border-bottom: 1px solid var(--border-hairline);
+      background: transparent;
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .variant-card:nth-child(2n) { border-right: 0; }
+    .variant-card:nth-last-child(-n+2) { border-bottom: 0; }
+
+    .variant-card[aria-pressed="true"] {
+      background: oklch(0.21 0.015 255);
+      box-shadow: inset 3px 0 0 var(--signal);
+    }
+
+    .variant-thumb {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .variant-thumb svg { width: 100%; height: 100%; display: block; }
+
+    .customizer-box {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      color: var(--ink-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .studio-select, .studio-input {
+      min-height: 32px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-input);
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .swatch-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .swatch-chip {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .swatch-chip[aria-pressed="true"] {
+      border-color: #FFFFFF;
+    }
+
+    /* Right Column: Optical Ladder, Xcode Matrix & Exports */
+    .inspect-block {
+      border-bottom: 1px solid var(--border-hairline);
+      padding: 14px 16px;
+    }
+
+    .size-ladder {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-hairline);
+      margin-top: 8px;
+    }
+
+    .size-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .size-slot svg { width: 100%; height: 100%; display: block; }
+
+    .size-slot-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-muted);
+    }
+
+    .loupe-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    #loupeCanvas {
+      width: 96px;
+      height: 96px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      image-rendering: pixelated;
+      background: #05080E;
+    }
+
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .two-col-band {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .band-cell {
+      padding: 18px 20px;
+      border-right: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .band-cell:last-child { border-right: 0; }
+
+    .media-frame {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-hairline);
+      overflow: hidden;
+      background: #070A10;
+    }
+
+    .media-frame svg, .media-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    @media (max-width: 1180px) {
+      .playground-grid, .two-col-band {
+        grid-template-columns: 1fr;
+      }
+      .col-phone, .col-icon-studio, .band-cell {
+        border-right: 0;
+        border-bottom: 1px solid var(--border-hairline);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand-title">iDE (ide_concept) · iOS Pocket VS Code Simulator &amp; Brand Studio</span>
+      <span class="badge">
+        <span class="badge-dot"></span>
+        <span>@mobile-design + @ui-design-system · 48pt Thumb Zone</span>
+      </span>
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" class="btn" id="toggleHeatmapBtn" aria-pressed="false">
+        Thumb-Zone Map <span class="kbd">H</span>
+      </button>
+      <button type="button" class="btn" id="toggleCmdPaletteBtn" aria-pressed="false">
+        iOS Command Sheet <span class="kbd">⌘P</span>
+      </button>
+      <button type="button" class="btn" id="copySvgBtn">Copy Icon SVG</button>
+      <button type="button" class="btn" id="downloadSvgBtn">Export SVG</button>
+      <button type="button" class="btn btn-primary" id="downloadPngBtn">Export 1024 AppIcon</button>
+    </div>
+  </header>
+
+  <main class="playground-grid">
+    <!-- ==================================================================
+         COLUMN 1: INTERACTIVE IPHONE 16 PRO POCKET VS CODE SIMULATOR
+         ================================================================== -->
+    <section class="col-phone" aria-label="Interactive iPhone Pocket VS Code Simulator">
+      <div class="panel-header">
+        <span class="panel-label">01 · Interactive iOS App Simulator (Tap Keys, Tabs &amp; Dynamic Island!)</span>
+        <select class="studio-select" id="oledModeSelect" style="width:auto;min-height:26px;font-size:11px;">
+          <option value="obsidian">OLED Obsidian (#05080E)</option>
+          <option value="trueBlack">True-Black OLED (#000000 · 0% Power)</option>
+          <option value="vscodeDark">VS Code Dark+ (#1E1E1E)</option>
+          <option value="sunlight">Outdoor Sunlight High-Contrast</option>
+        </select>
+      </div>
+
+      <div class="phone-stage">
+        <div class="iphone-chassis">
+          <div class="iphone-screen" id="iphoneScreen" data-oled="obsidian">
+            <!-- Fitts' Law Thumb-Zone Heatmap Overlay (@mobile-design) -->
+            <div class="thumb-heatmap-overlay" id="thumbHeatmap" hidden>
+              <div class="zone-stretch">HARD TO REACH (STRETCH) — Status &amp; Passive Telemetry Only</div>
+              <div class="zone-natural">NATURAL ARC (OK TO REACH) — Scrollable Code Buffer &amp; Readout</div>
+              <div class="zone-easy">EASY THUMB ZONE (PRIMARY 48PT CTAs) — Coding Keys, ⌘P Sheet &amp; Terminal</div>
+            </div>
+
+            <!-- iOS Top Safe Area + Clickable Dynamic Island Tunnel Pill -->
+            <div class="ios-status-bar">
+              <span>9:41</span>
+              <button type="button" class="dynamic-island" id="islandBtn" title="Tap to switch remote IDE host">
+                <span class="badge-dot" id="islandDot"></span>
+                <span id="islandText">codespace-main · 14ms</span>
+              </button>
+              <span>5G · 98%</span>
+            </div>
+
+            <!-- File Tabs Bar -->
+            <div class="ide-tabs" role="tablist">
+              <button type="button" class="ide-tab" data-file="swift" role="tab" aria-selected="true">MobileIDE.swift</button>
+              <button type="button" class="ide-tab" data-file="devcontainer" role="tab" aria-selected="false">devcontainer.json</button>
+              <button type="button" class="ide-tab" data-file="agent" role="tab" aria-selected="false">lpbot-agent.ts</button>
+            </div>
+
+            <!-- Code Editor Viewport -->
+            <div class="ide-editor" id="ideEditorViewport"></div>
+
+            <!-- Pull-Up Integrated Terminal / lpBOT AI Sheet -->
+            <div class="ide-sheet" id="ideTerminalSheet">
+              <div class="sheet-grabber"></div>
+              <div class="sheet-head">
+                <span id="sheetTitle">TERMINAL · ZSH (CODESPACE-MAIN)</span>
+                <span style="color:#34D399;">● PORT 3000 LIVE</span>
+              </div>
+              <div class="sheet-log" id="terminalLog">$ codespace attach --host github.com/groovelabs/ide_concept
+✓ Connected (14ms RTT · LSP TypeScript + Swift active)</div>
+            </div>
+
+            <!-- Bottom Thumb-Zone Coding Key Accessory Bar (8 Ergonomic 46pt Keys) -->
+            <div class="thumb-coding-bar" aria-label="Thumb-zone coding keyboard">
+              <button type="button" class="thumb-key" data-key-action="snippet">
+                <span>{ }</span>
+                <span class="thumb-key-sub">Block</span>
+              </button>
+              <button type="button" class="thumb-key" data-key-action="arrow">
+                <span>=&gt;</span>
+                <span class="thumb-key-sub">Lambda</span>
+              </button>
+              <button type="button" class="thumb-key" data-key-action="palette">
+                <span>⌘P</span>
+                <span class="thumb-key-sub">Palette</span>
+              </button>
+              <button type="button" class="thumb-key thumb-key-primary" data-key-action="run">
+                <span>RUN ▶</span>
+                <span class="thumb-key-sub">Build</span>
+              </button>
+              <button type="button" class="thumb-key" data-key-action="lpbot">
+                <span style="color:#64FAE7;">lpBOT</span>
+                <span class="thumb-key-sub">AI Fix</span>
+              </button>
+              <button type="button" class="thumb-key" data-key-action="port">
+                <span>3000</span>
+                <span class="thumb-key-sub">Preview</span>
+              </button>
+              <button type="button" class="thumb-key" data-key-action="git">
+                <span>GIT</span>
+                <span class="thumb-key-sub">Push</span>
+              </button>
+              <button type="button" class="thumb-key" data-key-action="host">
+                <span>SSH</span>
+                <span class="thumb-key-sub">Switch</span>
+              </button>
+            </div>
+
+            <!-- iOS Bottom Sheet Command Palette (⌘P) -->
+            <div class="cmd-palette-sheet" id="cmdPaletteSheet" hidden>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:11px;color:#38BDF8;">
+                <span>⌘P · THUMB-ZONE COMMAND PALETTE</span>
+                <button type="button" class="btn" id="closeCmdBtn" style="min-height:24px;padding:2px 8px;">Esc</button>
+              </div>
+              <button type="button" class="cmd-item" data-cmd="Connect GitHub Codespace (4-vCPU)">
+                <span>Codespaces: Connect Remote Container</span><span class="kbd">⏎</span>
+              </button>
+              <button type="button" class="cmd-item" data-cmd="Attach OpenVSCode Server (localhost:3000)">
+                <span>OpenVSCode: Attach Tunnel</span><span class="kbd">⏎</span>
+              </button>
+              <button type="button" class="cmd-item" data-cmd="Ask lpBOT Agent to Refactor Active File">
+                <span>lpBOT AI: Refactor &amp; Verify Types</span><span class="kbd">⏎</span>
+              </button>
+            </div>
+
+            <!-- iOS Home Indicator Safe Area -->
+            <div class="ios-home-indicator">
+              <div class="ios-home-pill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         COLUMN 2: PARAMETRIC iDE & lpBOT ICON CUSTOMIZER
+         ================================================================== -->
+    <section class="col-icon-studio" aria-label="Parametric App Icon Studio">
+      <div class="panel-header">
+        <span class="panel-label" id="activeVariantLabel">V1 · Pocket Code Ribbon (Master)</span>
+        <span class="panel-label">Keys 1–4</span>
+      </div>
+
+      <div class="icon-stage-box">
+        <div class="icon-specimen" id="mainIconSpecimen"></div>
+      </div>
+
+      <div class="variants-grid">
+        <button type="button" class="variant-card" data-variant="v1" aria-pressed="true">
+          <div class="variant-thumb" id="thumb-v1"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;">01 · Pocket Code Ribbon</div>
+            <div style="font-size:11px;color:var(--ink-secondary);">iPhone frame + Dynamic Island + 3D VS Code ribbon &amp; 'i' pillar.</div>
+          </div>
+        </button>
+
+        <button type="button" class="variant-card" data-variant="v2" aria-pressed="false">
+          <div class="variant-thumb" id="thumb-v2"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;">02 · Mobile Coder lpBOT</div>
+            <div style="font-size:11px;color:var(--ink-secondary);">Walking lpBOT with VS Code ribbon visor &amp; Codespace antenna.</div>
+          </div>
+        </button>
+
+        <button type="button" class="variant-card" data-variant="v3" aria-pressed="false">
+          <div class="variant-thumb" id="thumb-v3"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;">03 · iDE Geometric Prism</div>
+            <div style="font-size:11px;color:var(--ink-secondary);">Pure 8:15:17 architectural i + folded code ribbon mark.</div>
+          </div>
+        </button>
+
+        <button type="button" class="variant-card" data-variant="v4" aria-pressed="false">
+          <div class="variant-thumb" id="thumb-v4"></div>
+          <div>
+            <div style="font-size:12px;font-weight:600;">04 · Cloud DevContainer Pod</div>
+            <div style="font-size:11px;color:var(--ink-secondary);">Hexagonal Codespace container + iOS thumb-bar dock tray.</div>
+          </div>
+        </button>
+      </div>
+
+      <div class="customizer-box">
+        <div class="field-grid-2">
+          <div class="field-row">
+            <span class="field-label"><span>Primary IDE Ribbon Accent</span></span>
+            <div class="swatch-row" data-color-key="accent">
+              <button type="button" class="swatch-chip" data-hex="#38BDF8" style="background:#38BDF8" aria-pressed="true"></button>
+              <button type="button" class="swatch-chip" data-hex="#007ACC" style="background:#007ACC"></button>
+              <button type="button" class="swatch-chip" data-hex="#14F1D9" style="background:#14F1D9"></button>
+              <button type="button" class="swatch-chip" data-hex="#A855F7" style="background:#A855F7"></button>
+              <button type="button" class="swatch-chip" data-hex="#FC6D26" style="background:#FC6D26"></button>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <span class="field-label"><span>Tile Background</span></span>
+            <div class="swatch-row" data-color-key="bgHex">
+              <button type="button" class="swatch-chip" data-hex="#0A0F18" style="background:#0A0F18" aria-pressed="true"></button>
+              <button type="button" class="swatch-chip" data-hex="#000000" style="background:#000000"></button>
+              <button type="button" class="swatch-chip" data-hex="#7C4DFF" style="background:#7C4DFF"></button>
+              <button type="button" class="swatch-chip" data-hex="#0F2236" style="background:#0F2236"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-row">
+            <label class="field-label" for="tiltRange"><span>Icon Tilt</span><code id="tiltVal">0°</code></label>
+            <input type="range" id="tiltRange" min="-12" max="12" value="0" style="accent-color:var(--signal);" />
+          </div>
+
+          <div class="field-row">
+            <label class="field-label" for="radiusRange"><span>Squircle Radius</span><code id="radiusVal">228px</code></label>
+            <input type="range" id="radiusRange" min="0" max="512" step="4" value="228" style="accent-color:var(--signal);" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         COLUMN 3: OPTICAL LADDER, 8X LOUPE, XCODE MATRIX & EXPORTS
+         ================================================================== -->
+    <aside class="col-inspect" aria-label="Optical Inspection & Xcode Assets">
+      <div class="inspect-block">
+        <div class="panel-label">1:1 Optical Size Ladder (iOS Home → Favicon)</div>
+        <div class="size-ladder">
+          <div class="size-slot">
+            <div id="slot-120" style="width:96px;height:96px;"></div>
+            <span class="size-slot-label">iPhone @2x</span>
+          </div>
+          <div class="size-slot">
+            <div id="slot-60" style="width:60px;height:60px;"></div>
+            <span class="size-slot-label">60pt</span>
+          </div>
+          <div class="size-slot">
+            <div id="slot-32" style="width:32px;height:32px;"></div>
+            <span class="size-slot-label">32px</span>
+          </div>
+          <div class="size-slot">
+            <div id="slot-16" style="width:16px;height:16px;"></div>
+            <span class="size-slot-label">16px</span>
+          </div>
+        </div>
+
+        <div class="loupe-row">
+          <canvas id="loupeCanvas" width="96" height="96"></canvas>
+          <div style="font-size:11.5px;color:var(--ink-secondary);">
+            <div><strong style="color:var(--ink-primary);">8× Pixel Grid Loupe (16×16)</strong></div>
+            <div>Verifies legibility of the iPhone bezel, <code>i</code> pillar, and VS Code ribbon at micro sizes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inspect-block">
+        <div class="panel-label">Shipped Xcode &amp; Repo Asset Pack (ide_concept/brand/)</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-secondary);margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+          <div>✓ <code>ios/AppIcon.appiconset/</code> (1024..40pt + Contents.json)</div>
+          <div>✓ <code>ide-icon.svg</code> + <code>-micro.svg</code> + <code>-mono.svg</code></div>
+          <div>✓ <code>ide-wordmark-{dark,light,compact}.svg</code></div>
+          <div>✓ <code>og-image.png</code> (1200×630) &amp; <code>repo-banner.png</code> (1280×360)</div>
+          <div>✓ <code>social-announcement-square.png</code> (1080×1080)</div>
+          <div>✓ <code>backgrounds/ide-ios-wallpaper.png</code> (1179×2556 OLED)</div>
+          <div>✓ <code>tokens.css</code> &amp; <code>design-tokens.json</code> (DTCG)</div>
+        </div>
+
+        <div class="export-grid">
+          <button type="button" class="btn" id="exp512Btn">Export 512 PNG</button>
+          <button type="button" class="btn" id="exp180Btn">Export 180 iOS</button>
+          <button type="button" class="btn" id="expOgBtn">Export 1200×630 OG</button>
+          <button type="button" class="btn" id="expBannerBtn">Export 1280×360</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- SHIPPED REPO BANNER & SOCIAL ANNOUNCEMENT GALLERY -->
+  <section class="two-col-band" aria-label="Repo Banner and Social Announcement Previews">
+    <div class="band-cell">
+      <span class="panel-label">GitHub / GitLab Repository Hero Banner (brand/repo-banner-dark.svg · 1280×360)</span>
+      <div class="media-frame">
+        <img src="./brand/repo-banner.png" alt="iDE_CONCEPT Repository Banner" />
+      </div>
+    </div>
+
+    <div class="band-cell">
+      <span class="panel-label">OpenGraph Social Announcement Card (brand/og-image.png · 1200×630)</span>
+      <div class="media-frame">
+        <img src="./brand/og-image.png" alt="iDE_CONCEPT OpenGraph Card" />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const FILES = {
+        swift: [
+          { ln: "01", html: '<span class="syn-kw">import</span> <span class="syn-ty">SwiftUI</span>' },
+          { ln: "02", html: '<span class="syn-kw">import</span> <span class="syn-fn">CodespaceTunnelKit</span>' },
+          { ln: "03", html: '<span class="syn-cm">// @mobile-design: 48pt thumb-zone IDE bar</span>' },
+          { ln: "04", html: '<span class="syn-kw">struct</span> <span class="syn-ty">PocketVSCodeView</span>: <span class="syn-ty">View</span> {' },
+          { ln: "05", html: '  <span class="syn-kw">let</span> host = <span class="syn-st">"codespace://groovelabs/main"</span>' },
+          { ln: "06", html: '  <span class="syn-kw">let</span> minHitTargetPt = <span class="syn-nm">48.0</span>', active: true },
+          { ln: "07", html: '  <span class="syn-kw">func</span> <span class="syn-fn">attachLSP</span>() <span class="syn-kw">async</span> -> <span class="syn-ty">Bool</span> {' },
+          { ln: "08", html: '    <span class="syn-kw">return</span> <span class="syn-kw">await</span> Tunnel.connect(host)' },
+          { ln: "09", html: '  }' },
+          { ln: "10", html: '}' }
+        ],
+        devcontainer: [
+          { ln: "01", html: '{' },
+          { ln: "02", html: '  <span class="syn-ty">"name"</span>: <span class="syn-st">"iDE-Mobile-Codespace"</span>,' },
+          { ln: "03", html: '  <span class="syn-ty">"image"</span>: <span class="syn-st">"mcr.microsoft.com/devcontainers/universal:2"</span>,' },
+          { ln: "04", html: '  <span class="syn-ty">"forwardPorts"</span>: [<span class="syn-nm">3000</span>, <span class="syn-nm">8080</span>],' },
+          { ln: "05", html: '  <span class="syn-ty">"customizations"</span>: {', active: true },
+          { ln: "06", html: '    <span class="syn-ty">"vscode"</span>: { <span class="syn-ty">"extensions"</span>: [<span class="syn-st">"groovelabs.lpbot"</span>] }' },
+          { ln: "07", html: '  }' },
+          { ln: "08", html: '}' }
+        ],
+        agent: [
+          { ln: "01", html: '<span class="syn-kw">import</span> { lpBOT } <span class="syn-kw">from</span> <span class="syn-st">"@groovelabs/agent-nursery"</span>;' },
+          { ln: "02", html: '<span class="syn-kw">export async function</span> <span class="syn-fn">assistOnPhone</span>(ctx) {' },
+          { ln: "03", html: '  <span class="syn-kw">const</span> patch = <span class="syn-kw">await</span> lpBOT.<span class="syn-fn">proposeFix</span>(ctx);', active: true },
+          { ln: "04", html: '  <span class="syn-kw">return</span> patch.<span class="syn-fn">applyWithHaptic</span>(<span class="syn-st">"success"</span>);' },
+          { ln: "05", html: '}' }
+        ]
+      };
+
+      const HOSTS = [
+        "codespace-main · 14ms",
+        "openvscode-srv · 9ms",
+        "ssh://mac-studio · 4ms",
+        "jetbrains-gw · 17ms"
+      ];
+
+      let activeFile = "swift";
+      let hostIdx = 0;
+      let extraLines = [];
+
+      function renderPhoneEditor() {
+        const vp = document.getElementById("ideEditorViewport");
+        const baseLines = FILES[activeFile].concat(extraLines);
+        vp.innerHTML = baseLines
+          .map((row, idx) => {
+            const cls = row.active ? "code-line code-line-active" : "code-line";
+            const num = String(idx + 1).padStart(2, "0");
+            return `<div class="${cls}"><span class="line-num">${num}</span><span>${row.html}</span></div>`;
+          })
+          .join("");
+      }
+
+      document.querySelectorAll("[data-file]").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          activeFile = tab.getAttribute("data-file");
+          extraLines = [];
+          document.querySelectorAll("[data-file]").forEach((t) => {
+            t.setAttribute("aria-selected", String(t === tab));
+          });
+          renderPhoneEditor();
+        });
+      });
+
+      document.getElementById("islandBtn").addEventListener("click", () => {
+        hostIdx = (hostIdx + 1) % HOSTS.length;
+        const h = HOSTS[hostIdx];
+        document.getElementById("islandText").textContent = h;
+        document.getElementById("terminalLog").textContent = `$ tunnel switch -> ${h}\n✓ Zero-drop reconnect complete · 60fps stream locked`;
+      });
+
+      document.getElementById("oledModeSelect").addEventListener("change", (e) => {
+        document.getElementById("iphoneScreen").setAttribute("data-oled", e.target.value);
+      });
+
+      function toggleHeatmap() {
+        const hm = document.getElementById("thumbHeatmap");
+        const btn = document.getElementById("toggleHeatmapBtn");
+        hm.hidden = !hm.hidden;
+        btn.setAttribute("aria-pressed", String(!hm.hidden));
+      }
+      document.getElementById("toggleHeatmapBtn").addEventListener("click", toggleHeatmap);
+
+      function toggleCmdPalette(forceState) {
+        const sheet = document.getElementById("cmdPaletteSheet");
+        const btn = document.getElementById("toggleCmdPaletteBtn");
+        sheet.hidden = typeof forceState === "boolean" ? !forceState : !sheet.hidden;
+        btn.setAttribute("aria-pressed", String(!sheet.hidden));
+      }
+      document.getElementById("toggleCmdPaletteBtn").addEventListener("click", () => toggleCmdPalette());
+      document.getElementById("closeCmdBtn").addEventListener("click", () => toggleCmdPalette(false));
+
+      document.querySelectorAll("[data-cmd]").forEach((item) => {
+        item.addEventListener("click", () => {
+          const cmd = item.getAttribute("data-cmd");
+          toggleCmdPalette(false);
+          document.getElementById("terminalLog").textContent = `> Executed: ${cmd}\n✓ Completed in 24ms (Haptic: .success)`;
+        });
+      });
+
+      function handleThumbKeyAction(action) {
+        const log = document.getElementById("terminalLog");
+        switch (action) {
+          case "snippet":
+            extraLines.push({ html: '  <span class="syn-fn">guard</span> <span class="syn-kw">let</span> session = activeTunnel <span class="syn-fn">else</span> { <span class="syn-kw">return</span> }' });
+            renderPhoneEditor();
+            log.textContent = "Inserted guard-block snippet via 48pt Thumb Bar (Haptic: .light)";
+            break;
+          case "arrow":
+            extraLines.push({ html: '  <span class="syn-ty">Task</span> { <span class="syn-kw">await</span> session.<span class="syn-fn">syncBuffer</span>() }' });
+            renderPhoneEditor();
+            log.textContent = "Inserted async Task closure via Thumb Bar (Haptic: .light)";
+            break;
+          case "palette":
+            toggleCmdPalette();
+            break;
+          case "run":
+            log.textContent = "$ swift build && npm run test\n✓ Build succeeded (0 warnings) · Live preview updated on iPhone";
+            break;
+          case "lpbot":
+            extraLines.push({ html: '  <span class="syn-cm">// ✓ lpBOT verified: 0 memory leaks, 48pt hit targets</span>' });
+            renderPhoneEditor();
+            log.textContent = "🤖 lpBOT Agent: Verified file AST & applied mobile-design guardrails!";
+            break;
+          case "port":
+            log.textContent = "🌐 Forwarded remote port 3000 -> iOS split-sheet WebView preview";
+            break;
+          case "git":
+            log.textContent = "$ git push origin main\n✓ Pushed to gitlab.com/ykz2111/ide_concept (commit 8f4a21c)";
+            break;
+          case "host":
+            document.getElementById("islandBtn").click();
+            break;
+        }
+      }
+
+      document.querySelectorAll("[data-key-action]").forEach((keyBtn) => {
+        keyBtn.addEventListener("click", () => {
+          handleThumbKeyAction(keyBtn.getAttribute("data-key-action"));
+        });
+      });
+
+      // ====================================================================
+      // Parametric iDE Icon Engine (4 Variants)
+      // ====================================================================
+      const state = {
+        variant: "v1",
+        accent: "#38BDF8",
+        bgHex: "#0A0F18",
+        tilt: 0,
+        radius: 228
+      };
+
+      const VARIANT_NAMES = {
+        v1: "V1 · Pocket Code Ribbon (Master)",
+        v2: "V2 · Mobile Coder lpBOT",
+        v3: "V3 · iDE Geometric Prism",
+        v4: "V4 · Cloud DevContainer Pod"
+      };
+
+      function buildIdeCustomSvg(opts, uid) {
+        const acc = opts.accent;
+        const bg = opts.bgHex;
+        const rx = opts.radius;
+        const tilt = opts.tilt;
+
+        let fg = "";
+        if (opts.variant === "v1") {
+          fg = `<g transform="rotate(${tilt} 512 512)">
+            <rect x="284" y="172" width="456" height="680" rx="56" fill="#05080E"/>
+            <path fill="#F4F9FD" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>
+            <rect x="424" y="212" width="176" height="36" rx="18" fill="#111A27" stroke="${acc}" stroke-width="3"/>
+            <circle cx="454" cy="230" r="8" fill="#34D399"/>
+            <path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="#007ACC"/>
+            <path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="${acc}"/>
+            <rect x="192" y="388" width="68" height="248" rx="20" fill="#14F1D9"/>
+            <circle cx="226" cy="328" r="34" fill="#34D399"/>
+            <rect x="432" y="806" width="160" height="10" rx="5" fill="#F4F9FD" fill-opacity="0.65"/>
+          </g>`;
+        } else if (opts.variant === "v2") {
+          // Mobile Coder lpBOT
+          fg = `<g transform="rotate(${tilt - 4} 512 512)">
+            <g fill="none" stroke="#94A3B8" stroke-width="112" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M 412 740 L 336 936 L 264 936"/>
+              <path d="M 608 740 Q 656 856 604 964 L 648 964"/>
+            </g>
+            <rect x="116" y="340" width="56" height="248" rx="26" fill="#F0F2F8"/>
+            <rect x="852" y="340" width="56" height="248" rx="26" fill="#F0F2F8"/>
+            <rect x="148" y="168" width="728" height="636" rx="168" fill="#F0F2F8"/>
+            <rect x="196" y="212" width="632" height="444" rx="128" fill="#B4BCD8"/>
+            <rect x="232" y="244" width="560" height="380" rx="100" fill="#0E1525"/>
+            <!-- VS Code Ribbon + Eyes inside lpBOT Visor -->
+            <path d="M 316 396 A 52 52 0 0 1 420 396 Z" fill="${acc}"/>
+            <path d="M 604 396 A 52 52 0 0 1 708 396 Z" fill="${acc}"/>
+            <path d="M 396 548 L 604 424 L 644 448 V 572 L 604 596 L 396 472 Z" fill="#007ACC"/>
+            <path d="M 396 556 L 604 424 L 644 448 L 436 584 Z" fill="#14F1D9"/>
+            <circle cx="272" cy="712" r="24" fill="#34D399"/>
+            <circle cx="368" cy="708" r="34" fill="#94A3B8"/>
+            <rect x="540" y="676" width="210" height="56" rx="14" fill="#0E1525" stroke="${acc}" stroke-width="3"/>
+            <text x="645" y="714" text-anchor="middle" fill="${acc}" font-family="SF Mono, monospace" font-size="30" font-weight="800">iDE</text>
+          </g>`;
+        } else if (opts.variant === "v3") {
+          // iDE Geometric Prism
+          fg = `<g transform="rotate(${tilt} 512 512)">
+            <rect x="164" y="380" width="84" height="380" rx="20" fill="#14F1D9"/>
+            <circle cx="206" cy="284" r="46" fill="#34D399"/>
+            <path d="M 332 340 L 420 264 L 780 564 V 248 L 884 304 V 720 L 780 776 L 332 356 Z" fill="#007ACC"/>
+            <path d="M 332 684 L 780 248 L 884 304 L 420 760 Z" fill="${acc}"/>
+          </g>`;
+        } else {
+          // Cloud DevContainer Pod
+          fg = `<g transform="rotate(${tilt} 512 512)">
+            <polygon points="512,172 812,344 812,680 512,852 212,680 212,344" fill="#0D1624" stroke="#F4F9FD" stroke-width="28" stroke-linejoin="round"/>
+            <path d="M 348 420 L 412 368 L 644 560 V 356 L 716 396 V 628 L 644 668 L 348 432 Z" fill="#007ACC"/>
+            <path d="M 348 612 L 644 356 L 716 396 L 412 664 Z" fill="${acc}"/>
+            <circle cx="512" cy="172" r="28" fill="#34D399"/>
+            <circle cx="812" cy="344" r="28" fill="${acc}"/>
+            <circle cx="212" cy="344" r="28" fill="#A855F7"/>
+          </g>`;
+        }
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="iDE Icon">
+          <defs>
+            <clipPath id="c_${uid}"><rect width="1024" height="1024" rx="${rx}"/></clipPath>
+          </defs>
+          <g clip-path="url(#c_${uid})">
+            <rect width="1024" height="1024" fill="${bg}"/>
+            ${fg}
+            <rect x="2" y="2" width="1020" height="1020" rx="${Math.max(0, rx - 2)}" fill="none" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="4"/>
+          </g>
+        </svg>`;
+      }
+
+      function updateLoupe(svgMarkup) {
+        const canvas = document.getElementById("loupeCanvas");
+        const ctx = canvas.getContext("2d");
+        const off = document.createElement("canvas");
+        off.width = 16;
+        off.height = 16;
+        const offCtx = off.getContext("2d");
+        const img = new Image();
+        const blob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        img.onload = () => {
+          offCtx.clearRect(0, 0, 16, 16);
+          offCtx.drawImage(img, 0, 0, 16, 16);
+          URL.revokeObjectURL(url);
+          ctx.clearRect(0, 0, 96, 96);
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(off, 0, 0, 16, 16, 0, 0, 96, 96);
+        };
+        img.onerror = () => URL.revokeObjectURL(url);
+        img.src = url;
+      }
+
+      function renderStudio() {
+        document.getElementById("activeVariantLabel").textContent = VARIANT_NAMES[state.variant];
+        const svg = buildIdeCustomSvg(state, "main");
+        document.getElementById("mainIconSpecimen").innerHTML = svg;
+        document.getElementById("slot-120").innerHTML = buildIdeCustomSvg(state, "s120");
+        document.getElementById("slot-60").innerHTML = buildIdeCustomSvg(state, "s60");
+        document.getElementById("slot-32").innerHTML = buildIdeCustomSvg(state, "s32");
+        document.getElementById("slot-16").innerHTML = buildIdeCustomSvg(state, "s16");
+        updateLoupe(svg);
+
+        ["v1", "v2", "v3", "v4"].forEach((vk) => {
+          document.getElementById("thumb-" + vk).innerHTML = buildIdeCustomSvg(Object.assign({}, state, { variant: vk }), "th_" + vk);
+        });
+
+        document.querySelectorAll("[data-variant]").forEach((el) => {
+          el.setAttribute("aria-pressed", String(el.getAttribute("data-variant") === state.variant));
+        });
+      }
+
+      document.querySelectorAll("[data-variant]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.variant = btn.getAttribute("data-variant");
+          renderStudio();
+        });
+      });
+
+      document.querySelectorAll("[data-color-key]").forEach((row) => {
+        const key = row.getAttribute("data-color-key");
+        row.querySelectorAll(".swatch-chip").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            state[key] = chip.getAttribute("data-hex");
+            row.querySelectorAll(".swatch-chip").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+            renderStudio();
+          });
+        });
+      });
+
+      document.getElementById("tiltRange").addEventListener("input", (e) => {
+        state.tilt = Number(e.target.value);
+        document.getElementById("tiltVal").textContent = `${state.tilt}°`;
+        renderStudio();
+      });
+
+      document.getElementById("radiusRange").addEventListener("input", (e) => {
+        state.radius = Number(e.target.value);
+        document.getElementById("radiusVal").textContent = `${state.radius}px`;
+        renderStudio();
+      });
+
+      function triggerDownload(blob, filename) {
+        const u = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = u;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(u), 1000);
+      }
+
+      function exportPng(w, h, filename) {
+        const svg = buildIdeCustomSvg(state, "exp");
+        const img = new Image();
+        const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        img.onload = () => {
+          const c = document.createElement("canvas");
+          c.width = w;
+          c.height = h;
+          c.getContext("2d").drawImage(img, 0, 0, w, h);
+          URL.revokeObjectURL(url);
+          c.toBlob((b) => {
+            if (b) triggerDownload(b, filename);
+          }, "image/png");
+        };
+        img.onerror = () => URL.revokeObjectURL(url);
+        img.src = url;
+      }
+
+      document.getElementById("copySvgBtn").addEventListener("click", () => {
+        const svg = buildIdeCustomSvg(state, "copy");
+        if (navigator.clipboard) navigator.clipboard.writeText(svg);
+      });
+      document.getElementById("downloadSvgBtn").addEventListener("click", () => {
+        const svg = buildIdeCustomSvg(state, "dl");
+        triggerDownload(new Blob([svg], { type: "image/svg+xml" }), `ide-${state.variant}.svg`);
+      });
+      document.getElementById("downloadPngBtn").addEventListener("click", () => exportPng(1024, 1024, `ide-${state.variant}-1024.png`));
+      document.getElementById("exp512Btn").addEventListener("click", () => exportPng(512, 512, `ide-${state.variant}-512.png`));
+      document.getElementById("exp180Btn").addEventListener("click", () => exportPng(180, 180, "apple-touch-icon.png"));
+      document.getElementById("expOgBtn").addEventListener("click", () => {
+        const a = document.createElement("a");
+        a.href = "./brand/og-image.png";
+        a.download = "ide-og-1200x630.png";
+        a.click();
+      });
+      document.getElementById("expBannerBtn").addEventListener("click", () => {
+        const a = document.createElement("a");
+        a.href = "./brand/repo-banner.png";
+        a.download = "ide-repo-banner-1280x360.png";
+        a.click();
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT")) return;
+        const k = e.key.toLowerCase();
+        if (k === "h") toggleHeatmap();
+        else if (k === "1") { state.variant = "v1"; renderStudio(); }
+        else if (k === "2") { state.variant = "v2"; renderStudio(); }
+        else if (k === "3") { state.variant = "v3"; renderStudio(); }
+        else if (k === "4") { state.variant = "v4"; renderStudio(); }
+      });
+
+      renderPhoneEditor();
+      renderStudio();
+    })();
+  </script>
+</body>
+</html>

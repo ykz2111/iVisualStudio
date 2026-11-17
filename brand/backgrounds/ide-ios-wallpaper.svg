@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1179" height="2556" viewBox="0 0 1179 2556" role="img" aria-label="iDE iPhone OLED Lock Screen Wallpaper (1179x2556)">
+  <defs>
+    <radialGradient id="ipBg" gradientUnits="userSpaceOnUse" cx="590" cy="1278" r="1400">
+      <stop offset="0%"   stop-color="#0E1B2A"/>
+      <stop offset="50%"  stop-color="#05080E"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <pattern id="ipGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 H 0 V 64" fill="none" stroke="#38BDF8" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1179" height="2556" fill="url(#ipBg)"/>
+  <rect width="1179" height="2556" fill="url(#ipGrid)"/>
+  <g transform="translate(282, 970) scale(0.6)" opacity="0.16">
+  <rect x="284" y="172" width="456" height="680" rx="56" fill="#060A10"/>
+  <path fill="#F4F9FD" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>
+  <rect x="424" y="212" width="176" height="36" rx="18" fill="#14F1D9"/>
+  <path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="#007ACC"/>
+  <path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="#14F1D9"/>
+  <rect x="192" y="388" width="68" height="248" rx="20" fill="#14F1D9"/>
+  <circle cx="226" cy="328" r="34" fill="#34D399"/>
+</g>
+  <text x="590" y="2420" text-anchor="middle" fill="#38BDF8" fill-opacity="0.45" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="4">GROOVE LABS // iDE MOBILE</text>
+</svg>

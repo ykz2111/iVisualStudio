@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160" role="img" aria-label="iDE 4K Workspace &amp; Codespace Wallpaper">
+  <defs>
+    <radialGradient id="wsBg" gradientUnits="userSpaceOnUse" cx="1920" cy="960" r="2400">
+      <stop offset="0%"   stop-color="#111E2E"/>
+      <stop offset="52%"  stop-color="#090E17"/>
+      <stop offset="100%" stop-color="#030508"/>
+    </radialGradient>
+    <radialGradient id="wsAura" gradientUnits="userSpaceOnUse" cx="1920" cy="1080" r="1100">
+      <stop offset="0%"   stop-color="#007ACC" stop-opacity="0.14"/>
+      <stop offset="50%"  stop-color="#14F1D9" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#14F1D9" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="wsMinor" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 H 0 V 64" fill="none" stroke="#7DD3FC" stroke-opacity="0.032" stroke-width="1"/>
+    </pattern>
+    <pattern id="wsMajor" width="320" height="320" patternUnits="userSpaceOnUse">
+      <path d="M 320 0 H 0 V 320" fill="none" stroke="#7DD3FC" stroke-opacity="0.065" stroke-width="1.5"/>
+      <circle cx="320" cy="320" r="2.5" fill="#38BDF8" fill-opacity="0.24"/>
+    </pattern>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#wsBg)"/>
+  <rect width="3840" height="2160" fill="url(#wsAura)"/>
+  <rect width="3840" height="2160" fill="url(#wsMinor)"/>
+  <rect width="3840" height="2160" fill="url(#wsMajor)"/>
+  <g transform="translate(2620, 480) scale(1.1)" opacity="0.04">
+  <rect x="284" y="172" width="456" height="680" rx="56" fill="#060A10"/>
+  <path fill="#F4F9FD" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>
+  <rect x="424" y="212" width="176" height="36" rx="18" fill="#14F1D9"/>
+  <path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="#007ACC"/>
+  <path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="#14F1D9"/>
+  <rect x="192" y="388" width="68" height="248" rx="20" fill="#14F1D9"/>
+  <circle cx="226" cy="328" r="34" fill="#34D399"/>
+</g>
+  <g stroke="#38BDF8" stroke-opacity="0.26" stroke-width="3" fill="none" stroke-linecap="square">
+    <path d="M 128 176 V 128 H 176"/><path d="M 3712 176 V 128 H 3664"/>
+    <path d="M 128 1984 V 2032 H 176"/><path d="M 3712 1984 V 2032 H 3664"/>
+  </g>
+  <g fill="#697E94" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="2.4">
+    <text x="200" y="156">GROOVE LABS // iDE_CONCEPT · POCKET VS CODE &amp; CODESPACES FOR IOS</text>
+    <text x="3100" y="156">44PT THUMB ZONE · OLED TRUE-BLACK</text>
+    <text x="200" y="2018">YKZ21 · GITLAB.COM/YKZ2111/IDE_CONCEPT</text>
+    <text x="3390" y="2018">3840 × 2160 · 4K</text>
+  </g>
+</svg>

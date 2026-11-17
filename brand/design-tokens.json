@@ -1,0 +1,34 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "meta": {
+    "project": "iDE (ide_concept)",
+    "organization": "Groove Labs // YkZ21",
+    "platform": "iOS 18+ (iPhone & iPad)",
+    "skillsApplied": [
+      "ui-design-system",
+      "mobile-design",
+      "claude-design"
+    ]
+  },
+  "ergonomics": {
+    "minTouchTargetPt": 44,
+    "recommendedTouchTargetPt": 48,
+    "minTargetGapPt": 8,
+    "primaryThumbZone": "bottom-arc-35-percent",
+    "haptics": {
+      "keyTap": "UIImpactFeedbackGenerator(.light)",
+      "commandRun": "UIImpactFeedbackGenerator(.medium)",
+      "buildSuccess": "UINotificationFeedbackGenerator(.success)"
+    }
+  },
+  "color": {
+    "oledTrueBlack": "#000000",
+    "obsidianCanvas": "#05080E",
+    "elevatedSurface": "#111926",
+    "vscodeAzure": "#007ACC",
+    "electricSky": "#38BDF8",
+    "phosphorCyan": "#14F1D9",
+    "safeEmerald": "#34D399",
+    "irisViolet": "#A855F7"
+  }
+}

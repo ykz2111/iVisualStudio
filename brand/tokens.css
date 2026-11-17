@@ -1,0 +1,52 @@
+/**
+ * iDE (ide_concept) — @ui-design-system & @mobile-design Tokens
+ * Built for iOS OLED displays, 44pt/48pt Fitts' Law touch targets, and SF Pro / SF Mono Dynamic Type.
+ */
+:root {
+  /* OLED & Machined Obsidian Surfaces (Battery-Conscious Dark Default) */
+  --ide-bg-oled-true: #000000;
+  --ide-bg-canvas: #05080E;
+  --ide-bg-chassis: #0A0F18;
+  --ide-bg-elevated: #111926;
+  --ide-bg-thumb-bar: #131E2E;
+
+  /* Semantic Inks (WCAG AAA > 11:1 on #05080E) */
+  --ide-ink-primary: #F4F9FD;
+  --ide-ink-secondary: #9BB0C5;
+  --ide-ink-muted: #64748B;
+
+  /* Brand & IDE Signals */
+  --ide-signal-azure: #38BDF8;
+  --ide-signal-vscode: #007ACC;
+  --ide-signal-cyan: #14F1D9;
+  --ide-signal-emerald: #34D399;
+  --ide-signal-violet: #A855F7;
+  --ide-signal-amber: #FBBF24;
+  --ide-signal-coral: #FC6D26;
+
+  /* iOS HIG Touch & Safe-Area Ergonomics (@mobile-design) */
+  --ide-hit-min-ios: 44px;
+  --ide-hit-recommended: 48px;
+  --ide-hit-gap-min: 8px;
+  --ide-safe-top-island: 59px;
+  --ide-safe-bottom-home: 34px;
+
+  /* 8pt Spatial Grid (@ui-design-system) */
+  --ide-space-1: 4px;
+  --ide-space-2: 8px;
+  --ide-space-3: 12px;
+  --ide-space-4: 16px;
+  --ide-space-6: 24px;
+  --ide-space-8: 32px;
+
+  /* iOS Dynamic Type Scale (SF Pro & SF Mono) */
+  --ide-font-sans: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+  --ide-font-mono: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ide-type-large-title: 34px;
+  --ide-type-title-1: 28px;
+  --ide-type-title-2: 22px;
+  --ide-type-headline: 17px;
+  --ide-type-body: 17px;
+  --ide-type-code: 13.5px;
+  --ide-type-caption: 12px;
+}

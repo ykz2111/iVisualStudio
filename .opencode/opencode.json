@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "ide-coordinator",
+  "formatter": true,
+  "instructions": [".opencode/learned-skills.md"],
+  "permissions": [
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "godmode", "effect": "deny" },
+    { "action": "skill", "resource": "obliteratus", "effect": "deny" }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "name": "groove-labs-branding-design-ui-ux-stack",
+  "version": "1.0.0",
+  "updated_at": "2026-11-16T19:50:01.060799+00:00",
+  "organization": "Groove Labs // YkZ21",
+  "projects": [
+    "lpBOT",
+    "iDE_CONCEPT",
+    "Agent Nursery",
+    "NotAReal Sound",
+    "Scrappy",
+    "Groove Labs"
+  ],
+  "total_available_in_openclaude": 730,
+  "selected_stack": [
+    {
+      "id": "claude-design",
+      "role": "Required",
+      "rationale": "Surface-first composition, 10-tell anti-slop diagnostic, interactive HTML studio & Tweaks",
+      "installed_path": "/Users/ykz21/.openclaude/skills/claude-design",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/claude-design",
+      "sha256": "7f298ce7f6b6c8bec086821fde283f41b02b10b15caa587c739ad0fe80e96ce7",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "ui-design-system",
+      "role": "Required",
+      "rationale": "8pt spatial grid, DTCG/CSS design tokens, modular typography scale & WCAG contrast",
+      "installed_path": "/Users/ykz21/.openclaude/skills/ui-design-system",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/ui-design-system",
+      "sha256": "d2754b142e18ab5c51031fe6f1a4f807019b2e5346431a0c014baef22efd6aee",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "mobile-design",
+      "role": "Required",
+      "rationale": "iOS HIG, Fitts' Law 44pt/48pt touch targets, bottom thumb-zone arc & OLED battery optimization",
+      "installed_path": "/Users/ykz21/.openclaude/skills/mobile-design",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/mobile-design",
+      "sha256": "ec74cda5e1954572e4282c3aaa9c1c32ec743cef83c53f8aef622c00dc8f0682",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "ip-as-logo",
+      "role": "Required",
+      "rationale": "Minimal iconic mascot & monogram marks (lpBOT, Optical Folio S, Pocket Code Ribbon) legible at 32px/16px",
+      "installed_path": "/Users/ykz21/.openclaude/skills/ip-as-logo",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/ip-as-logo",
+      "sha256": "70089da302baaadf9f6f9e250970e656acc0a58f746ce1a1b550eb32db41b931",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "design-md",
+      "role": "Helpful",
+      "rationale": "Formal machine-readable DESIGN.md token spec authoring & Tailwind/DTCG export",
+      "installed_path": "/Users/ykz21/.openclaude/skills/design-md",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/design-md",
+      "sha256": "7ed56bba40ffc9573fa51b33b2424f37fb5f774e9ecb7e76e737797afd0b62ae",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "popular-web-designs",
+      "role": "Helpful",
+      "rationale": "54 reference design systems (Linear, Vercel, Stripe) for precision dark instrument polish",
+      "installed_path": "/Users/ykz21/.openclaude/skills/popular-web-designs",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/popular-web-designs",
+      "sha256": "3551eba639022a414cce013b96458bd595bfd6fa1d4c71ad819d36ae8b03edfc",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "frontend-design",
+      "role": "Helpful",
+      "rationale": "Intentional visual direction, typography hierarchy, and non-generic component styling",
+      "installed_path": "/Users/ykz21/.openclaude/skills/frontend-design",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/frontend-design",
+      "sha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "ui-ux-pro-max",
+      "role": "Helpful",
+      "rationale": "50 styles, 21 palettes, font pairings & responsive component ergonomics",
+      "installed_path": "/Users/ykz21/.openclaude/skills/ui-ux-pro-max",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/ui-ux-pro-max",
+      "sha256": "fff024e58ee4aeef4f06d3ec93bbf4aa0c6af12ec8e680182fa60d90d7f070e4",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "anti-ui-slop",
+      "role": "Helpful",
+      "rationale": "Hard finish gate grounding interfaces against generic AI card-grid layouts",
+      "installed_path": "/Users/ykz21/.openclaude/skills/anti-ui-slop",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/anti-ui-slop",
+      "sha256": "b5eec3d4ecf054420e6e27b691ba354af7b28b48ea27bbcd41802ababa66338b",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "macos-golden-gate-design",
+      "role": "Helpful",
+      "rationale": "Restrained native Apple sidebar, toolbar, squircle & pane boundary craft",
+      "installed_path": "/Users/ykz21/.openclaude/skills/macos-golden-gate-design",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/macos-golden-gate-design",
+      "sha256": "d702fca10992652af9daf55be79105791e2bccbad145f0f9f035edf596f14278",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "playground",
+      "role": "Helpful",
+      "rationale": "Self-contained interactive single-file HTML explorers with live controls & export",
+      "installed_path": "/Users/ykz21/.openclaude/skills/playground",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/playground",
+      "sha256": "521a3d62211e5f47b65ed17b660e001b15cf8d88d058cbf31bc00e889bcb63cc",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    },
+    {
+      "id": "adversarial-ux-test",
+      "role": "Helpful",
+      "rationale": "Hostile-user & edge-case UX audit for mobile reachability and crisis/grounding clarity",
+      "installed_path": "/Users/ykz21/.openclaude/skills/adversarial-ux-test",
+      "active_stack_path": "/Users/ykz21/.openclaude/active-design-stack/adversarial-ux-test",
+      "sha256": "d687ee7727174fd58acbe638038b207f7fb86ea27603a34cb3b0f1b0889b0dd7",
+      "safety_check": "passed",
+      "safe_trial": "passed"
+    }
+  ],
+  "routing_rules": {
+    "brand_icon_mascot": [
+      "ip-as-logo",
+      "claude-design",
+      "ui-design-system"
+    ],
+    "mobile_ios_ide": [
+      "mobile-design",
+      "ui-design-system",
+      "macos-golden-gate-design",
+      "playground"
+    ],
+    "web_studio_workbench": [
+      "claude-design",
+      "playground",
+      "popular-web-designs",
+      "anti-ui-slop"
+    ],
+    "ux_audit_verification": [
+      "adversarial-ux-test",
+      "anti-ui-slop",
+      "design-md"
+    ]
+  }
+}

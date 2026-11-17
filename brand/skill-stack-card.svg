@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="Groove Labs — Branding, Design, UI &amp; UX Agent Skill Stack Card">
+  <title>Groove Labs // YkZ21 — Curated Branding, Design, UI &amp; UX Skill Stack (12 Active of 730 Installed in ~/.openclaude)</title>
+  <defs>
+    <radialGradient id="stBg" gradientUnits="userSpaceOnUse" cx="600" cy="160" r="1000">
+      <stop offset="0%"   stop-color="#142030"/>
+      <stop offset="55%"  stop-color="#0A0F18"/>
+      <stop offset="100%" stop-color="#05070B"/>
+    </radialGradient>
+    <pattern id="stGrid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 H 0 V 48" fill="none" stroke="#7DD3FC" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="680" fill="url(#stBg)"/>
+  <rect width="1200" height="680" fill="url(#stGrid)"/>
+  <rect x="28" y="28" width="1144" height="624" rx="18" fill="none" stroke="#38BDF8" stroke-opacity="0.24" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <g transform="translate(64, 72)">
+    <text x="0" y="0" fill="#64FAE7" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700" letter-spacing="2.2">~/.OPENCLAUDE // 730 LOCAL SKILLS INDEXED · 12 CURATED DESIGN/UI/UX SKILLS ACTIVE</text>
+    <text x="0" y="38" fill="#F4F9FD" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="28" font-weight="700">Groove Labs — Branding, Design, UI &amp; Mobile UX Skill Stack</text>
+    <text x="0" y="66" fill="#9BB0C5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15">Verified stack powering lpBOT, iDE (Mobile VS Code for iOS), Agent Nursery, NotAReal Sound &amp; Scrappy.</text>
+  </g>
+
+  <!-- Status Summary Pills -->
+  <g transform="translate(820, 62)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700">
+    <rect x="0" y="0" width="152" height="30" rx="6" fill="#081813" stroke="#34D399" stroke-opacity="0.55"/>
+    <text x="16" y="19" fill="#6EE7B7">✓ SAFETY PASSED</text>
+    <rect x="164" y="0" width="152" height="30" rx="6" fill="#091624" stroke="#38BDF8" stroke-opacity="0.55"/>
+    <text x="180" y="19" fill="#7DD3FC">✓ RECALL 3/3 OK</text>
+  </g>
+
+  <!-- 4 Required Core Skills Row -->
+  <text x="64" y="176" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="700" letter-spacing="1.6">REQUIRED CORE STACK (4 PRIMARY SKILLS)</text>
+
+  <g transform="translate(64, 192)" font-family="-apple-system, BlinkMacSystemFont, sans-serif">
+    <g transform="translate(0, 0)">
+      <rect width="256" height="118" rx="12" fill="#0D1624" stroke="#14F1D9" stroke-opacity="0.55" stroke-width="1.5"/>
+      <text x="18" y="28" fill="#64FAE7" font-family="ui-monospace, Menlo, monospace" font-size="12" font-weight="700">01 · claude-design</text>
+      <text x="18" y="54" fill="#F4F9FD" font-size="13.5" font-weight="600">Surface-First &amp; Anti-Slop</text>
+      <text x="18" y="76" fill="#9BB0C5" font-size="12">10-tell slop diagnostic, 3+ structural</text>
+      <text x="18" y="94" fill="#9BB0C5" font-size="12">variants &amp; self-contained HTML studios.</text>
+    </g>
+
+    <g transform="translate(272, 0)">
+      <rect width="256" height="118" rx="12" fill="#0D1624" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="1.5"/>
+      <text x="18" y="28" fill="#7DD3FC" font-family="ui-monospace, Menlo, monospace" font-size="12" font-weight="700">02 · mobile-design</text>
+      <text x="18" y="54" fill="#F4F9FD" font-size="13.5" font-weight="600">iOS HIG &amp; Thumb-Zone UX</text>
+      <text x="18" y="76" fill="#9BB0C5" font-size="12">44pt/48pt Fitts' Law hit targets, Dynamic</text>
+      <text x="18" y="94" fill="#9BB0C5" font-size="12">Island safe areas &amp; OLED 0% power dark.</text>
+    </g>
+
+    <g transform="translate(544, 0)">
+      <rect width="256" height="118" rx="12" fill="#0D1624" stroke="#A855F7" stroke-opacity="0.55" stroke-width="1.5"/>
+      <text x="18" y="28" fill="#C4B5FD" font-family="ui-monospace, Menlo, monospace" font-size="12" font-weight="700">03 · ui-design-system</text>
+      <text x="18" y="54" fill="#F4F9FD" font-size="13.5" font-weight="600">8pt Grid &amp; DTCG Tokens</text>
+      <text x="18" y="76" fill="#9BB0C5" font-size="12">Modular SF Pro / SF Mono scales, CSS +</text>
+      <text x="18" y="94" fill="#9BB0C5" font-size="12">JSON token generation &amp; WCAG AAA math.</text>
+    </g>
+
+    <g transform="translate(816, 0)">
+      <rect width="256" height="118" rx="12" fill="#0D1624" stroke="#34D399" stroke-opacity="0.55" stroke-width="1.5"/>
+      <text x="18" y="28" fill="#6EE7B7" font-family="ui-monospace, Menlo, monospace" font-size="12" font-weight="700">04 · ip-as-logo</text>
+      <text x="18" y="54" fill="#F4F9FD" font-size="13.5" font-weight="600">Mascot &amp; 32px Micro Marks</text>
+      <text x="18" y="76" fill="#9BB0C5" font-size="12">Minimal cute IP mascot marks (lpBOT) &amp;</text>
+      <text x="18" y="94" fill="#9BB0C5" font-size="12">64-unit pixel-snapped 16px/32px favicons.</text>
+    </g>
+  </g>
+
+  <!-- 8 Supporting / Helpful Skills Grid -->
+  <text x="64" y="348" fill="#8FA3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5" font-weight="700" letter-spacing="1.6">SUPPORTING &amp; QUALITY GATE SKILLS (8 HELPFUL HELPERS)</text>
+
+  <g transform="translate(64, 364)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">
+    <rect x="0"   y="0" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="16"  y="28" fill="#F4F9FD" font-weight="700">05 · playground</text>
+    <text x="16"  y="50" fill="#8FA3B8" font-family="-apple-system, sans-serif">Interactive HTML explorers &amp; live controls</text>
+
+    <rect x="272" y="0" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="288" y="28" fill="#F4F9FD" font-weight="700">06 · macos-golden-gate-design</text>
+    <text x="288" y="50" fill="#8FA3B8" font-family="-apple-system, sans-serif">Native Apple sidebars, toolbars &amp; panes</text>
+
+    <rect x="544" y="0" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="560" y="28" fill="#F4F9FD" font-weight="700">07 · popular-web-designs</text>
+    <text x="560" y="50" fill="#8FA3B8" font-family="-apple-system, sans-serif">54 real design systems (Linear, Vercel)</text>
+
+    <rect x="816" y="0" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="832" y="28" fill="#F4F9FD" font-weight="700">08 · design-md</text>
+    <text x="832" y="50" fill="#8FA3B8" font-family="-apple-system, sans-serif">Machine-readable DESIGN.md token specs</text>
+
+    <rect x="0"   y="98" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="16"  y="126" fill="#F4F9FD" font-weight="700">09 · frontend-design</text>
+    <text x="16"  y="148" fill="#8FA3B8" font-family="-apple-system, sans-serif">Intentional aesthetic &amp; type direction</text>
+
+    <rect x="272" y="98" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="288" y="126" fill="#F4F9FD" font-weight="700">10 · ui-ux-pro-max</text>
+    <text x="288" y="148" fill="#8FA3B8" font-family="-apple-system, sans-serif">50 styles, 21 palettes &amp; font pairings</text>
+
+    <rect x="544" y="98" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="560" y="126" fill="#F4F9FD" font-weight="700">11 · anti-ui-slop</text>
+    <text x="560" y="148" fill="#8FA3B8" font-family="-apple-system, sans-serif">Hard finish gate &amp; required UI states</text>
+
+    <rect x="816" y="98" width="256" height="82" rx="10" fill="#0B111B" stroke="#94B8D0" stroke-opacity="0.22"/>
+    <text x="832" y="126" fill="#F4F9FD" font-weight="700">12 · adversarial-ux-test</text>
+    <text x="832" y="148" fill="#8FA3B8" font-family="-apple-system, sans-serif">Hostile-user &amp; one-handed UX triage</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="64" y="616" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">BOUNDARY: 100% LOCAL READ/WRITE · ZERO EXTERNAL ACCOUNT MUTATIONS · VERIFIED 2026-11-16</text>
+</svg>

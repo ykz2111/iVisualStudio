@@ -1,0 +1,30 @@
+{
+  "name": "iDE — Pocket VS Code & Codespaces for iOS",
+  "short_name": "iDE",
+  "description": "Mobile iOS IDE for GitHub Codespaces, OpenVSCode Server, SSH DevContainers, and OpenCode agents.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#05080E",
+  "theme_color": "#05080E",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

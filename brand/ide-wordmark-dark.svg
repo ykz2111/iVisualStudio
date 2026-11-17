@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="220" viewBox="0 0 960 220" role="img" aria-label="iDE Brand Lockup">
+  <title>iDE_CONCEPT — Dark Brand Lockup</title>
+  <g transform="translate(24, 30)">
+    <rect width="160" height="160" rx="36" fill="#0B0F16" stroke="#38BDF8" stroke-opacity="0.4" stroke-width="2"/>
+    <g transform="scale(0.15625)">
+  <rect x="284" y="172" width="456" height="680" rx="56" fill="#060A10"/>
+  <path fill="#F4F9FD" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>
+  <rect x="424" y="212" width="176" height="36" rx="18" fill="#14F1D9"/>
+  <path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="#007ACC"/>
+  <path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="#14F1D9"/>
+  <rect x="192" y="388" width="68" height="248" rx="20" fill="#14F1D9"/>
+  <circle cx="226" cy="328" r="34" fill="#34D399"/>
+</g>
+  </g>
+  <g transform="translate(216, 46)">
+    <g transform="scale(0.64)" fill="#F4F9FD" fill-rule="evenodd"><g transform="translate(0, 0)" fill="#14F1D9"><path d="M 4 0 H 24 V 20 H 4 Z M 4 32 H 24 V 100 H 4 Z"/></g>
+      <g transform="translate(40, 0)"><path d="M 0 0 H 54 L 74 20 V 80 L 54 100 H 0 Z M 20 20 V 80 H 52 V 20 Z"/></g>
+      <g transform="translate(126, 0)"><path d="M 0 0 H 66 L 56 20 H 20 V 40 H 54 V 60 H 20 V 80 H 66 V 100 H 0 Z"/></g>
+      <g transform="translate(204, 0)" fill="#14F1D9"><path d="M 0 84 H 56 V 100 H 0 Z"/></g>
+      <g transform="translate(272, 0)"><path d="M 14 0 H 68 L 58 20 H 20 V 80 H 58 L 68 100 H 14 L 0 86 V 14 Z"/></g>
+      <g transform="translate(352, 0)"><path d="M 14 0 H 60 L 74 14 V 86 L 60 100 H 14 L 0 86 V 14 Z M 20 20 V 80 H 54 V 20 Z"/></g>
+      <g transform="translate(438, 0)"><path d="M 0 0 H 20 L 56 64 V 0 H 76 V 100 H 56 L 20 36 V 100 H 0 Z"/></g>
+      <g transform="translate(526, 0)"><path d="M 14 0 H 68 L 58 20 H 20 V 80 H 58 L 68 100 H 14 L 0 86 V 14 Z"/></g>
+      <g transform="translate(606, 0)"><path d="M 0 0 H 66 L 56 20 H 20 V 40 H 54 V 60 H 20 V 80 H 66 V 100 H 0 Z"/></g>
+      <g transform="translate(684, 0)"><path d="M 0 0 H 56 L 70 14 V 50 L 56 64 H 20 V 100 H 0 Z M 20 20 V 44 H 50 V 20 Z"/></g>
+      <g transform="translate(766, 0)"><path d="M 0 0 H 72 L 62 20 H 46 V 100 H 26 V 20 H 0 Z"/></g></g>
+    <text x="2" y="108" fill="#8FA3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" font-weight="600" letter-spacing="2.0">POCKET VS CODE, GITHUB CODESPACES &amp; CLOUD IDE FOR IOS // GROOVE LABS</text>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="ideMonoTitle">
+  <title id="ideMonoTitle">iDE (Monochrome Stencil Glyph)</title>
+  <g fill="currentColor" fill-rule="evenodd">
+    <path d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>
+    <rect x="424" y="212" width="176" height="36" rx="18"/>
+    <rect x="192" y="388" width="68" height="248" rx="20"/>
+    <circle cx="226" cy="328" r="34"/>
+    <path d="M 336 620 L 680 324 L 764 368 V 656 L 680 700 L 336 404 L 404 336 L 680 576 V 420 L 404 680 Z"/>
+    <rect x="432" y="806" width="160" height="12" rx="6"/>
+  </g>
+</svg>
