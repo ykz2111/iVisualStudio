@@ -7,10 +7,10 @@
 
   <br />
 
-  <img src="./brand/badges/ios-testflight.svg" alt="iOS 18+ HIG Native" height="26" />
-  <img src="./brand/badges/codespaces-ready.svg" alt="Codespaces + OpenVSCode" height="26" />
-  <img src="./brand/badges/thumb-zone-ergonomics.svg" alt="44pt+ Thumb-Zone UX" height="26" />
-  <img src="./brand/badges/oled-zero-smear.svg" alt="OLED True-Black 60fps" height="26" />
+  <img src="./brand/badges/alternatives/B2a.svg" alt="TestFlight" height="26" />
+  <img src="./brand/badges/alternatives/B1a.svg" alt="Codespaces" height="26" />
+  <img src="./brand/badges/alternatives/B4a.svg" alt="Thumb zone" height="26" />
+  <img src="./brand/badges/alternatives/B3a.svg" alt="OLED" height="26" />
 </div>
 
 ---

@@ -1,0 +1,46 @@
+{
+  "name": "iVisual-Studio",
+  "pathsRelativeTo": "repository root",
+  "selected": [
+    {
+      "id": "A2",
+      "label": "Light repository banner",
+      "svg": "brand/repo-banner-light.svg",
+      "png": "brand/repo-banner-light.png",
+      "dimensions": [1280, 360]
+    },
+    {
+      "id": "C1",
+      "label": "Primary pocket code icon",
+      "svg": "brand/ide-icon.svg",
+      "png": "brand/ide-icon-1024.png",
+      "preview": "brand/ide-icon-128.png",
+      "dimensions": [1024, 1024]
+    },
+    {
+      "id": "D1",
+      "label": "Dark wordmark, renamed",
+      "svg": "brand/selected/D1-wordmark-dark.svg",
+      "png": "brand/selected/D1-wordmark-dark.png",
+      "dimensions": [960, 220]
+    },
+    {
+      "id": "E1",
+      "label": "Wide social preview",
+      "svg": "brand/og-image.svg",
+      "png": "brand/og-image.png",
+      "dimensions": [1280, 640]
+    },
+    {
+      "id": "F2",
+      "label": "iPhone wallpaper",
+      "svg": "brand/backgrounds/ide-ios-wallpaper.svg",
+      "png": "brand/backgrounds/ide-ios-wallpaper.png",
+      "dimensions": [1179, 2556]
+    }
+  ],
+  "badges": {
+    "status": "awaiting selection",
+    "manifest": "brand/badges/alternatives/manifest.json"
+  }
+}

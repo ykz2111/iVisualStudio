@@ -1,0 +1,28 @@
+{
+  "name": "iVisual-Studio badge alternatives",
+  "families": {
+    "a": "outline — 32px dark pill, colored outline",
+    "b": "split — 32px technical tag, colored icon panel + clipped corner",
+    "c": "minimal — 24px light strip, no border"
+  },
+  "subjects": {
+    "B1": "Codespaces",
+    "B2": "TestFlight",
+    "B3": "OLED",
+    "B4": "Thumb zone"
+  },
+  "badges": [
+    { "id": "B1a", "subject": "B1", "label": "Codespaces", "family": "outline", "color": "#14F1D9", "svg": "brand/badges/alternatives/B1a.svg", "png": "brand/badges/alternatives/B1a.png" },
+    { "id": "B1b", "subject": "B1", "label": "Codespaces", "family": "split", "color": "#14F1D9", "svg": "brand/badges/alternatives/B1b.svg", "png": "brand/badges/alternatives/B1b.png" },
+    { "id": "B1c", "subject": "B1", "label": "Codespaces", "family": "minimal", "color": "#14F1D9", "svg": "brand/badges/alternatives/B1c.svg", "png": "brand/badges/alternatives/B1c.png" },
+    { "id": "B2a", "subject": "B2", "label": "TestFlight", "family": "outline", "color": "#38BDF8", "svg": "brand/badges/alternatives/B2a.svg", "png": "brand/badges/alternatives/B2a.png" },
+    { "id": "B2b", "subject": "B2", "label": "TestFlight", "family": "split", "color": "#38BDF8", "svg": "brand/badges/alternatives/B2b.svg", "png": "brand/badges/alternatives/B2b.png" },
+    { "id": "B2c", "subject": "B2", "label": "TestFlight", "family": "minimal", "color": "#38BDF8", "svg": "brand/badges/alternatives/B2c.svg", "png": "brand/badges/alternatives/B2c.png" },
+    { "id": "B3a", "subject": "B3", "label": "OLED", "family": "outline", "color": "#A855F7", "svg": "brand/badges/alternatives/B3a.svg", "png": "brand/badges/alternatives/B3a.png" },
+    { "id": "B3b", "subject": "B3", "label": "OLED", "family": "split", "color": "#A855F7", "svg": "brand/badges/alternatives/B3b.svg", "png": "brand/badges/alternatives/B3b.png" },
+    { "id": "B3c", "subject": "B3", "label": "OLED", "family": "minimal", "color": "#A855F7", "svg": "brand/badges/alternatives/B3c.svg", "png": "brand/badges/alternatives/B3c.png" },
+    { "id": "B4a", "subject": "B4", "label": "Thumb zone", "family": "outline", "color": "#34D399", "svg": "brand/badges/alternatives/B4a.svg", "png": "brand/badges/alternatives/B4a.png" },
+    { "id": "B4b", "subject": "B4", "label": "Thumb zone", "family": "split", "color": "#34D399", "svg": "brand/badges/alternatives/B4b.svg", "png": "brand/badges/alternatives/B4b.png" },
+    { "id": "B4c", "subject": "B4", "label": "Thumb zone", "family": "minimal", "color": "#34D399", "svg": "brand/badges/alternatives/B4c.svg", "png": "brand/badges/alternatives/B4c.png" }
+  ]
+}

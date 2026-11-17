@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32" role="img" aria-labelledby="B4a-title" aria-describedby="B4a-desc">
+  <title id="B4a-title">Thumb zone</title>
+  <desc id="B4a-desc">Outlined pill with an emerald phone glyph and a curved lower-screen area.</desc>
+  <rect x="0.5" y="0.5" width="127" height="31" rx="15.5" fill="#05080E" stroke="#34D399"/>
+  <g transform="translate(12 8)">
+    <rect x="3" y="1" width="10" height="14" rx="2" fill="none" stroke="#34D399" stroke-width="1.5"/>
+    <path d="M4.5 11.5q3.5-3 7 0V13a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5Z" fill="#34D399"/>
+  </g>
+  <text x="40" y="20" fill="#F4F9FD" font-family="'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">Thumb zone</text>
+</svg>

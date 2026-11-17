@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="112" height="24" viewBox="0 0 112 24" role="img" aria-labelledby="B2c-title" aria-describedby="B2c-desc">
+  <title id="B2c-title">TestFlight</title>
+  <desc id="B2c-desc">Minimal light strip with a solid paper-plane glyph.</desc>
+  <rect width="112" height="24" fill="#F4F9FD"/>
+  <g transform="translate(8 4)">
+    <path d="M2 7.5 14 2 8.5 14 6.5 9.5Z" fill="#05080E" stroke="#05080E" stroke-linejoin="round"/>
+    <path d="m6.5 9.5 6-6" fill="none" stroke="#F4F9FD" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="32" y="16" fill="#05080E" font-family="'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="500">TestFlight</text>
+</svg>

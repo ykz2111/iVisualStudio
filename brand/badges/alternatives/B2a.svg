@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="32" viewBox="0 0 120 32" role="img" aria-labelledby="B2a-title" aria-describedby="B2a-desc">
+  <title id="B2a-title">TestFlight</title>
+  <desc id="B2a-desc">Outlined pill with an azure paper-plane glyph.</desc>
+  <rect x="0.5" y="0.5" width="119" height="31" rx="15.5" fill="#05080E" stroke="#38BDF8"/>
+  <path transform="translate(12 8)" d="M2 7.5 14 2 8.5 14 6.5 9.5 2 7.5Zm4.5 2L14 2" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="40" y="20" fill="#F4F9FD" font-family="'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">TestFlight</text>
+</svg>

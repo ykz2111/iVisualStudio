@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="32" viewBox="0 0 128 32" role="img" aria-labelledby="B1a-title" aria-describedby="B1a-desc">
+  <title id="B1a-title">Codespaces</title>
+  <desc id="B1a-desc">Outlined pill with a cyan terminal glyph.</desc>
+  <rect x="0.5" y="0.5" width="127" height="31" rx="15.5" fill="#05080E" stroke="#14F1D9"/>
+  <g transform="translate(12 8)" fill="none" stroke="#14F1D9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="1" y="2" width="14" height="12" rx="2"/>
+    <path d="m4 5 3 3-3 3m5 0h3"/>
+  </g>
+  <text x="40" y="20" fill="#F4F9FD" font-family="'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">Codespaces</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="136" height="32" viewBox="0 0 136 32" role="img" aria-labelledby="B2b-title" aria-describedby="B2b-desc">
+  <title id="B2b-title">TestFlight</title>
+  <desc id="B2b-desc">Split technical tag with an azure paper-plane panel and a clipped corner.</desc>
+  <path d="M.5.5h127l8 8v23H.5Z" fill="#111926" stroke="#64748B"/>
+  <path d="M1 1h31v30H1Z" fill="#38BDF8"/>
+  <path transform="translate(8 8)" d="M2 7.5 14 2 8.5 14 6.5 9.5 2 7.5Zm4.5 2L14 2" fill="none" stroke="#05080E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="48" y="20" fill="#F4F9FD" font-family="'SF Mono', 'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="12" font-weight="500">TestFlight</text>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="136" height="32" viewBox="0 0 136 32" role="img" aria-labelledby="B4b-title" aria-describedby="B4b-desc">
+  <title id="B4b-title">Thumb zone</title>
+  <desc id="B4b-desc">Split technical tag with an emerald phone panel, a curved lower-screen area, and a clipped corner.</desc>
+  <path d="M.5.5h127l8 8v23H.5Z" fill="#111926" stroke="#64748B"/>
+  <path d="M1 1h31v30H1Z" fill="#34D399"/>
+  <g transform="translate(8 8)">
+    <rect x="3" y="1" width="10" height="14" rx="2" fill="none" stroke="#05080E" stroke-width="1.5"/>
+    <path d="M4.5 11.5q3.5-3 7 0V13a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5Z" fill="#05080E"/>
+  </g>
+  <text x="48" y="20" fill="#F4F9FD" font-family="'SF Mono', 'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="12" font-weight="500">Thumb zone</text>
+</svg>

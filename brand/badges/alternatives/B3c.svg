@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="24" viewBox="0 0 80 24" role="img" aria-labelledby="B3c-title" aria-describedby="B3c-desc">
+  <title id="B3c-title">OLED</title>
+  <desc id="B3c-desc">Minimal light strip with a solid black display glyph.</desc>
+  <rect width="80" height="24" fill="#F4F9FD"/>
+  <g transform="translate(8 4)">
+    <rect x="1" y="2" width="14" height="10" rx="2" fill="#000000"/>
+    <path d="M8 12v3m-3 0h6" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="32" y="16" fill="#05080E" font-family="'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="500">OLED</text>
+</svg>
