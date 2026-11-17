@@ -1,69 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-label="iDE Mobile Announcement Card (1080x1080)">
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-label="iVisual-Studio square social">
   <defs>
-    <radialGradient id="sqBg" gradientUnits="userSpaceOnUse" cx="540" cy="360" r="900">
-      <stop offset="0%"   stop-color="#142336"/>
-      <stop offset="55%"  stop-color="#0A0F18"/>
-      <stop offset="100%" stop-color="#04060A"/>
-    </radialGradient>
-    <pattern id="sqGrid" width="54" height="54" patternUnits="userSpaceOnUse">
-      <path d="M 54 0 H 0 V 54" fill="none" stroke="#7DD3FC" stroke-opacity="0.045" stroke-width="1"/>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 H 0 V 64" fill="none" stroke="#38BDF8" stroke-opacity="0.04" stroke-width="1"/>
     </pattern>
+    <radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="540" cy="640" r="520">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="1080" height="1080" fill="url(#sqBg)"/>
-  <rect width="1080" height="1080" fill="url(#sqGrid)"/>
-  <rect x="44" y="44" width="992" height="992" rx="28" fill="none" stroke="#38BDF8" stroke-opacity="0.25" stroke-width="2"/>
+  <rect width="1080" height="1080" fill="#05080E"/>
+  <rect width="1080" height="1080" fill="url(#grid)"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
 
-  <text x="540" y="114" text-anchor="middle" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="600" letter-spacing="3.2">GROOVE LABS // YKZ21 · MOBILE CLOUD IDE FOR IOS</text>
+  <text x="540" y="178" text-anchor="middle" fill="#F4F9FD" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="84" font-weight="700" letter-spacing="-2">iVisual-Studio</text>
 
-  <!-- Center 340x340 Master Emblem -->
-  <g transform="translate(370, 156)">
-    <rect width="340" height="340" rx="76" fill="#080C12" stroke="#38BDF8" stroke-opacity="0.45" stroke-width="2.5"/>
-    <g transform="scale(0.33203125)">
-  <rect x="284" y="172" width="456" height="680" rx="56" fill="#060A10"/>
-  <path fill="#F4F9FD" fill-rule="evenodd" d="M 332 132 H 692 C 748 132, 780 164, 780 220 V 804 C 780 860, 748 892, 692 892 H 332 C 276 892, 244 860, 244 804 V 220 C 244 164, 276 132, 332 132 Z M 340 184 C 308 184, 296 196, 296 228 V 796 C 296 828, 308 840, 340 840 H 684 C 716 840, 728 828, 728 796 V 228 C 728 196, 716 184, 684 184 Z"/>
-  <rect x="424" y="212" width="176" height="36" rx="18" fill="#14F1D9"/>
-  <path d="M 336 392 L 404 336 L 680 576 V 324 L 764 368 V 656 L 680 700 L 336 404 Z" fill="#007ACC"/>
-  <path d="M 336 620 L 680 324 L 764 368 L 404 680 L 336 620 Z" fill="#14F1D9"/>
-  <rect x="192" y="388" width="68" height="248" rx="20" fill="#14F1D9"/>
-  <circle cx="226" cy="328" r="34" fill="#34D399"/>
-</g>
+  <rect x="375" y="250" width="330" height="700" rx="56" fill="#060A10" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="2"/>
+  <rect x="387" y="262" width="306" height="676" rx="44" fill="#0A0F18"/>
+  <rect x="481" y="276" width="118" height="32" rx="16" fill="#000000"/>
+  <text x="540" y="297" text-anchor="middle" fill="#64FAE7" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600">codespace · 14ms</text>
+
+  <rect x="405" y="332" width="128" height="26" rx="8" fill="#131E2E" stroke="#14F1D9" stroke-opacity="0.6"/>
+  <rect x="414" y="341" width="9" height="9" rx="1.5" fill="#34D399" fill-opacity="0.8"/>
+  <text x="429" y="350" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700" fill="#F4F9FD">bootstrap.sh</text>
+  <rect x="541" y="332" width="118" height="26" rx="8" fill="none" stroke="#38BDF8" stroke-opacity="0.25"/>
+  <rect x="550" y="341" width="9" height="9" rx="1.5" fill="#7DD3FC" fill-opacity="0.8"/>
+  <text x="565" y="350" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="700" fill="#9BB0C5">README.md</text>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" fill="#64748B" text-anchor="end">
+    <text x="420" y="394">33</text>
+    <text x="420" y="424">34</text>
+    <text x="420" y="454">35</text>
+    <text x="420" y="484">36</text>
+    <text x="420" y="514">37</text>
+    <text x="420" y="544">38</text>
+    <text x="420" y="574">39</text>
+    <text x="420" y="604">40</text>
+  </g>
+  <rect x="426" y="536" width="3" height="14" fill="#34D399"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">
+    <text x="434" y="394"><tspan fill="#C4B5FD">if</tspan><tspan fill="#F4F9FD"> ! git clone</tspan></text>
+    <text x="448" y="424"><tspan fill="#7DD3FC">echo</tspan><tspan fill="#6EE7B7"> "✗ Failed"</tspan></text>
+    <text x="448" y="454"><tspan fill="#C4B5FD">exit</tspan><tspan fill="#FBBF24"> 1</tspan></text>
+    <text x="434" y="484" fill="#C4B5FD">fi</text>
+    <text x="434" y="544"><tspan fill="#7DD3FC">echo</tspan><tspan fill="#6EE7B7"> "✓ Done"</tspan></text>
+    <text x="434" y="604" fill="#64748B"># Run installer</text>
   </g>
 
-  <g transform="translate(158, 548) scale(0.84)" fill="#F7FBFE" fill-rule="evenodd">
-    <g transform="translate(0, 0)" fill="#14F1D9"><path d="M 4 0 H 24 V 20 H 4 Z M 4 32 H 24 V 100 H 4 Z"/></g>
-      <g transform="translate(40, 0)"><path d="M 0 0 H 54 L 74 20 V 80 L 54 100 H 0 Z M 20 20 V 80 H 52 V 20 Z"/></g>
-      <g transform="translate(126, 0)"><path d="M 0 0 H 66 L 56 20 H 20 V 40 H 54 V 60 H 20 V 80 H 66 V 100 H 0 Z"/></g>
-      <g transform="translate(204, 0)" fill="#14F1D9"><path d="M 0 84 H 56 V 100 H 0 Z"/></g>
-      <g transform="translate(272, 0)"><path d="M 14 0 H 68 L 58 20 H 20 V 80 H 58 L 68 100 H 14 L 0 86 V 14 Z"/></g>
-      <g transform="translate(352, 0)"><path d="M 14 0 H 60 L 74 14 V 86 L 60 100 H 14 L 0 86 V 14 Z M 20 20 V 80 H 54 V 20 Z"/></g>
-      <g transform="translate(438, 0)"><path d="M 0 0 H 20 L 56 64 V 0 H 76 V 100 H 56 L 20 36 V 100 H 0 Z"/></g>
-      <g transform="translate(526, 0)"><path d="M 14 0 H 68 L 58 20 H 20 V 80 H 58 L 68 100 H 14 L 0 86 V 14 Z"/></g>
-      <g transform="translate(606, 0)"><path d="M 0 0 H 66 L 56 20 H 20 V 40 H 54 V 60 H 20 V 80 H 66 V 100 H 0 Z"/></g>
-      <g transform="translate(684, 0)"><path d="M 0 0 H 56 L 70 14 V 50 L 56 64 H 20 V 100 H 0 Z M 20 20 V 44 H 50 V 20 Z"/></g>
-      <g transform="translate(766, 0)"><path d="M 0 0 H 72 L 62 20 H 46 V 100 H 26 V 20 H 0 Z"/></g>
+  <rect x="405" y="636" width="270" height="64" rx="14" fill="#111926" stroke="#38BDF8" stroke-opacity="0.25"/>
+  <rect x="520" y="642" width="40" height="4" rx="2" fill="#64748B"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">
+    <text x="421" y="666" fill="#34D399">$ bash install.sh</text>
+    <text x="421" y="686" fill="#9BB0C5">✓ installed</text>
   </g>
 
-  <text x="540" y="688" text-anchor="middle" fill="#DCE7F2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="27" font-weight="600">Visual Studio Code &amp; Codespaces in Your Thumb Zone.</text>
-
-  <g transform="translate(110, 742)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="600">
-    <rect x="0"   y="0" width="268" height="72" rx="10" fill="#0D1624" stroke="#38BDF8" stroke-opacity="0.5"/>
-    <circle cx="28" cy="36" r="6" fill="#38BDF8"/><text x="48" y="41" fill="#F4F9FD">GitHub Codespaces</text>
-
-    <rect x="296" y="0" width="268" height="72" rx="10" fill="#0D1624" stroke="#14F1D9" stroke-opacity="0.5"/>
-    <circle cx="324" cy="36" r="6" fill="#14F1D9"/><text x="344" y="41" fill="#F4F9FD">OpenVSCode Server</text>
-
-    <rect x="592" y="0" width="268" height="72" rx="10" fill="#0D1624" stroke="#A855F7" stroke-opacity="0.5"/>
-    <circle cx="620" cy="36" r="6" fill="#A855F7"/><text x="640" y="41" fill="#F4F9FD">JetBrains Gateway</text>
-
-    <rect x="0"   y="92" width="268" height="72" rx="10" fill="#0D1624" stroke="#34D399" stroke-opacity="0.5"/>
-    <circle cx="28" cy="128" r="6" fill="#34D399"/><text x="48" y="133" fill="#F4F9FD">44pt+ Thumb Bar</text>
-
-    <rect x="296" y="92" width="268" height="72" rx="10" fill="#0D1624" stroke="#FC6D26" stroke-opacity="0.5"/>
-    <circle cx="324" cy="128" r="6" fill="#FC6D26"/><text x="344" y="133" fill="#F4F9FD">SSH DevContainers</text>
-
-    <rect x="592" y="92" width="268" height="72" rx="10" fill="#0D1624" stroke="#FBBF24" stroke-opacity="0.5"/>
-    <circle cx="620" cy="128" r="6" fill="#FBBF24"/><text x="640" y="133" fill="#F4F9FD">OLED True-Black</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle">
+    <rect x="405" y="724" width="60" height="52" rx="10" fill="#131E2E" stroke="#38BDF8" stroke-opacity="0.4"/>
+    <text x="435" y="755" fill="#F4F9FD">TAB</text>
+    <rect x="475" y="724" width="60" height="52" rx="10" fill="#131E2E" stroke="#38BDF8" stroke-opacity="0.4"/>
+    <text x="505" y="755" fill="#64FAE7">{ }</text>
+    <rect x="545" y="724" width="60" height="52" rx="10" fill="#131E2E" stroke="#38BDF8" stroke-opacity="0.4"/>
+    <text x="575" y="755" fill="#C4B5FD">⌘P</text>
+    <rect x="615" y="724" width="60" height="52" rx="10" fill="#092420" stroke="#34D399" stroke-opacity="0.6"/>
+    <text x="645" y="755" fill="#6EE7B7">RUN ▶</text>
   </g>
-
-  <text x="540" y="982" text-anchor="middle" fill="#8FA3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2">GITLAB.COM/YKZ2111/IDE_CONCEPT // GROOVE LABS</text>
+  <rect x="485" y="920" width="110" height="5" rx="2.5" fill="#F4F9FD" fill-opacity="0.6"/>
 </svg>

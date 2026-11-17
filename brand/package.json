@@ -1,0 +1,13 @@
+{
+  "name": "brand",
+  "version": "1.0.0",
+  "description": "Complete identity and design-system asset pack for **`iDE` (`ide_concept`)**, built in the **Groove Labs // YkZ21** visual system and engineered with `@ui-design-system` + `@mobile-design`.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
