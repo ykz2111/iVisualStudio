@@ -4,7 +4,7 @@ Learned 2026-11-17. Unique skills observed: **734**.
 
 Source index: `.opencode/skills-catalog.md` and `.opencode/skills-catalog.json`. Category counts sum to 734 (460 + 55 + 40 + 19 + 18 + 18 + 17 + 16 + 16 + 11 + 9 + 8 + 6 + 5 + 4 + 3 + 3 + 3 + 3 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1). `.opencode/skill-stack.json` still says `total_available_in_openclaude: 730`. That figure is stale. Do not shrink this index to match it.
 
-This file is routing memory for the next architect. It is not a second catalog. Product surface today is `ide-mobile-studio.html` plus `brand/`. Remotes are GitLab (`gitlab.com/ykz2111/iVisualStudio`, fetch + push) and GitHub (`github.com/ykz2111/iVisualStudio`, push), consolidated under a single `iVisualStudio` remote. GitLab is the fetch source of truth.
+This file is routing memory for the next architect. It is not a second catalog. Product surface today is `ide-mobile-studio.html` plus `brand/`. Remotes are GitLab (`gitlab.com/ykz2111/codespaced`, fetch + push) and GitHub (`github.com/ykz2111/iVisualStudio`, push), consolidated under a single `iVisualStudio` remote. GitLab is the fetch source of truth.
 
 ## How to use the catalog
 

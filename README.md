@@ -19,9 +19,8 @@
 
 **Visual Studio Code, GitHub Codespaces, OpenVSCode Server, JetBrains Gateway & SSH DevContainers — re-engineered for one-handed iOS touch.**
 
-Built under **Groove Labs // YkZ21**. One repository, three remotes:
+Built under **Groove Labs // YkZ21**. One repository, one `iVisualStudio` remote, pushed to two hosts:
 
-- GitLab: https://gitlab.com/ykz2111/iVisualStudio
 - GitLab: https://gitlab.com/ykz2111/codespaced
 - GitHub: https://github.com/ykz2111/iVisualStudio
 
