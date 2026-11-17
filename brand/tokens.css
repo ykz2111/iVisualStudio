@@ -10,7 +10,8 @@
   --ide-bg-elevated: #111926;
   --ide-bg-thumb-bar: #131E2E;
 
-  /* Semantic Inks (WCAG AAA > 11:1 on #05080E) */
+  /* Semantic Inks (measured on #05080E: primary ~18.8:1, secondary ~8.9:1 — AA/AAA;
+     muted ~4.2:1 — decorative use only, not body text) */
   --ide-ink-primary: #F4F9FD;
   --ide-ink-secondary: #9BB0C5;
   --ide-ink-muted: #64748B;
