@@ -1,8 +1,8 @@
 # iDE skill routing memory
 
-Learned 2026-11-17. Unique skills observed: **734**.
+Learned 2026-11-17. Unique skills observed: **740**.
 
-Source index: `.opencode/skills-catalog.md` and `.opencode/skills-catalog.json`. The catalog contains 734 unique skills; keep the stack total aligned with it.
+Source index: `.opencode/skills-catalog.md` and `.opencode/skills-catalog.json`. The catalog contains 740 unique skills; keep the stack total aligned with it.
 
 This file is routing memory for the next architect. It is not a second catalog. Product surface today is `ide-mobile-studio.html` plus `brand/`. Remotes are GitLab (`gitlab.com/ykz2111/codespaced`, fetch + push) and GitHub (`github.com/ykz2111/iVisualStudio`, push), consolidated under a single `iVisualStudio` remote. GitLab is the fetch source of truth.
 
@@ -12,7 +12,7 @@ This file is routing memory for the next architect. It is not a second catalog. 
 2. Load a skill with the skill tool only when that task matches its description.
 3. Never paste the catalog, this file's category map, or a stack of unrelated skill bodies into a design prompt.
 4. Load the smallest set. If two skills do the same job, load the one named under Overlaps and skip the other.
-5. Do not install skills, and do not load `skill-installer`, unless the user asks.
+5. Do not install skills unless the user asks. There is no local installer skill in the current tree.
 6. Hermes copies of the config skill tree are duplicates. A skill that appears in more than one layer is still one id.
 
 Product constraints outrank every skill:
@@ -66,12 +66,12 @@ Load the first column with the skill tool, in order, and only if the task matche
 | Task | Load first | Add only if |
 |---|---|---|
 | Mobile studio UI | `mobile-design`, `ui-design-system`, `claude-design`, `ip-as-logo`, `senior-frontend` | `playground` when editing `ide-mobile-studio.html` controls; `anti-ui-slop` before calling the UI done; `macos-golden-gate-design` only for pane and toolbar restraint |
-| Brand / icon | `ip-as-logo`, `claude-design`, `ui-design-system` | `imagegen` only for a requested raster (wallpaper, OG, mockup). Never as the SVG master |
+| Brand / icon | `ip-as-logo`, `claude-design`, `ui-design-system` | the built-in `experimental_image_generate` tool only for a requested raster (wallpaper, OG, mockup). Never as the SVG master |
 | Tokens / DESIGN.md | `ui-design-system`, `design-md` | `popular-web-designs` as a polish reference only. Do not copy its hex over brand tokens |
 | UX audit | `adversarial-ux-test`, `anti-ui-slop`, `mobile-design`, `design-md` | `senior-frontend` if the audit includes keyboard, screen reader, or phone-width failures; `web-design-reviewer` only for a running page, not the token files |
 | Swift / iOS architecture | `mobile-design`, `senior-architect` | `macos-golden-gate-design` for chrome restraint only; `apple-appstore-reviewer` before a TestFlight or App Store rejection pass; `vscode-ext-commands` only for a VS Code extension command, not the iOS shell |
 | Web playground | `playground`, `claude-design`, `popular-web-designs`, `anti-ui-slop` | `sketch` to compare throwaway variants before touching the studio file; `senior-frontend` when the HTML will be kept |
-| Code review | `code-reviewer`, `clean-code` | `requesting-code-review` before a commit; `review-agent` only when a subagent is doing a read-only defect pass |
+| Code review | `code-reviewer`, `clean-code` | `requesting-code-review` before a commit; `review-and-refactor` only when a subagent is doing a read-only defect pass |
 | Git / PR | `git-commit`, `make-repo-contribution` | `conventional-branch` when creating a branch; `pr-address-feedback` when answering review comments; `gitlab-duo-trial` only if the user asks for a Duo flow. Do not default to `github` (this remote is GitLab) |
 | Docs | `documentation-writer` | `docs-sync-audit` for drift, not for authoring; `create-architectural-decision-record` when the doc is an ADR; `code-wiki` only if a wiki plus Mermaid map is requested |
 | Security review | `security-review`, `senior-security` | `secret-scanning` if CI or credential files are in scope; `mcp-security-audit` if MCP config is in scope; `threat-model-analyst` only when the user explicitly asks for a threat model |
@@ -93,7 +93,7 @@ Ignore means: do not browse that group looking for a skill. Load a named id from
 - **software-development (18):** GitHub CLI, TDD, debugging, exploratory QA, spikes. Do not ignore for implementation, review, and test work. Skip Hermes DOM inspection and language debuggers this repo does not run.
 - **research (17):** Papers, OSINT, scraping, feeds. Ignore. `grounded-citations` only when a claim must be sourced outside the repo.
 - **mlops (16):** GPU training and fine-tunes. Ignore. `obliteratus` is in this group and is denied.
-- **root (16):** Codex, Paseo, Harbor, and lpm host tools, plus `imagegen`, `openai-docs`, `review-agent`, and `skill-installer`. No project-local `.opencode/skills` links are checked in; load an available skill by ID when its job matches. Ignore `harbor`, `lpm`, `lpm-cli`, `lpm-config`, `lpm-memory`, and `paseo*` unless the user is operating those apps. Do not load `skill-installer` unless asked. `openai-docs` is for Codex or ChatGPT Work behavior, not for iDE UI.
+- **root (13):** Codex, Paseo, Harbor, and lpm host tools, plus `skill-creator` and the runtime-provided `browser` skill. No project-local `.opencode/skills` links are checked in; load an available skill by ID when its job matches. Ignore `harbor`, `lpm`, `lpm-cli`, `lpm-config`, `lpm-memory`, and `paseo*` unless the user is operating those apps. `browser` is the in-app browser surface, not a research tool.
 - **autonomous-ai-agents (11):** Delegating work to other CLIs (`claude-code`, `codex`, `grok`, `opencode-cli`, and others). Ignore unless the user asks to hand the task to that CLI.
 - **finance (9):** Valuation workbooks, markets, decks. Ignore.
 - **devops (8):** Docker, tunnels, watchers, Hermes container supervision. Ignore. `pinggy-tunnel` is not the product's SSH or DevContainer client.
@@ -128,12 +128,12 @@ Load the left skill. Skip the right one for this repo.
 | Pocket IDE UI direction | `claude-design` + `mobile-design` | `ui-ux-pro-max` (palette dump; tokens already decide black and canvas), `penpot-uiux-design`, `premium-frontend-ui`, `auteur`, `scrollcraft`, `gsap-framer-scroll-animation` |
 | Visual direction still open | `frontend-design` | `impeccable` (same job, not in the stack) |
 | Generic-UI finish gate | `anti-ui-slop` | `landing-page-conversion-audit` (sales-page CRO) |
-| Icon / mascot master | `ip-as-logo` | `imagegen`, `generate-image`, `nano-banana-pro-openrouter`, `comfyui` for SVG masters. If a raster is requested, load `imagegen` only |
+| Icon / mascot master | `ip-as-logo` | `generate-image`, `nano-banana-pro-openrouter`, `comfyui` are raster paths and must never author an SVG master. If a raster is requested, use the built-in `experimental_image_generate` tool |
 | Token authoring | `ui-design-system` + `design-md` | `popular-web-designs` as a token source |
 | iOS hit targets | `mobile-design` | `macos-golden-gate-design` as the hit-target authority |
 | HTML UI implementation | `senior-frontend` | `senior-fullstack`, `react-best-practices` (no React app in this tree yet) |
 | System shape | `senior-architect` | `architecture-blueprint-generator`, `breakdown-epic-arch` (doc generators, not the implementation blueprint) |
-| Code review | `code-reviewer` | `review-and-refactor`; do not also preload `review-agent` |
+| Code review | `code-reviewer` | `review-and-refactor`; do not preload both |
 | Making a commit | `git-commit` | `git-commit-helper`, `commit-message-storyteller`, `conventional-commit`, `gitmoji` (message drafts, not the commit) |
 | Git host | `make-repo-contribution` | `github`, unless the user explicitly wants the `gh` CLI |
 | User-facing docs | `documentation-writer` | `create-readme`, `readme-blueprint-generator` (README already exists) |
