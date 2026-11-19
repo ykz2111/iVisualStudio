@@ -4,7 +4,7 @@ Learned 2026-11-17. Unique skills observed: **740**.
 
 Source index: `.opencode/skills-catalog.md` and `.opencode/skills-catalog.json`. The catalog contains 740 unique skills; keep the stack total aligned with it.
 
-This file is routing memory for the next architect. It is not a second catalog. Product surface today is `ide-mobile-studio.html` plus `brand/`. Remotes are GitLab (`gitlab.com/ykz2111/codespaced`, fetch + push) and GitHub (`github.com/ykz2111/iVisualStudio`, push), consolidated under a single `iVisualStudio` remote. GitLab is the fetch source of truth.
+This file is routing memory for the next architect. It is not a second catalog. Product surface today is `ide-mobile-studio.html` plus `brand/`. There are two remotes: `origin` is GitLab (`gitlab.com/groove-labz/iVisual-Studio`), and `github` is GitHub (`github.com/ykz2111/iVisualStudio`). Both accept push. GitLab is the fetch source of truth.
 
 ## How to use the catalog
 
@@ -72,7 +72,7 @@ Load the first column with the skill tool, in order, and only if the task matche
 | Swift / iOS architecture | `mobile-design`, `senior-architect` | `macos-golden-gate-design` for chrome restraint only; `apple-appstore-reviewer` before a TestFlight or App Store rejection pass; `vscode-ext-commands` only for a VS Code extension command, not the iOS shell |
 | Web playground | `playground`, `claude-design`, `popular-web-designs`, `anti-ui-slop` | `sketch` to compare throwaway variants before touching the studio file; `senior-frontend` when the HTML will be kept |
 | Code review | `code-reviewer`, `clean-code` | `requesting-code-review` before a commit; `review-and-refactor` only when a subagent is doing a read-only defect pass |
-| Git / PR | `git-commit`, `make-repo-contribution` | `conventional-branch` when creating a branch; `pr-address-feedback` when answering review comments; `gitlab-duo-trial` only if the user asks for a Duo flow. Do not default to `github` (this remote is GitLab) |
+| Git / PR | `git-commit`, `make-repo-contribution` | `conventional-branch` when creating a branch; `pr-address-feedback` when answering review comments; `gitlab-duo-trial` only if the user asks for a Duo flow. Do not load the `github` skill by reflex: `origin` is GitLab, and `github` is the `gh` CLI |
 | Docs | `documentation-writer` | `docs-sync-audit` for drift, not for authoring; `create-architectural-decision-record` when the doc is an ADR; `code-wiki` only if a wiki plus Mermaid map is requested |
 | Security review | `security-review`, `senior-security` | `secret-scanning` if CI or credential files are in scope; `mcp-security-audit` if MCP config is in scope; `threat-model-analyst` only when the user explicitly asks for a threat model |
 | Testing | `test-driven-development`, `webapp-testing` | `systematic-debugging` when a bug already exists; `dogfood` for exploratory QA of the studio; `test-gap-audit` for a coverage question; `javascript-typescript-jest` only if a Jest suite is in the tree |
