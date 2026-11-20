@@ -27,6 +27,8 @@ Ground UI work in `brand/tokens.css`, `brand/design-tokens.json`, `ide-mobile-st
 
 The iOS build plan lives in `docs/IOS-PORT-PLAN.md` (architecture decision, App Store constraints, phases 0–6). The **Build Plan** sheet in `ide-mobile-studio-v2.html` renders those phases — when a phase changes, update the doc first, then the sheet's `BUILD_PLAN` array so the two do not drift.
 
+The model research lives in `docs/CONVERSATION-EXPORT.md` (local Ollama shortlist per M1 memory tier, Groq and OpenCode price tables, Ollama-to-OpenCode routing). The **Research** sheet in `ide-mobile-studio-v2.html` (button `R`, deep link `#research`) renders the `RESEARCH` arrays as a view of it: update the export first, then those arrays.
+
 The screen contract lives in `docs/DESIGN-PLAN.md` (16 screens, the 6×48pt grid, layout arithmetic, semantic colour aliases, per-phase design gate). The build plan wins on *what gets built*; the design plan wins on *what it looks and measures like*. If a colour alias from its §7 is adopted, add it to `brand/tokens.css` and `brand/design-tokens.json` in the same commit.
 
 - Primary controls stay in the bottom 35% thumb arc.

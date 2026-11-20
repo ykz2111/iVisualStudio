@@ -531,6 +531,76 @@
     }
 
     /* ==================================================================
+       RESEARCH SHEET — view of docs/CONVERSATION-EXPORT.md.
+       Shares the plan sheet's modal chrome; only the rows are new.
+       ================================================================== */
+    .res-section { display: flex; flex-direction: column; gap: var(--ide-space-2); }
+
+    .res-heading {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ide-ink-secondary);
+      margin-top: var(--ide-space-2);
+      padding-top: var(--ide-space-2);
+      border-top: 1px solid var(--ide-bg-elevated);
+    }
+
+    .res-row {
+      display: grid;
+      grid-template-columns: minmax(130px, 1fr) auto minmax(0, 1.7fr);
+      gap: var(--ide-space-2);
+      align-items: baseline;
+      padding: var(--ide-space-2) var(--ide-space-3);
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-canvas);
+    }
+    .res-row-local { box-shadow: inset 3px 0 0 var(--dot); }
+    .res-row-hosted { box-shadow: inset 3px 0 0 var(--accent); }
+    .res-row-route { box-shadow: inset 3px 0 0 var(--pillar); }
+
+    .res-name {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-code);
+      font-weight: 700;
+      color: var(--ide-ink-primary);
+      overflow-wrap: anywhere;
+    }
+    .res-meta {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--accent);
+      white-space: nowrap;
+      text-align: right;
+    }
+    .res-note {
+      font-size: var(--ide-type-caption);
+      line-height: 1.45;
+      color: var(--ide-ink-secondary);
+      min-width: 0;
+    }
+    .res-code {
+      display: block;
+      margin-top: 5px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-chassis);
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-primary);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    @media (max-width: 720px) {
+      .res-row { grid-template-columns: 1fr; }
+      .res-meta { text-align: left; }
+    }
+
+    /* ==================================================================
        COLUMN 2 · BRAND EDITOR (identity · marks · palette · wordmark)
        ================================================================== */
     .brand-scroll { overflow-y: auto; }
@@ -695,6 +765,7 @@
       <button type="button" class="btn" id="toggleHeatmapBtn" aria-pressed="false">Thumb-Zone Map <span class="kbd">H</span></button>
       <button type="button" class="btn" id="toggleCmdPaletteBtn" aria-pressed="false">iOS Command Sheet <span class="kbd">⌘P</span></button>
       <button type="button" class="btn" id="planBtn" aria-pressed="false">Build Plan <span class="kbd">P</span></button>
+      <button type="button" class="btn" id="researchBtn" aria-pressed="false">Research <span class="kbd">R</span></button>
       <button type="button" class="btn" id="resetBtn">Reset Brand</button>
       <button type="button" class="btn btn-primary" id="exportKitBtn">Export tokens.css</button>
     </div>
@@ -972,6 +1043,23 @@
       </div>
     </div>
     <div class="plan-body" id="planBody"></div>
+  </section>
+
+  <!-- ============ RESEARCH · view of docs/CONVERSATION-EXPORT.md ============ -->
+  <div class="plan-backdrop" id="researchBackdrop" hidden></div>
+  <section class="plan-sheet" id="researchSheet" role="dialog" aria-modal="true" aria-labelledby="researchTitle" hidden>
+    <span class="plan-grabber" aria-hidden="true"></span>
+    <div class="plan-title-row">
+      <div>
+        <div class="plan-title" id="researchTitle">Research · models &amp; routing</div>
+        <div class="plan-sub">docs/CONVERSATION-EXPORT.md — 4 turns · catalogue snapshot, the export is the source of truth</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a class="btn plan-doc-link" href="./docs/CONVERSATION-EXPORT.md" target="_blank" rel="noopener">Full export</a>
+        <button type="button" class="btn" id="closeResearchBtn" style="min-height:44px;padding:4px 12px;">Close</button>
+      </div>
+    </div>
+    <div class="plan-body" id="researchBody"></div>
   </section>
 
   <footer class="footnote">
@@ -2156,6 +2244,7 @@
         const sheet = document.getElementById("planSheet");
         const btn = document.getElementById("planBtn");
         const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
+        if (willOpen) toggleResearch(false);
         backdrop.hidden = !willOpen;
         sheet.hidden = !willOpen;
         btn.setAttribute("aria-pressed", String(willOpen));
@@ -2191,6 +2280,123 @@
       document.getElementById("planBackdrop").addEventListener("click", function () { togglePlan(false); });
       renderPlanSheet();
 
+      /* ================================================================
+         RESEARCH — the export is the source of truth; this sheet is a
+         curated snapshot of its model tables and routing notes. When the
+         export changes, update the RESEARCH arrays to match.
+         ================================================================ */
+      const RESEARCH = {
+        summary: "4 research turns · 3 model catalogues checked · sizes are Ollama downloads, not memory use",
+        chips: ["Ollama library", "Groq", "OpenCode Models", "OpenCode Go", "M1 memory tiers"],
+        local: [
+          ["bonsai-2:9b", "3.2 GB · 256K", "8 GB pick. Ternary weights with vision and tools; the family spans 911 MB to 8.3 GB."],
+          ["ornith:9b", "5.6 GB · 256K", "Entry point for agentic coding on 16 GB. MIT licence; the 35B variant is 21 GB."],
+          ["mimo-v2.6", "7–9 GB · 256K", "SWE-bench Verified 61.1 against 34 for gpt-oss:20b, at two thirds the size."],
+          ["gemma4:26b", "16–19 GB · 256K", "3.8B active with vision and a native system role; 31B scores SWE-V 66.6. Has -mlx tags."],
+          ["flint:40b", "23 GB · 256K", "2.5B active. SWE-V 74.2, Terminal-Bench 2.1 54.9 — the best 32 GB coding pick."],
+          ["muse-glimmer:30b", "18 GB · 128K", "Meta, Apache 2.0, built for tool failure and retry. SWE-V 76.0, MCP-Atlas 75.5."],
+          ["qwen3.6:27b", "18–19 GB · 256K", "Highest published SWE-V at this size (77.2), with thinking preservation across turns."],
+          ["nemotron-3.5-lightning", "19–25 GB · 1M", "3B active, 1M context, tuned for always-on agents."],
+          ["qwen3-coder-next", "52 GB · 256K", "Needs 64 GB: 80B with 3B active, non-thinking, fast per token."],
+          ["ripple-preview:65b", "39–46 GB · 2M", "Needs 64 GB: 65B dense, Terminal-Bench 80.5, realistically 4–6 tok/s."]
+        ],
+        hosted: [
+          ["gpt-oss-20b · Groq", "$0.075 / $0.30", "~1000 t/s at 131K context on the self-serve developer plan."],
+          ["gpt-oss-120b · Groq", "$0.15 / $0.60", "~500 t/s. Llama 3.3 70B moved to Enterprise only."],
+          ["qwen3.8-27b · Groq", "$0.80 / $4.00", "~450 t/s; the only other coding lane Groq sells directly."],
+          ["Claude Haiku 5.5 · OpenCode", "$0.10 / $0.50", "Cheapest frontier lane in the pay-per-token catalogue."],
+          ["Qwen3.8 Flash · OpenCode", "$0.15 / $0.47", "Cheapest open-weight lane, 1M context."],
+          ["DeepSeek V4.1 Flash · Go", "$10 / month", "Best Go allowance: about 43,300 requests per 5-hour window."],
+          ["Kimi K2.7 Code · OpenCode", "$0.95 / $4.00", "Coding-specialised Kimi, 262K context."],
+          ["Claude Fable 5.1 · OpenCode", "$10 / $50", "No local equivalent exists — closed weights, so it stays hosted."]
+        ],
+        routes: [
+          ["Auto-discovery", "no config", "OpenCode inventories Ollama at 127.0.0.1:11434 and reads context, vision and tool support itself.", "/models → ollama/flint:40b"],
+          ["ollama launch", "one command", "Inline config; it never rewrites ~/.config/opencode/opencode.json, and models defined only there do not appear in its picker.", "ollama launch opencode --model flint:40b"],
+          ["Provider block", "project config", "Plural keys on current OpenCode; Ollama's own page still shows the older provider / npm / options shape.", '"providers": { "ollama": { "settings": { "baseURL": "http://127.0.0.1:11434/v1" } } }'],
+          ["Context gate", "required", "Under 24 GiB of VRAM Ollama serves 4k context; OpenCode needs 64k or more. Confirm the value with ollama ps.", "OLLAMA_CONTEXT_LENGTH=64000 ollama serve"]
+        ]
+      };
+
+      function researchRow(row, cls) {
+        return '<article class="res-row ' + cls + '">' +
+          '<span class="res-name">' + esc(row[0]) + "</span>" +
+          '<span class="res-meta">' + esc(row[1]) + "</span>" +
+          '<p class="res-note">' + esc(row[2]) + "</p>" +
+          "</article>";
+      }
+
+      function renderResearchSheet() {
+        document.getElementById("researchBody").innerHTML =
+          '<div class="plan-summary">' + esc(RESEARCH.summary) + "</div>" +
+          '<div class="plan-chips">' + RESEARCH.chips.map(function (c) {
+            return '<span class="badge">' + esc(c) + "</span>";
+          }).join("") + "</div>" +
+          '<div class="res-section">' +
+            '<span class="res-heading">Local · what actually fits an M1</span>' +
+            RESEARCH.local.map(function (r) { return researchRow(r, "res-row-local"); }).join("") +
+          "</div>" +
+          '<div class="res-section">' +
+            '<span class="res-heading">Hosted · self-serve list prices per 1M tokens</span>' +
+            RESEARCH.hosted.map(function (r) { return researchRow(r, "res-row-hosted"); }).join("") +
+          "</div>" +
+          '<div class="res-section">' +
+            '<span class="res-heading">Routing Ollama into OpenCode</span>' +
+            RESEARCH.routes.map(function (r) {
+              return '<article class="res-row res-row-route">' +
+                '<span class="res-name">' + esc(r[0]) + "</span>" +
+                '<span class="res-meta">' + esc(r[1]) + "</span>" +
+                '<div class="res-note">' + esc(r[2]) +
+                  '<code class="res-code">' + esc(r[3]) + "</code>" +
+                "</div>" +
+              "</article>";
+            }).join("") +
+          "</div>";
+      }
+
+      let lastFocusBeforeResearch = null;
+
+      function toggleResearch(forceState) {
+        const backdrop = document.getElementById("researchBackdrop");
+        const sheet = document.getElementById("researchSheet");
+        const btn = document.getElementById("researchBtn");
+        const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
+        if (willOpen) togglePlan(false);
+        backdrop.hidden = !willOpen;
+        sheet.hidden = !willOpen;
+        btn.setAttribute("aria-pressed", String(willOpen));
+        if (willOpen) {
+          lastFocusBeforeResearch = document.activeElement;
+          const first = sheet.querySelector(".plan-doc-link");
+          if (first) first.focus();
+        } else if (lastFocusBeforeResearch && typeof lastFocusBeforeResearch.focus === "function") {
+          lastFocusBeforeResearch.focus();
+          lastFocusBeforeResearch = null;
+        }
+      }
+
+      /* Same focus trap contract as the ⌘P dialog and the plan sheet */
+      document.getElementById("researchSheet").addEventListener("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        const sheet = e.currentTarget;
+        const focusables = Array.prototype.slice.call(sheet.querySelectorAll("button, a"));
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+
+      document.getElementById("researchBtn").addEventListener("click", function () { toggleResearch(); });
+      document.getElementById("closeResearchBtn").addEventListener("click", function () { toggleResearch(false); });
+      document.getElementById("researchBackdrop").addEventListener("click", function () { toggleResearch(false); });
+      renderResearchSheet();
+
       /* ---------------- Keyboard ---------------- */
       window.addEventListener("keydown", function (e) {
         if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
@@ -2203,7 +2409,8 @@
         const k = e.key.toLowerCase();
         if (k === "h") toggleHeatmap();
         else if (k === "p") togglePlan();
-        else if (k === "escape") { toggleCmdPalette(false); togglePlan(false); }
+        else if (k === "r") toggleResearch();
+        else if (k === "escape") { toggleCmdPalette(false); togglePlan(false); toggleResearch(false); }
         else if (k >= "1" && k <= "8") {
           const vk = "v" + k;
           if (VARIANTS[vk]) { brand.variant = vk; renderStudio(); }
@@ -2218,6 +2425,8 @@
 
       /* Deep link: ide-mobile-studio-v2.html#plan (used by the v1 studio) */
       if (location.hash === "#plan") togglePlan(true);
+      /* Deep link: ide-mobile-studio-v2.html#research (used by the v1 studio) */
+      if (location.hash === "#research") toggleResearch(true);
     })();
   </script>
 </body>
