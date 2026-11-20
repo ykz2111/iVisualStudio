@@ -21,7 +21,7 @@
 
 Built under **Groove Labs // YkZ21**. One repository, one `iVisualStudio` remote, pushed to two hosts:
 
-- GitLab: https://gitlab.com/ykz2111/codespaced
+- GitLab: https://gitlab.com/groove-labz/iVisual-Studio
 - GitHub: https://github.com/ykz2111/iVisualStudio
 
 ---
