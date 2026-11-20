@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Atomic double-push: send the current branch to origin (GitHub) AND gitlab
+# (GitLab). If the first push fails, hold back and surface the error so the
+# commit does not silently land on only one remote.
+#
+# Configure the two remotes in the repo before relying on this:
+#   origin = https://github.com/ykz2111/iVisualStudio.git
+#   gitlab = <your GitLab URL, SSH or HTTPS>
+#
+# Designed to be called from the post-commit hook in .git/hooks/post-commit
+# and from the command line:
+
+#   bin/double-push
+#   bin/double-push --no-verify   # skip remote gate, still push both
+
+set -euo pipefail
+
+REMOTES=(origin gitlab)
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
+if [[ "${BRANCH}" == "HEAD" ]]; then
+  echo "double-push: detached HEAD — refusing to guess a remote ref." >&2
+  echo "  checkout a branch first, e.g.: git checkout -B <name> <sha>" >&2
+  exit 1
+fi
+
+# Cheap preflight: refuse if the working tree has uncommitted changes.
+if ! git diff --quiet --exit-code HEAD 2>/dev/null; then
+  echo "double-push: working tree dirty — commit or stash first." >&2
+  exit 1
+fi
+
+PUSHED=()
+FAILED=()
+
+for remote in "${REMOTES[@]}"; do
+  if ! git remote get-url "$remote" >/dev/null 2>&1; then
+    echo "double-push: remote '$remote' not configured in this repo." >&2
+    echo "  add it: git remote add $remote <url>" >&2
+    exit 1
+  fi
+
+  echo "→ pushing ${BRANCH} → ${remote} ..."
+  if git push "$remote" "$BRANCH" --follow-tags; then
+    PUSHED+=("$remote")
+  else
+    FAILED+=("$remote")
+    echo "double-push: ${remote} push failed." >&2
+  fi
+done
+
+if [[ ${#FAILED[@]} -gt 0 ]]; then
+  echo "" >&2
+  echo "double-push: pushed to ${PUSHED[*]:-none}; FAILED on ${FAILED[*]}" >&2
+  echo "  The commit is local. Re-run bin/double-push after fixing the failed remote." >&2
+  exit 297
+fi
+
+echo ""
+echo "double-push: ${BRANCH} landed on ${PUSHED[*]}."

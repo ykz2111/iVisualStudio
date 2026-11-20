@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# refresh-dropbox: re-mirror the working tree of this repo into the
+# Dropbox cloud-shim path so it stays usable as a passive browse-only
+# reflection. Best effort. Cloud-shim filesystems inside
+# ~/Library/CloudStorage/Dropbox-*/ violate POSIX atomic-rename, which
+# means a real .git directory will not survive there. So we copy files
+# only and never touch .git inside the Dropbox folder.
+#
+# Usage:
+#   bin/refresh-dropbox                    # mirror to default path
+#   bin/refresh-dropbox /path/to/dropbox   # mirror to custom path
+#
+# Exit codes:
+#   0  ok, paths enumerated and copied
+#   1  source not a git work tree
+#   2  destination unreachable / unwritable
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+DEFAULT_DEST="/Users/ykz21/Library/CloudStorage/Dropbox-groovelabs/CODING/IVS GH"
+DEST="${1:-$DEFAULT_DEST}"
+
+if [[ ! -d "$REPO_ROOT/.git" ]]; then
+  echo "refresh-dropbox: source is not a git work tree: $REPO_ROOT" >&2
+  exit 1
+fi
+
+if [[ "$DEST" == "$REPO_ROOT" ]]; then
+  echo "refresh-dropbox: refusing to mirror a repo onto itself." >&2
+  exit 1
+fi
+
+# Guard rails — never let a `.git` directory travel through this script.
+if [[ "$DEST" == *"/.git" || "$DEST" == *"/.git/" ]]; then
+  echo "refresh-dropbox: destination looks like .git ($DEST) — refusing." >&2
+  exit 2
+fi
+
+mkdir -p "$DEST"
+
+# Copy everything except .git. rsync strips leading-slash artifacts, keeps
+# hidden files (--include='.*'). --delete removes files in the mirror that
+# no longer exist upstream, so brand/ or tokens.css you delete on the Mac
+# also disappears in Dropbox.
+rsync -a \
+  --exclude='.git' \
+  --exclude='.gitignore.swap' \
+  --exclude='*.swp' \
+  --include='.*' \
+  --delete \
+  "$REPO_ROOT/" "$DEST/"
+
+# Sanity check: .git must NOT have appeared in the destination.
+if [[ -d "$DEST/.git" ]]; then
+  echo "refresh-dropbox: WARNING — .git appeared in $DEST — removing." >&2
+  rm -rf "$DEST/.git"
+fi
+
+COUNT=$(find "$DEST" -type f | wc -l | tr -d ' ')
+echo "refresh-dropbox: mirrored $COUNT files → $DEST"
