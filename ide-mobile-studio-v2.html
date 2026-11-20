@@ -429,6 +429,108 @@
     .cmd-item:hover { border-color: var(--pillar); }
 
     /* ==================================================================
+       BUILD PLAN SHEET — view of docs/IOS-PORT-PLAN.md.
+       Page-level modal, deliberately NOT clipped by the 368px phone stage.
+       ================================================================== */
+    .plan-backdrop {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(5, 8, 14, 0.78);
+    }
+    .plan-backdrop[hidden] { display: none; }
+
+    .plan-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 61;
+      max-height: 86vh;
+      display: flex; flex-direction: column;
+      background: var(--ide-bg-chassis);
+      border-top: 1.5px solid var(--accent);
+      border-radius: var(--studio-radius-md) var(--studio-radius-md) 0 0;
+      box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.75);
+      padding-bottom: var(--ide-safe-bottom-home);
+    }
+    .plan-sheet[hidden] { display: none; }
+
+    .plan-grabber {
+      width: 36px; height: 4px; border-radius: 2px;
+      background: var(--ide-ink-muted);
+      align-self: center;
+      margin: var(--ide-space-2) 0 var(--ide-space-1);
+      flex-shrink: 0;
+    }
+    .plan-title-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: var(--ide-space-2);
+      padding: 0 var(--ide-space-4) var(--ide-space-2);
+      border-bottom: 1px solid var(--ide-bg-elevated);
+      flex-shrink: 0;
+    }
+    .plan-title { font-size: var(--ide-type-headline); font-weight: 700; color: var(--ide-ink-primary); }
+    .plan-sub {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-secondary);
+    }
+    .plan-doc-link { text-decoration: none; }
+
+    .plan-body {
+      flex: 1 1 auto; min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: var(--ide-space-3) var(--ide-space-4);
+      display: flex; flex-direction: column; gap: var(--ide-space-2);
+    }
+    .plan-summary {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--accent);
+    }
+    .plan-chips { display: flex; flex-wrap: wrap; gap: var(--ide-hit-gap-min); }
+
+    .plan-phase {
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: var(--ide-space-2);
+      align-items: start;
+      padding: var(--ide-space-2) var(--ide-space-3);
+      border-radius: var(--studio-radius-sm);
+      border: 1px solid var(--ide-bg-elevated);
+      background: var(--ide-bg-canvas);
+    }
+    .plan-phase-gate { border-color: var(--dot); box-shadow: inset 3px 0 0 var(--dot); }
+    .plan-num {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      font-weight: 700;
+      color: var(--accent);
+      padding-top: 2px;
+    }
+    .plan-phase-gate .plan-num { color: var(--dot); }
+    .plan-phase-main { min-width: 0; }
+    .plan-phase-name {
+      font-size: var(--ide-type-code);
+      font-weight: 700;
+      color: var(--ide-ink-primary);
+    }
+    .plan-goal, .plan-accept {
+      font-size: var(--ide-type-caption);
+      line-height: 1.45;
+      color: var(--ide-ink-secondary);
+      margin-top: 3px;
+    }
+    .plan-accept {
+      font-family: var(--ide-font-mono);
+      padding-top: 4px;
+      border-top: 1px dashed rgba(155, 176, 197, 0.2);
+    }
+    .plan-accept b { color: var(--dot); font-weight: 700; letter-spacing: 0.06em; }
+    .plan-weeks {
+      font-family: var(--ide-font-mono);
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-secondary);
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* ==================================================================
        COLUMN 2 · BRAND EDITOR (identity · marks · palette · wordmark)
        ================================================================== */
     .brand-scroll { overflow-y: auto; }
@@ -592,6 +694,7 @@
     <div class="topbar-actions">
       <button type="button" class="btn" id="toggleHeatmapBtn" aria-pressed="false">Thumb-Zone Map <span class="kbd">H</span></button>
       <button type="button" class="btn" id="toggleCmdPaletteBtn" aria-pressed="false">iOS Command Sheet <span class="kbd">⌘P</span></button>
+      <button type="button" class="btn" id="planBtn" aria-pressed="false">Build Plan <span class="kbd">P</span></button>
       <button type="button" class="btn" id="resetBtn">Reset Brand</button>
       <button type="button" class="btn btn-primary" id="exportKitBtn">Export tokens.css</button>
     </div>
@@ -852,6 +955,23 @@
       <span class="panel-label">GitLab / GitHub repo banner · 1280×360 · live from your brand</span>
       <div class="media-frame" id="bannerPreview"></div>
     </div>
+  </section>
+
+  <!-- ============ BUILD PLAN · view of docs/IOS-PORT-PLAN.md ============ -->
+  <div class="plan-backdrop" id="planBackdrop" hidden></div>
+  <section class="plan-sheet" id="planSheet" role="dialog" aria-modal="true" aria-labelledby="planTitle" hidden>
+    <span class="plan-grabber" aria-hidden="true"></span>
+    <div class="plan-title-row">
+      <div>
+        <div class="plan-title" id="planTitle">Build Plan · iOS port</div>
+        <div class="plan-sub">docs/IOS-PORT-PLAN.md — phases 0–6 · source of truth is the doc</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a class="btn plan-doc-link" href="./docs/IOS-PORT-PLAN.md" target="_blank" rel="noopener">Full doc</a>
+        <button type="button" class="btn" id="closePlanBtn" style="min-height:44px;padding:4px 12px;">Close</button>
+      </div>
+    </div>
+    <div class="plan-body" id="planBody"></div>
   </section>
 
   <footer class="footnote">
@@ -1966,6 +2086,111 @@
         runCompliance();
       });
 
+      /* ================================================================
+         BUILD PLAN — the sheet is a view; docs/IOS-PORT-PLAN.md is the
+         source of truth. Keep these two in step when a phase changes.
+         ================================================================ */
+      const BUILD_PLAN = [
+        {
+          id: "P0", name: "De-risk the two unknowns", weeks: "1 wk", gate: true,
+          goal: "Throwaway build. Does Runestone take paste, IME, dictation and undo on iOS 18, and does a 48pt arrow-key row feel right at 13.5pt? Second spike: swift-nio-ssh round-trips cat on a real host.",
+          accept: "40 characters of Swift typed on a phone without wanting to throw it. If this week stretches to three, the scope is wrong."
+        },
+        {
+          id: "P1", name: "Native skeleton, read-only", weeks: "2–3 wk",
+          goal: "Token-driven Theme, workspace list, file tree, read-only syntax viewer, in-file search, Quick Open. 44pt minimum, 48pt bar, OLED #000000, Dynamic Type through the 11→34pt ramp.",
+          accept: "Read brand/tokens.css at 200% Dynamic Type with no clipping. Internal TestFlight build exists."
+        },
+        {
+          id: "P2", name: "The editor you can actually use", weeks: "3–4 wk", gate: true,
+          goal: "Runestone, line numbers, thumb bar v1 (cursor cluster, Tab, brackets, undo), indent engine, find & replace, autosave, iPad hardware keyboard and split view, token haptics.",
+          accept: "Edit an 800-line Swift file for 10 minutes without one accidental cursor jump, and with autocorrect never changing what you typed."
+        },
+        {
+          id: "P3", name: "Round trip: it talks to the world", weeks: "3–4 wk",
+          goal: "WorkspaceProvider + LocalProvider + SSHProvider, GitHub REST git first and libgit2 later, Codespaces device flow, connection pill with live RTT, webview behind an Advanced toggle.",
+          accept: "Clone, edit, diff, commit and push to GitHub from the phone — then do it again over SSH to a real devcontainer."
+        },
+        {
+          id: "P4", name: "Run it", weeks: "3–4 wk",
+          goal: "SwiftTerm terminal sheet, named tasks streamed over the same session, port list with copyable URLs, build → haptics → Live Activity, filtered ANSI log viewer.",
+          accept: "Run npm test in a Codespace, read the failure, fix it and re-run without leaving the app."
+        },
+        {
+          id: "P5", name: "Make it smart", weeks: "4 wk",
+          goal: "LSP over the existing session (completions, diagnostics, hover, definition in a sheet), selection-scoped lpBOT, share extension and Files provider, Stage Manager polish.",
+          accept: "A missing import is flagged in-editor and one tap inserts it."
+        },
+        {
+          id: "P6", name: "App Store hardening", weeks: "2 wk",
+          goal: "Privacy manifest, purpose strings, account deletion, onboarding that explains where code runs, review notes with a demo codespace and SSH host, accessibility and light-mode audit.",
+          accept: "Submitted, with the is-this-a-thin-client answer already sitting in the review notes."
+        }
+      ];
+
+      function renderPlanSheet() {
+        document.getElementById("planBody").innerHTML =
+          '<div class="plan-summary">' + esc(BUILD_PLAN.length + " phases · ~16 weeks part-time · the editor is the only hard part, the rest is plumbing") + "</div>" +
+          '<div class="plan-chips">' +
+            '<span class="badge"><span class="badge-dot"></span>native editor first</span>' +
+            '<span class="badge">webview = fallback mode</span>' +
+            '<span class="badge">no code executed on device</span>' +
+          "</div>" +
+          BUILD_PLAN.map(function (p) {
+            return '<article class="plan-phase' + (p.gate ? " plan-phase-gate" : "") + '">' +
+              '<span class="plan-num">' + esc(p.id) + "</span>" +
+              '<div class="plan-phase-main">' +
+                '<div class="plan-phase-name">' + esc(p.name) + (p.gate ? " · gate" : "") + "</div>" +
+                '<p class="plan-goal">' + esc(p.goal) + "</p>" +
+                '<p class="plan-accept"><b>ACCEPT</b> ' + esc(p.accept) + "</p>" +
+              "</div>" +
+              '<span class="plan-weeks">' + esc(p.weeks) + "</span>" +
+            "</article>";
+          }).join("");
+      }
+
+      let lastFocusBeforePlan = null;
+
+      function togglePlan(forceState) {
+        const backdrop = document.getElementById("planBackdrop");
+        const sheet = document.getElementById("planSheet");
+        const btn = document.getElementById("planBtn");
+        const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
+        backdrop.hidden = !willOpen;
+        sheet.hidden = !willOpen;
+        btn.setAttribute("aria-pressed", String(willOpen));
+        if (willOpen) {
+          lastFocusBeforePlan = document.activeElement;
+          const first = sheet.querySelector(".plan-doc-link");
+          if (first) first.focus();
+        } else if (lastFocusBeforePlan && typeof lastFocusBeforePlan.focus === "function") {
+          lastFocusBeforePlan.focus();
+          lastFocusBeforePlan = null;
+        }
+      }
+
+      /* Same focus trap contract as the ⌘P dialog */
+      document.getElementById("planSheet").addEventListener("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        const sheet = e.currentTarget;
+        const focusables = Array.prototype.slice.call(sheet.querySelectorAll("button, a"));
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+
+      document.getElementById("planBtn").addEventListener("click", function () { togglePlan(); });
+      document.getElementById("closePlanBtn").addEventListener("click", function () { togglePlan(false); });
+      document.getElementById("planBackdrop").addEventListener("click", function () { togglePlan(false); });
+      renderPlanSheet();
+
       /* ---------------- Keyboard ---------------- */
       window.addEventListener("keydown", function (e) {
         if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
@@ -1977,7 +2202,8 @@
         if (e.metaKey || e.ctrlKey || e.altKey) return;
         const k = e.key.toLowerCase();
         if (k === "h") toggleHeatmap();
-        else if (k === "escape") toggleCmdPalette(false);
+        else if (k === "p") togglePlan();
+        else if (k === "escape") { toggleCmdPalette(false); togglePlan(false); }
         else if (k >= "1" && k <= "8") {
           const vk = "v" + k;
           if (VARIANTS[vk]) { brand.variant = vk; renderStudio(); }
@@ -1989,6 +2215,9 @@
       renderPhoneEditor();
       renderStudio();
       runCompliance();
+
+      /* Deep link: ide-mobile-studio-v2.html#plan (used by the v1 studio) */
+      if (location.hash === "#plan") togglePlan(true);
     })();
   </script>
 </body>
