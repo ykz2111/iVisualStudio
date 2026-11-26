@@ -1,13 +1,50 @@
 import Foundation
 import UniformTypeIdentifiers
 
+/// A GitHub repository behind a workspace. `baseCommit` and `baseTree` are the
+/// last commit this device synced with; `blobs` records the blob id of every
+/// file that was pulled down, so a commit only sends what actually changed.
+struct GitHubBinding: Hashable, Codable {
+    let owner: String
+    let repo: String
+    let branch: String
+    var baseCommit: String
+    var baseTree: String
+    var blobs: [String: String]
+
+    var fullName: String { "\(owner)/\(repo)" }
+    var label: String { "\(fullName) · \(branch)" }
+}
+
+/// An SSH host behind a workspace. `remotePath` is the directory mirrored into
+/// the workspace folder; edits are written back over the same session.
+struct SSHBinding: Hashable, Codable {
+    let host: String
+    let port: Int
+    let username: String
+    let remotePath: String
+
+    var label: String { "\(username)@\(host)" }
+}
+
 struct Workspace: Identifiable, Hashable {
     let id: String
     let name: String
     let rootURL: URL?
+    var github: GitHubBinding?
+    var ssh: SSHBinding?
 
     static let sample = Workspace(id: "ide-sample", name: "iDE Sample", rootURL: nil)
     var isSample: Bool { rootURL == nil }
+    var isGitHub: Bool { github != nil }
+    var isSSH: Bool { ssh != nil }
+
+    /// Protocol line under a workspace card (design plan S1: protocol · latency).
+    var transportLabel: String {
+        if let github { return "HTTPS · GitHub · \(github.branch)" }
+        if let ssh { return "SSH · \(ssh.label)" }
+        return isSample ? "Sample project · read-write" : "Local folder · editable"
+    }
 }
 
 struct CodeFile: Identifiable, Hashable {
@@ -79,6 +116,7 @@ enum NavigationRoute: Hashable {
     case workspace(Workspace)
     case directory(Workspace, String)
     case file(CodeFile)
+    case web(String)
 }
 
 struct WorkspaceEntry: Identifiable, Hashable {
@@ -92,9 +130,23 @@ struct WorkspaceEntry: Identifiable, Hashable {
 }
 
 enum WorkspaceContent {
-    private static let ignoredDirectoryNames: Set<String> = [
+    static let ignoredDirectoryNames: Set<String> = [
         ".git", "node_modules", "Pods", ".build", "DerivedData", "build", "dist"
     ]
+
+    /// Text test by path only, for content that has not been written yet.
+    static func isLikelyTextPath(_ path: String) -> Bool {
+        let url = URL(fileURLWithPath: path)
+        let name = url.lastPathComponent
+        let textExtensions: Set<String> = [
+            "swift", "h", "m", "mm", "c", "cc", "cpp", "cxx", "rs", "go", "py", "rb",
+            "js", "jsx", "ts", "tsx", "html", "css", "scss", "json", "xml", "yaml", "yml",
+            "toml", "md", "txt", "sh", "bash", "zsh", "sql", "kt", "java", "dart", "php",
+            "vue", "svelte", "gradle", "properties", "plist", "xcconfig", "gitignore", "makefile"
+        ]
+        return textExtensions.contains(url.pathExtension.lowercased()) ||
+            ["Makefile", "Dockerfile", ".gitignore"].contains(name)
+    }
 
     static func entries(in workspace: Workspace, at path: String = "") -> [WorkspaceEntry] {
         if workspace.isSample {
@@ -183,7 +235,7 @@ enum WorkspaceContent {
             }
     }
 
-    private static func isLikelyTextFile(_ url: URL) -> Bool {
+    static func isLikelyTextFile(_ url: URL) -> Bool {
         if let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType,
            type.conforms(to: .text) || type.conforms(to: .sourceCode) {
             return true

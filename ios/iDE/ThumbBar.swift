@@ -122,12 +122,27 @@ struct ThumbBar: View {
     }
 }
 
+/// Haptics wired to the token table, and silenced from Settings (Phase 6).
 enum Haptics {
     static func light() {
+        guard IDESettings.hapticsEnabled else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     static func medium() {
+        guard IDESettings.hapticsEnabled else { return }
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
+
+    /// Build or task finished cleanly.
+    static func success() {
+        guard IDESettings.hapticsEnabled else { return }
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    /// Push rejected, auth failed, command exited non-zero.
+    static func error() {
+        guard IDESettings.hapticsEnabled else { return }
+        UINotificationFeedbackGenerator().notificationOccurred(.error)
     }
 }

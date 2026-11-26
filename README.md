@@ -38,6 +38,31 @@ Open **[`./ide-mobile-studio.html`](./ide-mobile-studio.html)** in any browser t
 
 ---
 
+## Native iOS app (`./ios/`)
+
+A SwiftUI shell with a native editor — built against `docs/IOS-PORT-PLAN.md`
+(phases 1–3 shipped, 4–6 partial) and `docs/DESIGN-PLAN.md`.
+
+```sh
+open ios/iDE.xcodeproj    # Xcode 26+, iOS 18+
+```
+
+| Surface | What it does |
+|---|---|
+| Workspaces | Sample, imported folders (security-scoped bookmarks), GitHub clones, SSH hosts — all persisted across relaunch |
+| Editor | Native `UITextView` editing, line numbers, indent engine, find & replace with regex, autosave with a 0.9 s debounce |
+| Thumb bar | 48 pt cursor cluster, brackets, symbols page, undo/redo, above the keyboard |
+| Git | Changes → unified diff (glyph + rule, never colour alone) → commit, pushed through GitHub's blobs → tree → commit → ref API |
+| SSH | `swift-nio-ssh`, pinned host keys, mirrored tree with per-file push-back, terminal sheet, task runner, port list |
+| Diagnostics | Minimal LSP client over the session (completion, definition, publishDiagnostics) |
+| lpBOT | Selection-scoped assist against a model endpoint you name; off until configured |
+| Connections | The signature pill: host · protocol · live round trip, text only, no pulsing |
+
+Credentials live in the Keychain. No code executes on device by design (build
+plan §5); the webview runs remote VS Code only behind the Advanced toggle.
+
+---
+
 ## Mobile UX & UI Design System (`@mobile-design` + `@ui-design-system`)
 
 | Principle | Desktop VS Code Problem on Phone | `iDE` iOS Solution |

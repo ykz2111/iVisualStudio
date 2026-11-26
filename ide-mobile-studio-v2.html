@@ -2195,22 +2195,22 @@
           accept: "Edit an 800-line Swift file for 10 minutes without one accidental cursor jump, and with autocorrect never changing what you typed."
         },
         {
-          id: "P3", name: "Round trip: it talks to the world", weeks: "3–4 wk",
+          id: "P3", name: "Round trip: it talks to the world", weeks: "3–4 wk", status: "shipped",
           goal: "WorkspaceProvider + LocalProvider + SSHProvider, GitHub REST git first and libgit2 later, Codespaces device flow, connection pill with live RTT, webview behind an Advanced toggle.",
           accept: "Clone, edit, diff, commit and push to GitHub from the phone — then do it again over SSH to a real devcontainer."
         },
         {
-          id: "P4", name: "Run it", weeks: "3–4 wk",
+          id: "P4", name: "Run it", weeks: "3–4 wk", status: "partial · exec, tasks, ports",
           goal: "SwiftTerm terminal sheet, named tasks streamed over the same session, port list with copyable URLs, build → haptics → Live Activity, filtered ANSI log viewer.",
           accept: "Run npm test in a Codespace, read the failure, fix it and re-run without leaving the app."
         },
         {
-          id: "P5", name: "Make it smart", weeks: "4 wk",
+          id: "P5", name: "Make it smart", weeks: "4 wk", status: "partial · minimal LSP",
           goal: "LSP over the existing session (completions, diagnostics, hover, definition in a sheet), selection-scoped lpBOT, share extension and Files provider, Stage Manager polish.",
           accept: "A missing import is flagged in-editor and one tap inserts it."
         },
         {
-          id: "P6", name: "App Store hardening", weeks: "2 wk",
+          id: "P6", name: "App Store hardening", weeks: "2 wk", status: "partial · manifest, onboarding",
           goal: "Privacy manifest, purpose strings, account deletion, onboarding that explains where code runs, review notes with a demo codespace and SSH host, accessibility and light-mode audit.",
           accept: "Submitted, with the is-this-a-thin-client answer already sitting in the review notes."
         }
@@ -2228,7 +2228,8 @@
             return '<article class="plan-phase' + (p.gate ? " plan-phase-gate" : "") + '">' +
               '<span class="plan-num">' + esc(p.id) + "</span>" +
               '<div class="plan-phase-main">' +
-                '<div class="plan-phase-name">' + esc(p.name) + (p.gate ? " · gate" : "") + "</div>" +
+                '<div class="plan-phase-name">' + esc(p.name) + (p.gate ? " · gate" : "") +
+                  (p.status ? ' <span class="badge">' + esc(p.status) + "</span>" : "") + "</div>" +
                 '<p class="plan-goal">' + esc(p.goal) + "</p>" +
                 '<p class="plan-accept"><b>ACCEPT</b> ' + esc(p.accept) + "</p>" +
               "</div>" +

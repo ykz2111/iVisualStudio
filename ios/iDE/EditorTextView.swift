@@ -40,6 +40,19 @@ final class EditorHandle: ObservableObject {
         textView?.insertText(text)
     }
 
+    /// Replaces the current selection (or inserts at the caret when there is
+    /// none) through the text view's undo stack, so an applied proposal is one
+    /// undo away from being rejected.
+    func replaceSelection(with text: String) {
+        guard let textView else { return }
+        let range = textView.selectedRange
+        if range.length > 0 {
+            textView.performReplace(range, with: text)
+        } else {
+            textView.insertText(text)
+        }
+    }
+
     func tabKey() {
         textView?.insertTabOrIndentBlock()
     }
@@ -66,6 +79,22 @@ final class EditorHandle: ObservableObject {
 
     func invalidateGutter() {
         gutter?.setNeedsDisplay()
+    }
+
+    /// The current selection as plain text, trimmed. Empty when nothing is
+    /// selected, which is what keeps the assist selection-scoped.
+    func selectedText() -> String {
+        guard let textView else { return "" }
+        let range = textView.selectedRange
+        guard range.length > 0 else { return "" }
+        let source = textView.text ?? ""
+        let nsSource = source as NSString
+        let clamped = NSRange(
+            location: min(range.location, nsSource.length),
+            length: max(min(range.length, nsSource.length - min(range.location, nsSource.length)), 0)
+        )
+        guard clamped.length > 0 else { return "" }
+        return nsSource.substring(with: clamped).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: Find & replace
@@ -138,8 +167,7 @@ final class EditorHandle: ObservableObject {
         performFind(query: findQuery, isRegex: findIsRegex, caseSensitive: findIsCaseSensitive)
     }
 
-    func jump(toLine line: Int) {
-        guard let textView else { return }
+    func jump(toLine line: Int) {        guard let textView else { return }
         let source = textView.text ?? ""
         let nsSource = source as NSString
         let total = max(source.components(separatedBy: .newlines).count, 1)

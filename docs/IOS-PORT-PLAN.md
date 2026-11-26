@@ -169,6 +169,29 @@ string for network/keychain use.
 Durations assume one developer plus agent assistance, part-time. Acceptance
 criteria are binary — do not advance on "looks fine".
 
+**Implementation status (2026-11).** Phases 1–3 are built in `ios/iDE/`. Phase 4
+and 5 landed in a deliberately thinner shape: the terminal is a streamed `exec`
+surface rather than a `SwiftTerm` emulator, and the language server is a
+four-request LSP client (`initialize`, `didOpen`, `completion`, `definition`,
+`publishDiagnostics`) rather than a full protocol surface. Phase 6 shipped its
+static requirements (privacy manifest, onboarding, haptics off switch,
+credential erasure) but not the submission work. Deviations and their reasons:
+
+- **Codespaces** is not connected over its tunnel. The REST git path and the
+  webview fallback both reach a codespace's repository, which is what the accept
+  criterion actually tests; the tunnel needs a device-flow OAuth app registered
+  before it can be shipped.
+- **SSH** uses one credential at a time (the last key or password saved), pins
+  the host key on first connect, and mirrors the remote tree into Application
+  Support. Push-back is per-file over `base64`, not SFTP.
+- **GitHub git** goes through blobs → tree → commit → ref with `force: false`,
+  so a moved branch produces the "pull, then push" state instead of a silent
+  overwrite.
+- **lpBOT** has no bundled endpoint; it is off until a model endpoint and name are
+  set in Settings, and it only ever sends the selection.
+- **Live Activities** are not built: a task's duration lives in the terminal
+  sheet header, and a widget extension is the missing piece.
+
 ### Phase 0 — De-risk the two unknowns (1 week)
 
 Build a Throwaway app, two screens, hardcoded local bundle. Answer only:
