@@ -79,6 +79,16 @@ actor GitHubClient {
         try await decode(RepositorySummary.self, from: "/repos/\(owner)/\(repo)")
     }
 
+    /// Repositories the token can reach, most recently pushed first. Used by the
+    /// Connect screen so nobody has to type `owner/repository` on a phone.
+    func repositories() async throws -> [String] {
+        let list: [RepositoryName] = try await decode(
+            [RepositoryName].self,
+            from: "/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member"
+        )
+        return list.map(\.fullName)
+    }
+
     /// Cheapest call available: one repo lookup, used for the latency pill.
     func ping(owner: String, repo: String) async throws -> Int {
         _ = try await send("/repos/\(owner)/\(repo)/branches/\(try encodeBranch(await repository(owner: owner, repo: repo).defaultBranch))")
@@ -180,6 +190,14 @@ actor GitHubClient {
         enum CodingKeys: String, CodingKey {
             case defaultBranch = "default_branch"
             case privateRepo = "private"
+        }
+    }
+
+    private struct RepositoryName: Decodable {
+        let fullName: String
+
+        enum CodingKeys: String, CodingKey {
+            case fullName = "full_name"
         }
     }
 

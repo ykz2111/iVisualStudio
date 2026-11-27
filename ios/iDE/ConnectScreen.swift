@@ -10,6 +10,7 @@ struct ConnectScreen: View {
     // GitHub
     @State private var token = ""
     @State private var account: String?
+    @State private var repositories: [String] = []
     @State private var repository = ""
     @State private var branch = ""
     @State private var githubError: String?
@@ -83,6 +84,21 @@ struct ConnectScreen: View {
                     .textInputAutocapitalization(.never)
                     .listRowBackground(IDETheme.chassis)
 
+                // Tokens are 90+ characters; typing one on a phone keyboard is
+                // the worst part of connecting. Paste and verify in one tap.
+                Button {
+                    pasteTokenFromClipboard()
+                } label: {
+                    Label("Paste token from clipboard", systemImage: "doc.on.clipboard")
+                        .font(.system(size: 13, design: .monospaced))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(height: IDETheme.recommendedHitTarget)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(IDETheme.azure)
+                .disabled(githubBusy)
+                .listRowBackground(IDETheme.chassis)
+
                 Button {
                     Task { await saveToken() }
                 } label: {
@@ -106,6 +122,24 @@ struct ConnectScreen: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .listRowBackground(IDETheme.chassis)
+
+            if !repositories.isEmpty {
+                Menu {
+                    ForEach(repositories, id: \.self) { name in
+                        Button(name) {
+                            repository = name
+                            Haptics.light()
+                        }
+                    }
+                } label: {
+                    Label("Choose from \(repositories.count) repositories", systemImage: "list.bullet")
+                        .font(.system(size: 13, design: .monospaced))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(height: IDETheme.recommendedHitTarget)
+                }
+                .foregroundStyle(IDETheme.azure)
+                .listRowBackground(IDETheme.chassis)
+            }
 
             TextField("Branch (default)", text: $branch)
                 .font(.system(size: 14, design: .monospaced))
@@ -334,22 +368,37 @@ struct ConnectScreen: View {
     private func refreshAccount() async {
         guard let token = GitHubClient.storedToken, !token.isEmpty else { return }
         do {
-            account = try await GitHubClient(token: token).currentUser()
+            let client = GitHubClient(token: token)
+            account = try await client.currentUser()
+            repositories = (try? await client.repositories()) ?? []
         } catch {
             githubError = error.localizedDescription
         }
     }
 
-    private func saveToken() async {
-        githubBusy = true
+    private func pasteTokenFromClipboard() {
+        guard let pasted = UIPasteboard.general.string?
+            .trimmingCharacters(in: .whitespacesAndNewlines), !pasted.isEmpty else {
+            githubError = "The clipboard is empty. Copy the token from GitHub first."
+            return
+        }
+        token = pasted
+        Haptics.light()
+        Task { await saveToken() }
+    }
+
+    private func saveToken() async {        githubBusy = true
         githubError = nil
         defer { githubBusy = false }
         do {
             let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)
-            let login = try await GitHubClient(token: trimmed).currentUser()
+            let client = GitHubClient(token: trimmed)
+            let login = try await client.currentUser()
             try KeychainStore.save(trimmed, for: KeychainStore.githubTokenAccount)
             account = login
+            repositories = (try? await client.repositories()) ?? []
             token = ""
+            Haptics.success()
         } catch {
             githubError = error.localizedDescription
         }
