@@ -1,0 +1,69 @@
+{
+  "$comment": "MCP servers declared by github/awesome-copilot, extracted 2026-11. Local stdio servers need a shell on the machine running the agent and cannot be reached from this app; the streamable-http ones are added as integrations.",
+  "source": "github/awesome-copilot",
+  "servers": [
+    {
+      "id": "github-agentic-workflows",
+      "declaredIn": "mcp.json, .vscode/mcp.json",
+      "type": "local",
+      "command": "gh",
+      "args": ["aw", "mcp-server"],
+      "tools": ["compile", "audit", "logs", "inspect", "status", "audit-diff"],
+      "reachableFromThisApp": false,
+      "note": "Shell command. Needs the GitHub CLI with the agentic-workflows extension."
+    },
+    {
+      "id": "awesome-copilot",
+      "declaredIn": "plugins/awesome-copilot/mcp.json",
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
+      ],
+      "reachableFromThisApp": false,
+      "note": "Containerised stdio server."
+    },
+    {
+      "id": "fluent-ui-blazor",
+      "declaredIn": "plugins/fluentui-blazor/mcp.json",
+      "type": "stdio",
+      "command": "dnx",
+      "args": ["Microsoft.FluentUI.AspNetCore.McpServer@5.0.0-rc.5-26219.1", "--yes"],
+      "reachableFromThisApp": false,
+      "note": "Dotnet tool. Unrelated to this project's stack."
+    },
+    {
+      "id": "context-matic",
+      "declaredIn": "plugins/context-matic/mcp.json",
+      "type": "streamable-http",
+      "url": "https://chatbotapi.apimatic.io/mcp/plugins",
+      "headers": { "X-Apimatic-Mcp-Client": "VsCode" },
+      "reachableFromThisApp": true
+    },
+    {
+      "id": "globestudio",
+      "declaredIn": "plugins/globestudio/mcp.json",
+      "type": "streamable-http",
+      "url": "https://globestudio.app/mcp",
+      "reachableFromThisApp": true
+    },
+    {
+      "id": "microsoft-learn",
+      "declaredIn": "plugins/foundry-hosted-agent-copilotkit/mcp.json",
+      "type": "streamable-http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "reachableFromThisApp": true
+    },
+    {
+      "id": "foundry",
+      "declaredIn": "plugins/foundry-hosted-agent-copilotkit/mcp.json",
+      "type": "streamable-http",
+      "url": "https://mcp.ai.azure.com",
+      "reachableFromThisApp": true,
+      "note": "Azure Foundry endpoint; expects Azure credentials."
+    }
+  ]
+}
