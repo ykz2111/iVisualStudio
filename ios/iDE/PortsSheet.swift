@@ -17,14 +17,11 @@ struct PortsSheet: View {
         NavigationStack {
             List {
                 if isLoading {
-                    HStack(spacing: 10) {
-                        ProgressView().tint(IDETheme.azure)
-                        Text("Reading listening sockets…")
-                            .font(.system(size: 12, design: .monospaced))
-                            .foregroundStyle(IDETheme.secondary)
-                    }
-                    .frame(minHeight: IDETheme.recommendedHitTarget)
-                    .listRowBackground(IDETheme.chassis)
+                    Text("Reading listening sockets…")
+                        .font(.system(size: 13))
+                        .foregroundStyle(IDETheme.secondary)
+                        .frame(minHeight: IDETheme.recommendedHitTarget, alignment: .leading)
+                        .listRowBackground(IDETheme.chassis)
                 } else if ports.isEmpty {
                     ContentUnavailableView(
                         "No listening ports",
@@ -49,26 +46,32 @@ struct PortsSheet: View {
                                     UIPasteboard.general.string = port.url
                                     Haptics.light()
                                 } label: {
-                                    Text("COPY")
-                                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                                        .frame(width: 88, height: IDETheme.minimumHitTarget)
-                                        .background(IDETheme.elevated, in: RoundedRectangle(cornerRadius: 8))
+                                    Text("Copy URL")
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .frame(width: 96, height: IDETheme.minimumHitTarget)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                                        }
                                 }
                                 .buttonStyle(.plain)
-                                .foregroundStyle(IDETheme.primary)
+                                .foregroundStyle(IDETheme.secondary)
 
                                 if let url = URL(string: port.url) {
                                     Button {
                                         Haptics.medium()
                                         openURL(url)
                                     } label: {
-                                        Text("OPEN")
-                                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                        Text("Open")
+                                            .font(.system(size: 13, weight: .semibold))
                                             .frame(width: 88, height: IDETheme.minimumHitTarget)
-                                            .background(IDETheme.azure.opacity(0.16), in: RoundedRectangle(cornerRadius: 8))
+                                            .overlay {
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                                            }
                                     }
                                     .buttonStyle(.plain)
-                                    .foregroundStyle(IDETheme.azure)
+                                    .foregroundStyle(IDETheme.secondary)
                                 }
                                 Spacer(minLength: 0)
                             }

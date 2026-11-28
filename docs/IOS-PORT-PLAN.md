@@ -177,13 +177,18 @@ four-request LSP client (`initialize`, `didOpen`, `completion`, `definition`,
 static requirements (privacy manifest, onboarding, haptics off switch,
 credential erasure) but not the submission work. Deviations and their reasons:
 
-- **Codespaces** is not connected over its tunnel. The REST git path and the
-  webview fallback both reach a codespace's repository, which is what the accept
-  criterion actually tests; the tunnel needs a device-flow OAuth app registered
-  before it can be shipped.
-- **SSH** uses one credential at a time (the last key or password saved), pins
-  the host key on first connect, and mirrors the remote tree into Application
-  Support. Push-back is per-file over `base64`, not SFTP.
+- **Codespaces** is not connected over its tunnel. The app can open GitHub's
+  documented repository/branch Codespaces links (or the account list) in WebKit;
+  this is an explicit browser escape hatch, not a native provider. A tunnel still
+  needs a device-flow OAuth app registered before it can be shipped.
+- **GitLab Web IDE** opens from a project URL or namespace path using GitLab's
+  Web IDE route in WebKit. It uses the user's browser session and adds neither a
+  GitLab API client nor a native workspace provider.
+- **SSH** uses one credential at a time (the last key or password saved). On first
+  contact, the app shows the SHA-256 host-key fingerprint and asks for explicit
+  verification before sending credentials; later key changes require re-trust.
+  Workspace files are mirrored into Application Support and pushed per-file over
+  `base64`, not SFTP.
 - **GitHub git** goes through blobs → tree → commit → ref with `force: false`,
   so a moved branch produces the "pull, then push" state instead of a silent
   overwrite.

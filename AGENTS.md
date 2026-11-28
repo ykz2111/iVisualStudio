@@ -36,3 +36,10 @@ The screen contract lives in `docs/DESIGN-PLAN.md` (16 screens, the 6×48pt grid
 - Primary controls stay in the bottom 35% thumb arc.
 - Hit targets: 44pt minimum, 48pt for the coding bar, at least 8pt gaps.
 - OLED true black is `#000000`. Canvas is `#05080E`. Do not invent hex values outside the token files.
+
+## Screen-generation contract
+
+`DESIGN.md` (root) is the agent-friendly design system for screens generated from this repo —
+dials, palette with roles, type ramp, component and motion rules, and the anti-pattern list. It adds
+no hex: every value is a token from `brand/tokens.css` / `brand/design-tokens.json`. Screens generated
+for Stitch, for SwiftUI, or for the HTML studio must pass it.

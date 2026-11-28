@@ -8,10 +8,10 @@ enum EditorSaveState {
 
     var label: String {
         switch self {
-        case .unsaved: return "UNSAVED"
-        case .saving: return "SAVING"
-        case .saved: return "SAVED"
-        case .failed: return "SAVE FAILED"
+        case .unsaved: return "Unsaved"
+        case .saving: return "Saving…"
+        case .saved: return "Saved"
+        case .failed: return "Save failed"
         }
     }
 
@@ -20,7 +20,7 @@ enum EditorSaveState {
         case .unsaved: return IDETheme.amber
         case .saving: return IDETheme.azure
         case .saved: return IDETheme.emerald
-        case .failed: return .red
+        case .failed: return IDETheme.coral
         }
     }
 }
@@ -35,6 +35,7 @@ struct EditorScreenView: View {
     @State private var text = ""
     @State private var lastSavedText = ""
     @State private var loadError: String?
+    @State private var saveError: String?
     @State private var saveState: EditorSaveState = .saved
     @State private var showFindSheet = false
     @State private var showGitSheet = false
@@ -95,8 +96,9 @@ struct EditorScreenView: View {
             if file.workspace.isGitHub || file.workspace.isSSH {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        flushSave()
-                        showGitSheet = true
+                        if flushSave() {
+                            showGitSheet = true
+                        }
                     } label: {
                         Image(systemName: "arrow.triangle.branch")
                             .frame(minWidth: IDETheme.minimumHitTarget, minHeight: IDETheme.minimumHitTarget)
@@ -168,7 +170,7 @@ struct EditorScreenView: View {
             }
         }
         .onDisappear {
-            flushSave()
+            _ = flushSave()
             Task {
                 await language.closeDocument()
                 await language.stop()
@@ -185,6 +187,15 @@ struct EditorScreenView: View {
             guard newValue != lastSavedText else { return }
             scheduleSave()
         }
+        .alert("Couldn't save this file", isPresented: Binding(
+            get: { saveError != nil },
+            set: { if !$0 { saveError = nil } }
+        )) {
+            Button("Retry") { Task { await save() } }
+            Button("Dismiss", role: .cancel) { saveError = nil }
+        } message: {
+            Text(saveError ?? "Your latest edits are still unsaved.")
+        }
     }
 
     private func openLanguageSheet() async {
@@ -198,15 +209,16 @@ struct EditorScreenView: View {
             ConnectionPill(state: connectionState)
                 .accessibilityAddTraits(.isStaticText)
             Spacer(minLength: 8)
-            Text("LN \(handle.cursorLine) COL \(handle.cursorColumn)")
+            Text("Ln \(handle.cursorLine) · Col \(handle.cursorColumn)")
+                .font(.system(size: 12, design: .monospaced))
                 .monospacedDigit()
             Text(saveState.label)
+                .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(saveState.color)
         }
-        .font(.system(size: 11, weight: .medium, design: .monospaced))
         .foregroundStyle(IDETheme.secondary)
-        .padding(.horizontal, 12)
-        .frame(height: 32)
+        .padding(.horizontal, IDETheme.pageGutter)
+        .frame(height: 44)
         .background(IDETheme.chassis)
         .accessibilityElement(children: .combine)
     }
@@ -248,24 +260,30 @@ struct EditorScreenView: View {
 
     private func save() async {
         saveState = .saving
+        saveError = nil
         do {
             try file.writeText(text)
             lastSavedText = text
             saveState = .saved
         } catch {
             saveState = .failed
+            saveError = error.localizedDescription
         }
     }
 
-    private func flushSave() {
+    private func flushSave() -> Bool {
         saveTask?.cancel()
-        guard text != lastSavedText else { return }
+        guard text != lastSavedText else { return true }
         do {
             try file.writeText(text)
             lastSavedText = text
             saveState = .saved
+            saveError = nil
+            return true
         } catch {
             saveState = .failed
+            saveError = error.localizedDescription
+            return false
         }
     }
 }

@@ -23,31 +23,56 @@ actor WorkspaceSync {
 
         let id = "github:\(owner)/\(repo)@\(branchName)"
         let folder = WorkspaceStorage.workspaceDirectory(for: id)
-        try? FileManager.default.removeItem(at: folder)
-        try WorkspaceStorage.ensureDirectory(folder)
+        try WorkspaceStorage.ensureDirectory(WorkspaceStorage.root)
+        guard !FileManager.default.fileExists(atPath: folder.path) else {
+            throw GitHubError.workspaceAlreadyExists
+        }
+        let stagingFolder = WorkspaceStorage.root.appendingPathComponent(".clone-\(UUID().uuidString)", isDirectory: true)
+        try WorkspaceStorage.ensureDirectory(stagingFolder)
+        defer { try? FileManager.default.removeItem(at: stagingFolder) }
 
         var blobs: [String: String] = [:]
+        var fileWriteError: Error?
+        var fetchError: String?
         let candidates = tree.filter { entry in
-            entry.type == "blob" && entry.mode != "120000" && (entry.size ?? 0) <= 400_000
+            entry.type == "blob" && entry.mode != "120000" &&
+                Self.isSafeRelativePath(entry.path) && (entry.size ?? 0) <= 400_000
         }
 
         // Fetch in batches so a large repository does not open hundreds of
         // sockets at once.
         for batch in candidates.chunked(into: 8) {
-            await withTaskGroup(of: (String, String?).self) { group in
+            await withTaskGroup(of: (String, String?, String?).self) { group in
                 for entry in batch {
                     group.addTask {
-                        let text = try? await client.blobText(owner: owner, repo: repo, sha: entry.sha)
-                        return (entry.path, text)
+                        do {
+                            return (entry.path, try await client.blobText(owner: owner, repo: repo, sha: entry.sha), nil)
+                        } catch let error as GitHubError {
+                            if case .notText = error { return (entry.path, nil, nil) }
+                            return (entry.path, nil, error.localizedDescription)
+                        } catch {
+                            return (entry.path, nil, error.localizedDescription)
+                        }
                     }
                 }
-                for await (path, text) in group {
+                for await (path, text, error) in group {
+                    if let error {
+                        fetchError = error
+                        continue
+                    }
                     guard let text else { continue }
-                    blobs[path] = batch.first { $0.path == path }?.sha ?? ""
-                    try? WorkspaceStorage.write(text, to: folder.appendingPathComponent(path))
+                    do {
+                        try WorkspaceStorage.write(text, to: stagingFolder.appendingPathComponent(path))
+                        blobs[path] = batch.first { $0.path == path }?.sha ?? ""
+                    } catch {
+                        fileWriteError = error
+                    }
                 }
             }
         }
+        if let fileWriteError { throw fileWriteError }
+        if let fetchError { throw GitHubError.transport(fetchError) }
+        try FileManager.default.moveItem(at: stagingFolder, to: folder)
 
         let binding = GitHubBinding(
             owner: owner,
@@ -74,21 +99,52 @@ actor WorkspaceSync {
 
         var updated = binding
         var conflicts: [String] = []
+        let presentPaths = Set(tree.compactMap { entry in
+            entry.type == "blob" && Self.isSafeRelativePath(entry.path) ? entry.path : nil
+        })
         let candidates = tree.filter { entry in
-            entry.type == "blob" && entry.mode != "120000" && (entry.size ?? 0) <= 400_000
+            entry.type == "blob" && entry.mode != "120000" &&
+                Self.isSafeRelativePath(entry.path) && (entry.size ?? 0) <= 400_000
         }
-        let remote = Dictionary(uniqueKeysWithValues: candidates.map { ($0.path, $0.sha) })
 
-        // Deletions upstream.
-        for (path, _) in binding.blobs where remote[path] == nil {
-            try? FileManager.default.removeItem(at: folder.appendingPathComponent(path))
+        // A remote deletion must not erase an edit that exists only on this device.
+        for (path, baseSHA) in binding.blobs where !presentPaths.contains(path) {
+            let localURL = folder.appendingPathComponent(path)
+            if FileManager.default.fileExists(atPath: localURL.path) {
+                guard let local = WorkspaceStorage.readText(localURL) else {
+                    conflicts.append(path)
+                    updated.blobs[path] = nil
+                    continue
+                }
+                let base = try await client.blobText(owner: binding.owner, repo: binding.repo, sha: baseSHA)
+                if WorkspaceStorage.digest(local) != WorkspaceStorage.digest(base) {
+                    conflicts.append(path)
+                    updated.blobs[path] = nil
+                    continue
+                }
+                try FileManager.default.removeItem(at: localURL)
+            }
             updated.blobs[path] = nil
         }
 
         for entry in candidates where binding.blobs[entry.path] != entry.sha {
             let localURL = folder.appendingPathComponent(entry.path)
-            if let local = WorkspaceStorage.readText(localURL) {
-                guard let remoteText = try? await client.blobText(owner: binding.owner, repo: binding.repo, sha: entry.sha) else {
+            let remoteText: String
+            do {
+                remoteText = try await client.blobText(owner: binding.owner, repo: binding.repo, sha: entry.sha)
+            } catch let error as GitHubError {
+                if case .notText = error {
+                    conflicts.append(entry.path)
+                    updated.blobs[entry.path] = nil
+                    continue
+                }
+                throw error
+            }
+
+            if FileManager.default.fileExists(atPath: localURL.path) {
+                guard let local = WorkspaceStorage.readText(localURL) else {
+                    conflicts.append(entry.path)
+                    updated.blobs[entry.path] = entry.sha
                     continue
                 }
                 if WorkspaceStorage.digest(local) != WorkspaceStorage.digest(remoteText) {
@@ -99,8 +155,7 @@ actor WorkspaceSync {
                     continue
                 }
             }
-            guard let text = try? await client.blobText(owner: binding.owner, repo: binding.repo, sha: entry.sha) else { continue }
-            try? WorkspaceStorage.write(text, to: localURL)
+            try WorkspaceStorage.write(remoteText, to: localURL)
             updated.blobs[entry.path] = entry.sha
         }
 
@@ -222,11 +277,12 @@ actor WorkspaceSync {
         port: Int,
         username: String,
         remotePath: String,
-        auth: SSHConnection.Auth
+        auth: SSHConnection.Auth,
+        trustedFingerprint: String? = nil
     ) async throws -> (name: String, fingerprint: String, files: [String]) {
         let library = WorkspaceLibrary.load()
         let id = "ssh:\(username)@\(host):\(port)/\(remotePath)"
-        let known = library.sshEntry(id: id)?.fingerprint
+        let known = trustedFingerprint ?? library.sshEntry(id: id)?.fingerprint
         let connection = try await SSHConnection.open(
             host: host,
             port: port,
@@ -409,20 +465,15 @@ actor WorkspaceSync {
         return pushed
     }
 
-    /// Git status on the host, so the Git screen shows real repository state
-    /// (including changes made outside the app). Local edits are pushed first:
-    /// a commit that silently left edited files behind would be a lie.
+    /// Reads host-side Git changes and local mirror edits without sending files.
+    /// The explicit commit action is the only Git-screen path that pushes edits.
     func sshGitStatus(binding: SSHBinding, workspaceID: String) async throws -> [PendingChange] {
         let pendingLocal = localSSHChanges(workspaceID: workspaceID)
-        if !pendingLocal.isEmpty {
-            _ = try? await pushSSH(workspaceID: workspaceID, binding: binding, paths: pendingLocal.map(\.path))
-        }
-
         let connection = try await requireSession(workspaceID: workspaceID, binding: binding)
         let status = try await connection.run("cd \(Self.quote(binding.remotePath)) && git status --porcelain 2>/dev/null")
-        guard status.succeeded, !status.stdout.isEmpty else { return [] }
+        guard status.succeeded else { throw SSHError.commandFailed(status.combined) }
 
-        var changes: [PendingChange] = []
+        var remoteChanges: [PendingChange] = []
         for line in status.stdout.components(separatedBy: .newlines) where line.count > 3 {
             let code = String(line.prefix(2))
             var path = String(line.dropFirst(3))
@@ -444,24 +495,54 @@ actor WorkspaceSync {
             )
             let text = Data(base64Encoded: current.stdout.trimmingCharacters(in: .whitespacesAndNewlines))
                 .flatMap { String(data: $0, encoding: .utf8) }
-            changes.append(
+            let base = changeStatus == .added
+                ? ""
+                : (try await remoteGitText(connection: connection, remotePath: binding.remotePath, path: trimmedPath) ?? "")
+            remoteChanges.append(
                 PendingChange(
                     path: trimmedPath,
                     status: changeStatus,
                     current: text ?? "",
                     baseSHA: nil,
-                    mirrored: nil
+                    mirrored: base
                 )
             )
         }
-        return changes
+
+        let localPaths = Set(pendingLocal.map(\.path))
+        let remotePaths = Set(remoteChanges.map(\.path))
+        let overlapping = localPaths.intersection(remotePaths).sorted()
+        guard overlapping.isEmpty else {
+            throw SSHError.transport(
+                "These files changed on both this device and the host: \(overlapping.joined(separator: ", ")). Pull from the host before committing."
+            )
+        }
+
+        var changes = remoteChanges
+        for change in pendingLocal {
+            let base = change.status == .added
+                ? ""
+                : (try await remoteGitText(connection: connection, remotePath: binding.remotePath, path: change.path) ?? "")
+            changes.append(
+                PendingChange(
+                    path: change.path,
+                    status: change.status,
+                    current: change.current,
+                    baseSHA: nil,
+                    mirrored: base
+                )
+            )
+        }
+        return changes.sorted { $0.path < $1.path }
     }
 
     func sshGitCommit(binding: SSHBinding, workspaceID: String, message: String, paths: [String]) async throws -> String {
         let connection = try await requireSession(workspaceID: workspaceID, binding: binding)
         // Send any edit that has not reached the host yet, so the commit
         // contains what the editor shows.
+        let selectedPaths = Set(paths)
         let pendingLocal = localSSHChanges(workspaceID: workspaceID)
+            .filter { selectedPaths.contains($0.path) }
         if !pendingLocal.isEmpty {
             _ = try await pushSSH(workspaceID: workspaceID, binding: binding, paths: pendingLocal.map(\.path))
         }
@@ -474,6 +555,15 @@ actor WorkspaceSync {
     }
 
     // MARK: SSH plumbing
+
+    private func remoteGitText(connection: SSHConnection, remotePath: String, path: String) async throws -> String? {
+        let result = try await connection.run(
+            "cd \(Self.quote(remotePath)) && git show \(Self.quote("HEAD:\(path)")) 2>/dev/null | base64 | tr -d '\\n'"
+        )
+        guard result.succeeded else { return nil }
+        let encoded = result.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+        return Data(base64Encoded: encoded).flatMap { String(data: $0, encoding: .utf8) }
+    }
 
     private func requireSession(workspaceID: String, binding: SSHBinding) async throws -> SSHConnection {
         if let connection = sessions[workspaceID] { return connection }
@@ -527,6 +617,12 @@ actor WorkspaceSync {
             }
         }
         return results
+    }
+
+    private static func isSafeRelativePath(_ path: String) -> Bool {
+        guard !path.isEmpty, !path.hasPrefix("/") else { return false }
+        return path.split(separator: "/", omittingEmptySubsequences: false)
+            .allSatisfy { !$0.isEmpty && $0 != "." && $0 != ".." }
     }
 
     /// Single-quoted shell literal. Safe for every path we allow.

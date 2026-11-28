@@ -39,13 +39,18 @@ struct ContentView: View {
             .navigationDestination(for: NavigationRoute.self) { route in
                 switch route {
                 case .workspace(let workspace):
-                    WorkspaceBrowserView(workspace: workspace) {
-                        quickOpenWorkspace = workspace
-                    }
+                    WorkspaceBrowserView(
+                        workspace: workspace,
+                        onQuickOpen: { quickOpenWorkspace = workspace },
+                        onOpenWebIDE: { navigationPath.append(.web($0)) }
+                    )
                 case .directory(let workspace, let path):
-                    WorkspaceBrowserView(workspace: workspace, directoryPath: path) {
-                        quickOpenWorkspace = workspace
-                    }
+                    WorkspaceBrowserView(
+                        workspace: workspace,
+                        directoryPath: path,
+                        onQuickOpen: { quickOpenWorkspace = workspace },
+                        onOpenWebIDE: { navigationPath.append(.web($0)) }
+                    )
                 case .file(let file):
                     EditorScreenView(file: file)
                 case .web(let url):
@@ -70,10 +75,15 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showConnections) {
             NavigationStack {
-                ConnectScreen { workspace in
-                    library = WorkspaceLibrary.load()
-                    navigationPath.append(.workspace(workspace))
-                }
+                ConnectScreen(
+                    onWorkspace: { workspace in
+                        library = WorkspaceLibrary.load()
+                        navigationPath.append(.workspace(workspace))
+                    },
+                    onOpenWebIDE: { url in
+                        navigationPath.append(.web(url))
+                    }
+                )
             }
             .preferredColorScheme(.dark)
         }
@@ -131,90 +141,51 @@ private struct HomeScreen: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text("Workspaces")
-                            .font(.largeTitle.weight(.bold))
-                            .foregroundStyle(IDETheme.primary)
-                        Spacer()
-                        Button(action: onSettings) {
-                            Image(systemName: "gearshape")
-                                .font(.system(size: 16, weight: .medium))
-                                .frame(width: IDETheme.minimumHitTarget, height: IDETheme.minimumHitTarget)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(IDETheme.secondary)
-                        .accessibilityLabel("Settings")
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .center) {
+                    Text("Workspaces")
+                        .font(.system(size: 34, weight: .bold))
+                        .tracking(-0.7)
+                        .foregroundStyle(IDETheme.primary)
+                    Spacer()
+                    Button(action: onSettings) {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 16, weight: .medium))
+                            .frame(width: IDETheme.minimumHitTarget, height: IDETheme.minimumHitTarget)
                     }
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(IDETheme.emerald)
-                            .frame(width: 7, height: 7)
-                        Text("LOCAL · READY TO EXPLORE")
-                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .tracking(0.6)
-                            .foregroundStyle(IDETheme.secondary)
-                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(IDETheme.secondary)
+                    .accessibilityLabel("Settings")
                 }
                 .padding(.top, 12)
+                .padding(.bottom, 8)
 
-                VStack(alignment: .leading, spacing: 12) {
-                    SectionEyebrow(title: "WORKSPACES", trailing: "\(workspaces.count)")
-                    ForEach(workspaces) { workspace in
-                        NavigationLink(value: NavigationRoute.workspace(workspace)) {
-                            WorkspaceCard(workspace: workspace)
-                        }
-                        .buttonStyle(.plain)
-                        .contextMenu {
-                            if !workspace.isSample {
-                                Button("Remove from list", systemImage: "trash", role: .destructive) {
-                                    onRemove(workspace)
-                                }
+                ForEach(workspaces) { workspace in
+                    NavigationLink(value: NavigationRoute.workspace(workspace)) {
+                        WorkspaceRow(workspace: workspace)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu {
+                        if !workspace.isSample {
+                            Button("Remove from list", systemImage: "trash", role: .destructive) {
+                                onRemove(workspace)
                             }
                         }
                     }
+                    rowDivider
                 }
 
                 if let webURL {
-                    VStack(alignment: .leading, spacing: 12) {
-                        SectionEyebrow(title: "ADVANCED", trailing: "WEBKIT")
-                        NavigationLink(value: NavigationRoute.web(webURL)) {
-                            RecentFileRow(
-                                icon: "globe",
-                                title: URL(string: webURL)?.host ?? "Web workspace",
-                                subtitle: "Remote VS Code in WebKit",
-                                accent: IDETheme.amber
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    SectionEyebrow(title: "START HERE", trailing: "SAMPLE")
-                    NavigationLink(value: NavigationRoute.file(
-                        CodeFile(workspace: .sample, relativePath: "Sources/EditorView.swift")
-                    )) {
+                    NavigationLink(value: NavigationRoute.web(webURL)) {
                         RecentFileRow(
-                            icon: "swift",
-                            title: "EditorView.swift",
-                            subtitle: "Sources · SwiftUI view",
-                            accent: IDETheme.coral
+                            icon: "globe",
+                            title: URL(string: webURL)?.host ?? "Web workspace",
+                            subtitle: "Remote editor · WebKit",
+                            accent: IDETheme.secondary
                         )
                     }
                     .buttonStyle(.plain)
-                    NavigationLink(value: NavigationRoute.file(
-                        CodeFile(workspace: .sample, relativePath: "README.md")
-                    )) {
-                        RecentFileRow(
-                            icon: "doc.text",
-                            title: "README.md",
-                            subtitle: "iDE Sample Workspace",
-                            accent: IDETheme.azure
-                        )
-                    }
-                    .buttonStyle(.plain)
+                    rowDivider
                 }
             }
             .padding(.horizontal, IDETheme.pageGutter)
@@ -223,8 +194,8 @@ private struct HomeScreen: View {
         .background(IDETheme.canvas)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             HStack(spacing: IDETheme.minimumGap) {
-                bottomButton("Open a folder", systemImage: "folder.badge.plus", action: onOpenFolder)
-                bottomButton("Connect", systemImage: "antenna.radiowaves.left.and.right", action: onConnect)
+                bottomButton("Open a folder", systemImage: "folder.badge.plus", isPrimary: false, action: onOpenFolder)
+                bottomButton("Connect", systemImage: "antenna.radiowaves.left.and.right", isPrimary: true, action: onConnect)
             }
             .padding(.horizontal, IDETheme.pageGutter)
             .padding(.top, 8)
@@ -233,25 +204,45 @@ private struct HomeScreen: View {
         }
     }
 
-    private func bottomButton(_ title: String, systemImage: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+    private var rowDivider: some View {
+        Rectangle()
+            .fill(IDETheme.secondary.opacity(0.10))
+            .frame(height: 1)
+            .padding(.leading, 56)
+    }
+
+    private func bottomButton(
+        _ title: String,
+        systemImage: String,
+        isPrimary: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
+            Haptics.light()
+            action()
+        } label: {
             Label(title, systemImage: systemImage)
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .frame(height: IDETheme.recommendedHitTarget)
-                .background(IDETheme.elevated, in: RoundedRectangle(cornerRadius: 12))
+                .background(
+                    isPrimary ? IDETheme.emerald : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 10)
+                )
                 .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(IDETheme.secondary.opacity(0.22), lineWidth: 1)
+                    if !isPrimary {
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                    }
                 }
         }
         .buttonStyle(.plain)
-        .foregroundStyle(IDETheme.primary)
+        .foregroundStyle(isPrimary ? IDETheme.oledBlack : IDETheme.secondary)
     }
 }
 
-private struct WorkspaceCard: View {
+private struct WorkspaceRow: View {
     let workspace: Workspace
 
     private var glyph: String {
@@ -261,22 +252,13 @@ private struct WorkspaceCard: View {
         return "folder.fill"
     }
 
-    private var accent: Color {
-        if workspace.isGitHub { return IDETheme.violet }
-        if workspace.isSSH { return IDETheme.cyan }
-        return IDETheme.azure
-    }
-
     var body: some View {
         HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(IDETheme.thumbBar)
-                Image(systemName: glyph)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(accent)
-            }
-            .frame(width: 48, height: 48)
+            Image(systemName: glyph)
+                .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(IDETheme.secondary)
+                .frame(width: 44, height: 44)
+                .background(IDETheme.elevated, in: RoundedRectangle(cornerRadius: IDETheme.cardRadius))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(workspace.name)
@@ -293,13 +275,8 @@ private struct WorkspaceCard: View {
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(IDETheme.muted)
         }
-        .padding(12)
-        .background(IDETheme.chassis, in: RoundedRectangle(cornerRadius: IDETheme.cardRadius))
-        .overlay {
-            RoundedRectangle(cornerRadius: IDETheme.cardRadius)
-                .strokeBorder(IDETheme.elevated, lineWidth: 1)
-        }
-        .contentShape(RoundedRectangle(cornerRadius: IDETheme.cardRadius))
+        .frame(height: 72)
+        .contentShape(Rectangle())
     }
 }
 
@@ -315,10 +292,10 @@ private struct RecentFileRow: View {
                 .font(.system(size: 17, weight: .medium))
                 .foregroundStyle(accent)
                 .frame(width: 44, height: 44)
-                .background(IDETheme.elevated, in: RoundedRectangle(cornerRadius: 10))
+                .background(IDETheme.elevated, in: RoundedRectangle(cornerRadius: IDETheme.cardRadius))
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.system(size: 15, weight: .medium, design: .monospaced))
+                    .font(.system(size: IDETheme.codeSize, weight: .medium, design: .monospaced))
                     .foregroundStyle(IDETheme.primary)
                     .lineLimit(1)
                 Text(subtitle)
@@ -331,26 +308,8 @@ private struct RecentFileRow: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(IDETheme.muted)
         }
-        .padding(.horizontal, 4)
-        .frame(minHeight: 52)
+        .frame(height: 72)
         .contentShape(Rectangle())
-    }
-}
-
-private struct SectionEyebrow: View {
-    let title: String
-    let trailing: String
-
-    var body: some View {
-        HStack {
-            Text(title)
-            Spacer()
-            Text(trailing)
-                .foregroundStyle(IDETheme.muted)
-        }
-        .font(.system(size: 11, weight: .semibold, design: .monospaced))
-        .tracking(0.8)
-        .foregroundStyle(IDETheme.secondary)
     }
 }
 
@@ -358,6 +317,7 @@ private struct WorkspaceBrowserView: View {
     let workspace: Workspace
     var directoryPath = ""
     let onQuickOpen: () -> Void
+    let onOpenWebIDE: (String) -> Void
 
     @State private var showGit = false
     @State private var showTerminal = false
@@ -402,9 +362,10 @@ private struct WorkspaceBrowserView: View {
                         .listRowSeparatorTint(IDETheme.elevated)
                     }
                 } header: {
-                    Text(directoryPath.isEmpty ? "WORKSPACE FILES" : directoryPath.uppercased())
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .tracking(0.7)
+                    Text(directoryPath.isEmpty ? "Files" : directoryPath)
+                        .font(directoryPath.isEmpty
+                            ? .system(size: 17, weight: .semibold)
+                            : .system(size: 12, design: .monospaced))
                         .foregroundStyle(IDETheme.secondary)
                         .textCase(nil)
                         .padding(.top, 4)
@@ -433,7 +394,12 @@ private struct WorkspaceBrowserView: View {
                         }
                         .disabled(isSyncing)
                     }
-                    if workspace.isGitHub {
+                    if let github = workspace.github {
+                        Button("Open in GitHub Codespaces", systemImage: "cloud") {
+                            if let url = WebIDEURLBuilder.codespaces(for: github) {
+                                onOpenWebIDE(url.absoluteString)
+                            }
+                        }
                         Button("Pull from GitHub", systemImage: "arrow.down.circle") {
                             Task { await pullFromGitHub() }
                         }
@@ -584,7 +550,7 @@ private struct FileEntryRow: View {
                 .frame(width: 28)
             VStack(alignment: .leading, spacing: 3) {
                 Text(entry.name)
-                    .font(.system(size: 15, weight: entry.isDirectory ? .semibold : .regular, design: .monospaced))
+                    .font(.system(size: IDETheme.codeSize, weight: entry.isDirectory ? .medium : .regular, design: .monospaced))
                     .foregroundStyle(IDETheme.primary)
                     .lineLimit(1)
                 if !entry.isDirectory {

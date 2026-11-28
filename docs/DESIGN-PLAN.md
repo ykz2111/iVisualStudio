@@ -128,14 +128,14 @@ Phases refer to `docs/IOS-PORT-PLAN.md` §6.
 | ID | Screen | Phase | Primary action | States designed |
 |---|---|---|---|---|
 | S1 | Workspaces | 1 | Open workspace | empty · loading · local-only · remote-broken |
-| S2 | Connect | 3 | Connect (48 pt emerald) | device-flow waiting · SSH host key · auth expired · bad token |
+| S2 | Connect | 3 | Connect or open a Web IDE | browser sign-in · repository/branch launch · SSH host-key verification · auth expired · bad token |
 | S3 | Editor | 1 (read) / 2 (write) | Type | read-only · editing · saving · conflict · unsaved-on-close |
 | S4 | Thumb bar (component) | 2 | Insert character / move caret | page 1–3 · disabled-in-read-only |
 | S5 | Quick Open (sheet) | 1 | Open file | typing · no results · > 2 000 files |
 | S6 | Find & Replace (sheet) | 2 | Replace · Replace all | no match · regex error · replace preview |
 | S7 | Command Palette (sheet) | 2 | Run command | recents-first · empty query |
 | S8 | Terminal (sheet) | 4 | Send key | connecting · running · exited · long-task |
-| S9 | Git / Diff (screen + sheet) | 3 | Commit & Push | clean · staged · push rejected · detached |
+| S9 | Git / Diff (screen + sheet) | 3 | Commit & Push | selected files · clean · push rejected · host conflict |
 | S10 | Ports & Tasks (screen) | 4 | Open URL · Run task | none forwarded · task failed |
 | S11 | Diagnostics (inline + sheet) | 5 | Fix | warning · error · stale |
 | S12 | lpBOT (sheet) | 5 | Apply to selection | thinking · proposal · rejected-by-user |

@@ -34,14 +34,11 @@ struct GitScreen: View {
 
             Section {
                 if isLoading {
-                    HStack(spacing: 10) {
-                        ProgressView().tint(IDETheme.azure)
-                        Text("Reading the workspace…")
-                            .font(.system(size: 13, design: .monospaced))
-                            .foregroundStyle(IDETheme.secondary)
-                    }
-                    .frame(minHeight: IDETheme.recommendedHitTarget)
-                    .listRowBackground(IDETheme.chassis)
+                    Text("Reading the workspace…")
+                        .font(.system(size: 13))
+                        .foregroundStyle(IDETheme.secondary)
+                        .frame(minHeight: IDETheme.recommendedHitTarget, alignment: .leading)
+                        .listRowBackground(IDETheme.chassis)
                 } else if changes.isEmpty {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Working tree clean")
@@ -55,15 +52,30 @@ struct GitScreen: View {
                     .listRowBackground(IDETheme.chassis)
                 } else {
                     ForEach(changes) { change in
-                        NavigationLink {
-                            DiffScreen(
-                                title: change.name,
-                                original: originalText(for: change),
-                                current: change.current,
-                                subtitle: change.path
-                            )
-                        } label: {
-                            changeRow(change)
+                        HStack(spacing: 4) {
+                            Button {
+                                toggleSelection(for: change)
+                            } label: {
+                                Image(systemName: selected.contains(change.path) ? "checkmark.circle.fill" : "circle")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(selected.contains(change.path) ? IDETheme.emerald : IDETheme.muted)
+                                    .frame(width: IDETheme.minimumHitTarget, height: IDETheme.minimumHitTarget)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(selected.contains(change.path) ? "Deselect \(change.name)" : "Select \(change.name)")
+
+                            NavigationLink {
+                                DiffScreen(
+                                    title: change.name,
+                                    original: originalText(for: change),
+                                    current: change.current,
+                                    subtitle: change.path
+                                )
+                            } label: {
+                                changeRow(change)
+                            }
+                            .buttonStyle(.plain)
                         }
                         .listRowBackground(IDETheme.chassis)
                         .listRowSeparatorTint(IDETheme.elevated)
@@ -71,14 +83,13 @@ struct GitScreen: View {
                 }
             } header: {
                 HStack {
-                    Text("CHANGES")
+                    Text("Changes")
                     Spacer()
-                    Text("\(changes.count)")
-                        .foregroundStyle(IDETheme.muted)
+                    Text("\(selected.count) of \(changes.count) selected")
+                        .foregroundStyle(IDETheme.secondary)
                 }
-                .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                .tracking(0.7)
-                .foregroundStyle(IDETheme.secondary)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(IDETheme.primary)
                 .textCase(nil)
             }
 
@@ -181,17 +192,11 @@ struct GitScreen: View {
             Button {
                 Task { await commit() }
             } label: {
-                HStack(spacing: 8) {
-                    if isBusy {
-                        ProgressView().tint(IDETheme.oledBlack)
-                    }
-                    Text(isBusy ? "PUSHING" : "COMMIT & PUSH")
-                        .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .tracking(0.5)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: IDETheme.recommendedHitTarget)
-                .background(canCommit ? IDETheme.emerald : IDETheme.elevated, in: RoundedRectangle(cornerRadius: 10))
+                Text(isBusy ? "Pushing…" : "Commit & push")
+                    .font(.system(size: 17, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: IDETheme.recommendedHitTarget)
+                    .background(canCommit ? IDETheme.emerald : IDETheme.elevated, in: RoundedRectangle(cornerRadius: 10))
             }
             .buttonStyle(.plain)
             .foregroundStyle(canCommit ? IDETheme.oledBlack : IDETheme.muted)
@@ -210,7 +215,15 @@ struct GitScreen: View {
     // MARK: State helpers
 
     private var canCommit: Bool {
-        !isBusy && !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !changes.isEmpty
+        !isBusy && !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !selected.isEmpty
+    }
+
+    private func toggleSelection(for change: PendingChange) {
+        if selected.contains(change.path) {
+            selected.remove(change.path)
+        } else {
+            selected.insert(change.path)
+        }
     }
 
     private func originalText(for change: PendingChange) -> String {
@@ -255,6 +268,8 @@ struct GitScreen: View {
     private func load() async {
         isLoading = true
         banner = nil
+        changes = []
+        selected = []
         baseCache = [:]
         do {
             if let github {
@@ -268,6 +283,7 @@ struct GitScreen: View {
             } else if let ssh, workspace.rootURL != nil {
                 changes = try await WorkspaceSync.shared.sshGitStatus(binding: ssh, workspaceID: workspace.id)
             }
+            selected = Set(changes.map(\.path))
         } catch {
             banner = .error(error.localizedDescription)
         }
@@ -280,19 +296,21 @@ struct GitScreen: View {
         statusLine = nil
         defer { isBusy = false }
         let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        let selectedPaths = changes.map(\.path).filter { selected.contains($0) }
+        guard !selectedPaths.isEmpty else { return }
         do {
             if let github {
                 let updated = try await WorkspaceSync.shared.commitGitHub(
                     binding: github,
                     message: text,
-                    paths: changes.map(\.path)
+                    paths: selectedPaths
                 )
                 var next = workspace
                 next.github = updated
                 onBindingsChanged(next)
                 await storeIntoLibrary(next)
                 Haptics.success()
-                statusLine = "Pushed \(changes.count) change\(changes.count == 1 ? "" : "s") to \(updated.label)"
+                statusLine = "Pushed \(selectedPaths.count) change\(selectedPaths.count == 1 ? "" : "s") to \(updated.label)"
                 message = ""
                 await load()
             } else if let ssh {
@@ -300,7 +318,7 @@ struct GitScreen: View {
                     binding: ssh,
                     workspaceID: workspace.id,
                     message: text,
-                    paths: changes.map(\.path)
+                    paths: selectedPaths
                 )
                 Haptics.success()
                 statusLine = output.isEmpty ? "Committed on the host." : output

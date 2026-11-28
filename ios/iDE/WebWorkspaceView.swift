@@ -15,30 +15,28 @@ struct WebWorkspaceView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack {
             IDETheme.oledBlack.ignoresSafeArea()
             WebView(urlString: urlString, reloadToken: reloadToken, isLoading: $isLoading, error: $error)
                 .ignoresSafeArea(edges: .bottom)
-            if isLoading {
-                ProgressView()
-                    .tint(IDETheme.azure)
-                    .padding(10)
-                    .background(IDETheme.chassis.opacity(0.9), in: Capsule())
-                    .padding(.top, 8)
-            }
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "globe")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(IDETheme.amber)
-                Text("ADVANCED · \(host)")
-                    .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                    .tracking(0.6)
                     .foregroundStyle(IDETheme.secondary)
+                Text(host)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(IDETheme.primary)
                     .lineLimit(1)
-                Spacer()
+                Spacer(minLength: 8)
+                if isLoading {
+                    Text("Opening…")
+                        .font(.system(size: 12))
+                        .foregroundStyle(IDETheme.secondary)
+                }
                 Button {
+                    isLoading = true
                     reloadToken = UUID()
                     Haptics.light()
                 } label: {
@@ -62,7 +60,7 @@ struct WebWorkspaceView: View {
                     .foregroundStyle(IDETheme.primary)
                     .padding(12)
                     .frame(maxWidth: .infinity)
-                    .background(IDETheme.coral.opacity(0.18))
+                    .background(IDETheme.coral.opacity(0.08))
             }
         }
         .navigationBarTitleDisplayMode(.inline)

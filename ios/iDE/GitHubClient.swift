@@ -76,7 +76,7 @@ actor GitHubClient {
     }
 
     func repository(owner: String, repo: String) async throws -> RepositorySummary {
-        try await decode(RepositorySummary.self, from: "/repos/\(owner)/\(repo)")
+        try await decode(RepositorySummary.self, from: repositoryPath(owner: owner, repo: repo))
     }
 
     /// Repositories the token can reach, most recently pushed first. Used by the
@@ -89,34 +89,49 @@ actor GitHubClient {
         return list.map(\.fullName)
     }
 
-    /// Cheapest call available: one repo lookup, used for the latency pill.
+    /// Cheapest call available: one repo lookup, used by the latency pill.
     func ping(owner: String, repo: String) async throws -> Int {
-        _ = try await send("/repos/\(owner)/\(repo)/branches/\(try encodeBranch(await repository(owner: owner, repo: repo).defaultBranch))")
+        let path = try repositoryPath(owner: owner, repo: repo)
+        let summary = try await repository(owner: owner, repo: repo)
+        _ = try await send("\(path)/branches/\(try encodeBranch(summary.defaultBranch))")
         return 0
     }
 
-    private func encodeBranch(_ branch: String) throws -> String {
-        guard let encoded = branch.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
-            throw GitHubError.transport("That branch name cannot be requested.")
+    private func repositoryPath(owner: String, repo: String) throws -> String {
+        "/repos/\(try encodePathComponent(owner))/\(try encodePathComponent(repo))"
+    }
+
+    private func encodePathComponent(_ value: String) throws -> String {
+        var allowed = CharacterSet.urlPathAllowed
+        allowed.remove(charactersIn: "/?#%")
+        guard let encoded = value.addingPercentEncoding(withAllowedCharacters: allowed) else {
+            throw GitHubError.transport("That GitHub path cannot be requested.")
         }
         return encoded
+    }
+
+    private func encodeBranch(_ branch: String) throws -> String {
+        try encodePathComponent(branch)
     }
 
     // MARK: Git data — read
 
     func head(owner: String, repo: String, branch: String) async throws -> BranchHead {
-        try await decode(BranchHead.self, from: "/repos/\(owner)/\(repo)/branches/\(try encodeBranch(branch))")
+        let path = try repositoryPath(owner: owner, repo: repo)
+        return try await decode(BranchHead.self, from: "\(path)/branches/\(try encodeBranch(branch))")
     }
 
     func tree(owner: String, repo: String, sha: String) async throws -> [TreeEntry] {
-        let reply: TreeReply = try await decode(TreeReply.self, from: "/repos/\(owner)/\(repo)/git/trees/\(sha)?recursive=1")
+        let path = try repositoryPath(owner: owner, repo: repo)
+        let reply: TreeReply = try await decode(TreeReply.self, from: "\(path)/git/trees/\(try encodePathComponent(sha))?recursive=1")
         return reply.tree
     }
 
     /// Blob contents, base64-decoded. GitHub wraps encoded text at 60 columns,
     /// which `Data(base64Encoded:options:.ignoreUnknownCharacters)` tolerates.
     func blobText(owner: String, repo: String, sha: String) async throws -> String {
-        let blob: BlobReply = try await decode(BlobReply.self, from: "/repos/\(owner)/\(repo)/git/blobs/\(sha)")
+        let path = try repositoryPath(owner: owner, repo: repo)
+        let blob: BlobReply = try await decode(BlobReply.self, from: "\(path)/git/blobs/\(try encodePathComponent(sha))")
         guard let data = Data(base64Encoded: blob.content, options: .ignoreUnknownCharacters) else {
             throw GitHubError.transport("A file in this repository could not be decoded.")
         }
@@ -129,9 +144,10 @@ actor GitHubClient {
     // MARK: Git data — write
 
     func createBlob(owner: String, repo: String, text: String) async throws -> String {
+        let path = try repositoryPath(owner: owner, repo: repo)
         let reply: SHAOnly = try await decode(
             SHAOnly.self,
-            from: "/repos/\(owner)/\(repo)/git/blobs",
+            from: "\(path)/git/blobs",
             method: "POST",
             body: ["content": text, "encoding": "utf-8"]
         )
@@ -141,9 +157,10 @@ actor GitHubClient {
     func createTree(owner: String, repo: String, baseTree: String?, entries: [[String: Any]]) async throws -> String {
         var body: [String: Any] = ["tree": entries]
         if let baseTree { body["base_tree"] = baseTree }
+        let path = try repositoryPath(owner: owner, repo: repo)
         let reply: SHAOnly = try await decode(
             SHAOnly.self,
-            from: "/repos/\(owner)/\(repo)/git/trees",
+            from: "\(path)/git/trees",
             method: "POST",
             body: body
         )
@@ -157,9 +174,10 @@ actor GitHubClient {
         tree: String,
         parents: [String]
     ) async throws -> String {
+        let path = try repositoryPath(owner: owner, repo: repo)
         let reply: SHAOnly = try await decode(
             SHAOnly.self,
-            from: "/repos/\(owner)/\(repo)/git/commits",
+            from: "\(path)/git/commits",
             method: "POST",
             body: ["message": message, "tree": tree, "parents": parents]
         )
@@ -170,8 +188,9 @@ actor GitHubClient {
     /// the branch moved while this device was editing, which is exactly the
     /// "push rejected — pull first" state the design asks for.
     func updateRef(owner: String, repo: String, branch: String, sha: String) async throws {
+        let path = try repositoryPath(owner: owner, repo: repo)
         _ = try await send(
-            "/repos/\(owner)/\(repo)/git/refs/heads/\(try encodeBranch(branch))",
+            "\(path)/git/refs/heads/\(try encodeBranch(branch))",
             method: "PATCH",
             body: ["sha": sha, "force": false]
         )
@@ -241,6 +260,7 @@ enum GitHubError: LocalizedError {
     case http(status: Int, message: String)
     case emptyChange
     case remoteMoved
+    case workspaceAlreadyExists
 
     var errorDescription: String? {
         switch self {
@@ -263,6 +283,8 @@ enum GitHubError: LocalizedError {
             return "There is nothing to commit."
         case .remoteMoved:
             return "The branch moved on GitHub since the last pull. Pull before pushing again."
+        case .workspaceAlreadyExists:
+            return "This repository branch already has local workspace data. Open the existing workspace instead of cloning over it."
         }
     }
 }

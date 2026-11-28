@@ -21,10 +21,10 @@ final class ConnectionStatus: ObservableObject {
 
         var protocolName: String {
             switch self {
-            case .local: return "FILES"
-            case .connecting: return "CONNECTING"
+            case .local: return "Files"
+            case .connecting: return "Connecting"
             case .online(_, let name, _): return name
-            case .offline: return "OFFLINE"
+            case .offline: return "Offline"
             }
         }
 

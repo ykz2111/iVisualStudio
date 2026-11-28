@@ -4,8 +4,21 @@ import SwiftUI
 /// helper binary), then SSH, then the local folder import the home screen owns.
 struct ConnectScreen: View {
     let onWorkspace: (Workspace) -> Void
+    let onOpenWebIDE: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
+
+    private struct SSHTrustPrompt {
+        let fingerprint: String
+        let changed: Bool
+
+        var message: String {
+            if changed {
+                return "The server presented a different host key. Compare this fingerprint with the server operator before trusting it:\n\(fingerprint)"
+            }
+            return "This host key has not been verified before. Compare this fingerprint with the server operator before trusting it:\n\(fingerprint)"
+        }
+    }
 
     // GitHub
     @State private var token = ""
@@ -16,6 +29,11 @@ struct ConnectScreen: View {
     @State private var githubError: String?
     @State private var githubBusy = false
     @State private var cloning = false
+
+    // GitLab Web IDE
+    @State private var gitlabProject = ""
+    @State private var gitlabBranch = ""
+    @State private var webIDEError: String?
 
     // SSH
     @State private var host = ""
@@ -28,10 +46,12 @@ struct ConnectScreen: View {
     @State private var generatedPublicKey: String?
     @State private var sshError: String?
     @State private var sshBusy = false
+    @State private var sshTrustPrompt: SSHTrustPrompt?
 
     var body: some View {
         Form {
             githubSection
+            webIDESection
             sshSection
             advancedSection
         }
@@ -53,6 +73,128 @@ struct ConnectScreen: View {
                 privateKey = stored
             }
         }
+        .alert("Verify SSH host key", isPresented: Binding(
+            get: { sshTrustPrompt != nil },
+            set: { if !$0 { sshTrustPrompt = nil } }
+        )) {
+            Button("Trust fingerprint") {
+                guard let prompt = sshTrustPrompt else { return }
+                sshTrustPrompt = nil
+                Task { await connectSSH(trustedFingerprint: prompt.fingerprint) }
+            }
+            Button("Cancel", role: .cancel) { sshTrustPrompt = nil }
+        } message: {
+            Text(sshTrustPrompt?.message ?? "")
+        }
+    }
+
+    private var webIDESection: some View {
+        Section {
+            Text("Open a remote editor in the embedded browser. Sign in with the provider if asked.")
+                .font(.system(size: 13))
+                .foregroundStyle(IDETheme.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .listRowBackground(IDETheme.chassis)
+
+            Text("Use the GitHub repository and branch above to start or resume a Codespace, or open your Codespaces list.")
+                .font(.system(size: 12))
+                .foregroundStyle(IDETheme.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .listRowBackground(IDETheme.chassis)
+
+            secondaryActionButton("Open GitHub Codespaces", action: openCodespaces)
+                .listRowBackground(IDETheme.chassis)
+
+            Text("Creating or resuming a Codespace may incur GitHub usage charges.")
+                .font(.system(size: 12))
+                .foregroundStyle(IDETheme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .listRowBackground(IDETheme.chassis)
+
+            TextField("GitLab project URL or group/project", text: $gitlabProject)
+                .font(.system(size: 14, design: .monospaced))
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .keyboardType(.URL)
+                .listRowBackground(IDETheme.chassis)
+
+            TextField("Branch (optional)", text: $gitlabBranch)
+                .font(.system(size: 14, design: .monospaced))
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .listRowBackground(IDETheme.chassis)
+
+            secondaryActionButton("Open in GitLab Web IDE", action: openGitLabWebIDE)
+                .disabled(gitlabWebIDEURL == nil)
+                .opacity(gitlabWebIDEURL == nil ? 0.45 : 1)
+                .listRowBackground(IDETheme.chassis)
+
+            if let webIDEError {
+                errorRow(webIDEError)
+            }
+        } header: {
+            header("Web IDEs")
+        } footer: {
+            Text("GitLab accepts a project URL or namespace/project path. Leave the branch blank to use the project's default branch.")
+                .font(.system(size: 12))
+                .foregroundStyle(IDETheme.muted)
+        }
+    }
+
+    private func secondaryActionButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 16, weight: .semibold))
+                .frame(maxWidth: .infinity)
+                .frame(height: IDETheme.recommendedHitTarget)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                }
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(IDETheme.secondary)
+        .listRowBackground(IDETheme.chassis)
+    }
+
+    private var gitlabWebIDEURL: URL? {
+        WebIDEURLBuilder.gitLab(projectURL: gitlabProject, branch: gitlabBranch)
+    }
+
+    private func openCodespaces() {
+        webIDEError = nil
+        let input = repository.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !input.isEmpty else {
+            onOpenWebIDE("https://github.com/codespaces")
+            dismiss()
+            return
+        }
+
+        do {
+            let parsed = try Self.parseRepository(input)
+            guard let url = WebIDEURLBuilder.codespaces(
+                owner: parsed.owner,
+                repo: parsed.repo,
+                branch: branch.trimmingCharacters(in: .whitespacesAndNewlines)
+            ) else {
+                webIDEError = "Enter a GitHub repository as owner/repository."
+                return
+            }
+            onOpenWebIDE(url.absoluteString)
+            dismiss()
+        } catch {
+            webIDEError = error.localizedDescription
+        }
+    }
+
+    private func openGitLabWebIDE() {
+        guard let url = gitlabWebIDEURL else {
+            webIDEError = "Enter a GitLab project URL or namespace/project path."
+            return
+        }
+        webIDEError = nil
+        onOpenWebIDE(url.absoluteString)
+        dismiss()
     }
 
     // MARK: GitHub
@@ -102,17 +244,17 @@ struct ConnectScreen: View {
                 Button {
                     Task { await saveToken() }
                 } label: {
-                    HStack(spacing: 8) {
-                        if githubBusy { ProgressView().tint(IDETheme.oledBlack) }
-                        Text(githubBusy ? "CHECKING" : "SAVE TOKEN")
-                            .font(.system(size: 14, weight: .bold, design: .monospaced))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: IDETheme.recommendedHitTarget)
-                    .background(token.isEmpty ? IDETheme.elevated : IDETheme.emerald, in: RoundedRectangle(cornerRadius: 10))
+                    Text(githubBusy ? "Checking…" : "Save token")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: IDETheme.recommendedHitTarget)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                        }
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(token.isEmpty ? IDETheme.muted : IDETheme.oledBlack)
+                .foregroundStyle(token.isEmpty ? IDETheme.muted : IDETheme.secondary)
                 .disabled(token.isEmpty || githubBusy)
                 .listRowBackground(IDETheme.chassis)
             }
@@ -150,16 +292,17 @@ struct ConnectScreen: View {
             Button {
                 Task { await clone() }
             } label: {
-                HStack(spacing: 8) {
-                    if cloning { ProgressView().tint(IDETheme.azure) }
-                    Text(cloning ? "CLONING…" : "CLONE INTO WORKSPACES")
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: IDETheme.recommendedHitTarget)
+                Text(cloning ? "Cloning…" : "Clone workspace")
+                    .font(.system(size: 16, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: IDETheme.recommendedHitTarget)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                    }
             }
             .buttonStyle(.plain)
-            .foregroundStyle(IDETheme.azure)
+            .foregroundStyle(IDETheme.secondary)
             .disabled(account == nil || repository.isEmpty || cloning)
             .listRowBackground(IDETheme.chassis)
 
@@ -287,16 +430,14 @@ struct ConnectScreen: View {
             Button {
                 Task { await connectSSH() }
             } label: {
-                HStack(spacing: 8) {
-                    if sshBusy { ProgressView().tint(IDETheme.emerald) }
-                    Text(sshBusy ? "CONNECTING…" : "CONNECT")
-                        .font(.system(size: 14, weight: .bold, design: .monospaced))
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: IDETheme.recommendedHitTarget)
+                Text(sshBusy ? "Connecting…" : "Connect host")
+                    .font(.system(size: 17, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: IDETheme.recommendedHitTarget)
+                    .background(canConnect ? IDETheme.emerald : IDETheme.elevated, in: RoundedRectangle(cornerRadius: 10))
             }
             .buttonStyle(.plain)
-            .foregroundStyle(IDETheme.emerald)
+            .foregroundStyle(canConnect ? IDETheme.oledBlack : IDETheme.muted)
             .disabled(!canConnect || sshBusy)
             .listRowBackground(IDETheme.chassis)
 
@@ -306,7 +447,7 @@ struct ConnectScreen: View {
         } header: {
             header("SSH · swift-nio-ssh")
         } footer: {
-            Text("The first connection pins the host key; a changed key later fails until you trust it again.")
+            Text("Verify the host fingerprint before trusting it. A changed key requires a fresh out-of-band check.")
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundStyle(IDETheme.muted)
         }
@@ -320,7 +461,7 @@ struct ConnectScreen: View {
                 dismiss()
             } label: {
                 Text("Advanced web workspace lives in Settings")
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: 13))
                     .frame(minHeight: IDETheme.minimumHitTarget)
             }
             .buttonStyle(.plain)
@@ -329,8 +470,8 @@ struct ConnectScreen: View {
         } header: {
             header("ADVANCED")
         } footer: {
-            Text("OpenVSCode Server, Codespaces and JetBrains Gateway stay behind a toggle. This app is a native editor first; guideline 4.2.")
-                .font(.system(size: 11, design: .monospaced))
+            Text("Set a custom remote development URL in Settings. GitHub Codespaces and GitLab Web IDE open from Web IDEs above.")
+                .font(.system(size: 12))
                 .foregroundStyle(IDETheme.muted)
         }
     }
@@ -338,9 +479,15 @@ struct ConnectScreen: View {
     // MARK: Pieces
 
     private func header(_ text: String) -> some View {
-        Text(text)
-            .font(.system(size: 11, weight: .semibold, design: .monospaced))
-            .tracking(0.7)
+        let title: String
+        switch text {
+        case "GITHUB · REST GIT": title = "GitHub"
+        case "SSH · swift-nio-ssh": title = "SSH"
+        case "ADVANCED": title = "Advanced"
+        default: title = text
+        }
+        return Text(title)
+            .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(IDETheme.secondary)
             .textCase(nil)
     }
@@ -387,7 +534,8 @@ struct ConnectScreen: View {
         Task { await saveToken() }
     }
 
-    private func saveToken() async {        githubBusy = true
+    private func saveToken() async {
+        githubBusy = true
         githubError = nil
         defer { githubBusy = false }
         do {
@@ -434,7 +582,7 @@ struct ConnectScreen: View {
         }
     }
 
-    private func connectSSH() async {
+    private func connectSSH(trustedFingerprint: String? = nil) async {
         sshBusy = true
         sshError = nil
         defer { sshBusy = false }
@@ -445,7 +593,8 @@ struct ConnectScreen: View {
                 port: Int(port) ?? 22,
                 username: username.trimmingCharacters(in: .whitespaces),
                 remotePath: remotePath.trimmingCharacters(in: .whitespaces),
-                auth: auth
+                auth: auth,
+                trustedFingerprint: trustedFingerprint
             )
             let binding = SSHBinding(
                 host: host.trimmingCharacters(in: .whitespaces),
@@ -467,6 +616,15 @@ struct ConnectScreen: View {
             onWorkspace(workspace)
             Haptics.success()
             dismiss()
+        } catch let error as SSHError {
+            switch error {
+            case .untrustedHostKey(let observed):
+                sshTrustPrompt = SSHTrustPrompt(fingerprint: observed, changed: false)
+            case .hostKeyChanged(_, let observed):
+                sshTrustPrompt = SSHTrustPrompt(fingerprint: observed, changed: true)
+            default:
+                sshError = error.localizedDescription
+            }
         } catch {
             sshError = error.localizedDescription
         }
@@ -474,14 +632,24 @@ struct ConnectScreen: View {
 
     private static func parseRepository(_ text: String) throws -> (owner: String, repo: String) {
         var value = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        if let range = value.range(of: "github.com/") {
-            value = String(value[range.upperBound...])
+        if value.hasPrefix("git@github.com:") {
+            value = String(value.dropFirst("git@github.com:".count))
+        } else if value.contains("://") {
+            guard let components = URLComponents(string: value),
+                  components.scheme?.lowercased() == "https",
+                  components.host?.lowercased() == "github.com",
+                  components.user == nil,
+                  components.password == nil else {
+                throw GitHubError.transport("Use a GitHub repository URL or owner/repository path.")
+            }
+            value = components.path
+        } else if value.hasPrefix("github.com/") {
+            value = String(value.dropFirst("github.com/".count))
         }
-        value = value.replacingOccurrences(of: "https://", with: "")
-        value = value.replacingOccurrences(of: "git@", with: "")
+        value = value.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         if value.hasSuffix(".git") { value.removeLast(4) }
         let parts = value.split(separator: "/").map(String.init)
-        guard parts.count >= 2 else {
+        guard parts.count >= 2, !parts[0].isEmpty, !parts[1].isEmpty else {
             throw GitHubError.transport("Use owner/repository, for example ykz2111/iVisualStudio.")
         }
         return (parts[0], parts[1])

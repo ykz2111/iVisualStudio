@@ -638,17 +638,23 @@ struct AssistSheet: View {
                     Button {
                         Task { await ask() }
                     } label: {
-                        HStack(spacing: 8) {
-                            if isThinking { ProgressView().tint(IDETheme.oledBlack) }
-                            Text(isThinking ? "THINKING" : "ASK")
-                                .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: IDETheme.recommendedHitTarget)
-                        .background(canAsk ? IDETheme.violet : IDETheme.elevated, in: RoundedRectangle(cornerRadius: 10))
+                        Text(isThinking ? "Thinking…" : "Ask")
+                            .font(.system(size: 16, weight: .semibold))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: IDETheme.recommendedHitTarget)
+                            .background(
+                                proposal.isEmpty && canAsk ? IDETheme.emerald : IDETheme.elevated,
+                                in: RoundedRectangle(cornerRadius: 10)
+                            )
+                            .overlay {
+                                if !proposal.isEmpty {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .strokeBorder(IDETheme.secondary.opacity(0.18), lineWidth: 1)
+                                }
+                            }
                     }
                     .buttonStyle(.plain)
-                    .foregroundStyle(canAsk ? IDETheme.oledBlack : IDETheme.muted)
+                    .foregroundStyle(proposal.isEmpty && canAsk ? IDETheme.oledBlack : IDETheme.primary)
                     .disabled(!canAsk)
 
                     Button {
@@ -656,13 +662,16 @@ struct AssistSheet: View {
                         Haptics.success()
                         dismiss()
                     } label: {
-                        Text("APPLY")
-                            .font(.system(size: 14, weight: .bold, design: .monospaced))
+                        Text("Apply")
+                            .font(.system(size: 16, weight: .semibold))
                             .frame(width: 96, height: IDETheme.recommendedHitTarget)
-                            .background(IDETheme.elevated, in: RoundedRectangle(cornerRadius: 10))
+                            .background(
+                                proposal.isEmpty ? IDETheme.elevated : IDETheme.emerald,
+                                in: RoundedRectangle(cornerRadius: 10)
+                            )
                     }
                     .buttonStyle(.plain)
-                    .foregroundStyle(proposal.isEmpty ? IDETheme.muted : IDETheme.primary)
+                    .foregroundStyle(proposal.isEmpty ? IDETheme.muted : IDETheme.oledBlack)
                     .disabled(proposal.isEmpty)
                 }
                 .padding(.horizontal, IDETheme.pageGutter)

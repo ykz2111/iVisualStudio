@@ -403,15 +403,27 @@ final class SSHConnection: @unchecked Sendable {
         }
 
         func validateHostKey(hostKey: NIOSSHPublicKey, validationCompletePromise: EventLoopPromise<Void>) {
-            let fingerprint = "SHA256:" + String(openSSHPublicKey: hostKey)
-                .split(separator: " ")
-                .dropFirst()
-                .joined()
+            let publicKeyParts = String(openSSHPublicKey: hostKey).split(separator: " ")
+            guard publicKeyParts.count >= 2,
+                  let keyBlob = Data(base64Encoded: String(publicKeyParts[1])) else {
+                validationCompletePromise.fail(SSHError.transport("The SSH server presented an unreadable host key."))
+                return
+            }
+
+            let digest = Data(SHA256.hash(data: keyBlob)).base64EncodedString()
+                .trimmingCharacters(in: CharacterSet(charactersIn: "="))
+            let fingerprint = "SHA256:\(digest)"
+            let legacyFingerprint = "SHA256:\(publicKeyParts[1])"
             observed = fingerprint
-            if let expected, expected != fingerprint {
-                validationCompletePromise.fail(SSHError.hostKeyChanged(expected: expected, observed: fingerprint))
+
+            if let expected {
+                if expected != fingerprint && expected != legacyFingerprint {
+                    validationCompletePromise.fail(SSHError.hostKeyChanged(expected: expected, observed: fingerprint))
+                } else {
+                    validationCompletePromise.succeed(())
+                }
             } else {
-                validationCompletePromise.succeed(())
+                validationCompletePromise.fail(SSHError.untrustedHostKey(observed: fingerprint))
             }
         }
     }
@@ -419,6 +431,7 @@ final class SSHConnection: @unchecked Sendable {
 
 enum SSHError: LocalizedError {
     case commandFailed(String)
+    case untrustedHostKey(observed: String)
     case hostKeyChanged(expected: String, observed: String)
     case invalidPrivateKey
     case transport(String)
@@ -428,8 +441,10 @@ enum SSHError: LocalizedError {
         case .commandFailed(let output):
             let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
             return trimmed.isEmpty ? "The remote command failed." : trimmed
+        case .untrustedHostKey(let observed):
+            return "This host key has not been verified. Compare \(observed) with the server operator, then trust it in Connections."
         case .hostKeyChanged(let expected, let observed):
-            return "The host key changed. Saved \(expected), now \(observed). Trust the new key in Connections if that is expected."
+            return "The SSH host key changed. Saved \(expected), now \(observed). Reconnect in Connections to verify and trust the new key."
         case .invalidPrivateKey:
             return "That private key could not be read. Use an unencrypted OpenSSH ed25519 key, or generate one in the app."
         case .transport(let message):
