@@ -595,6 +595,23 @@
       overflow-x: auto;
     }
 
+    .chat-summary-card {
+      padding: var(--ide-space-3);
+      border: 1px solid var(--ide-bg-elevated);
+      border-radius: var(--studio-radius-sm);
+      background: var(--ide-bg-canvas);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    .chat-summary-card h3 {
+      font-size: var(--ide-type-code);
+      color: var(--ide-ink-primary);
+      margin-bottom: var(--ide-space-1);
+    }
+    .chat-summary-card p {
+      font-size: var(--ide-type-caption);
+      color: var(--ide-ink-secondary);
+    }
+
     @media (max-width: 720px) {
       .res-row { grid-template-columns: 1fr; }
       .res-meta { text-align: left; }
@@ -766,6 +783,7 @@
       <button type="button" class="btn" id="toggleCmdPaletteBtn" aria-pressed="false">iOS Command Sheet <span class="kbd">⌘P</span></button>
       <button type="button" class="btn" id="planBtn" aria-pressed="false">Build Plan <span class="kbd">P</span></button>
       <button type="button" class="btn" id="researchBtn" aria-pressed="false">Research <span class="kbd">R</span></button>
+      <button type="button" class="btn" id="chatSummaryBtn" aria-pressed="false">Project Chats <span class="kbd">C</span></button>
       <button type="button" class="btn" id="resetBtn">Reset Brand</button>
       <button type="button" class="btn btn-primary" id="exportKitBtn">Export tokens.css</button>
     </div>
@@ -1060,6 +1078,42 @@
       </div>
     </div>
     <div class="plan-body" id="researchBody"></div>
+  </section>
+
+  <!-- ============ PROJECT CHATS · view of docs/PROJECT-CHAT-SUMMARY.md ============ -->
+  <div class="plan-backdrop" id="chatSummaryBackdrop" hidden></div>
+  <section class="plan-sheet" id="chatSummarySheet" role="dialog" aria-modal="true" aria-labelledby="chatSummaryTitle" hidden>
+    <span class="plan-grabber" aria-hidden="true"></span>
+    <div class="plan-title-row">
+      <div>
+        <div class="plan-title" id="chatSummaryTitle">Project Chats · summary</div>
+        <div class="plan-sub">docs/PROJECT-CHAT-SUMMARY.md — captured conversation only</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <a class="btn plan-doc-link" href="./docs/PROJECT-CHAT-SUMMARY.md" target="_blank" rel="noopener">Full summary</a>
+        <a class="btn plan-doc-link" href="./docs/CONVERSATION-EXPORT.md" target="_blank" rel="noopener">Detailed export</a>
+        <button type="button" class="btn" id="closeChatSummaryBtn" style="min-height:44px;padding:4px 12px;">Close</button>
+      </div>
+    </div>
+    <div class="plan-body" id="chatSummaryBody">
+      <div class="plan-summary">1 captured project conversation · 4 topics. Unexported project threads are not included.</div>
+      <article class="chat-summary-card">
+        <h3>iOS port build-plan view</h3>
+        <p>The studio prototype gained a Build Plan sheet for phases 0–6, linked to the authoritative plan. The code was reviewed, but not rendered in a browser.</p>
+      </article>
+      <article class="chat-summary-card">
+        <h3>OpenCode, Groq, and M1 models</h3>
+        <p>Compared hosted providers and local models by Mac memory tier. Fable and Hydrogen were identified as unavailable for local M1 use; hosted models were recommended for heavier work.</p>
+      </article>
+      <article class="chat-summary-card">
+        <h3>Expanded model research</h3>
+        <p>Revised local picks range from Bonsai-2 or Ornith at 8 GB, through MiMo-V2.6 at 16 GB and Flint, Muse-Glimmer, or Qwen3.6 at 32 GB, to Qwen3-Coder-Next or Ripple at 64 GB. Benchmark and speed figures are indicative.</p>
+      </article>
+      <article class="chat-summary-card">
+        <h3>Ollama with OpenCode</h3>
+        <p>Covered automatic discovery, `ollama launch opencode`, manual provider setup, and raising context to at least 64K for agentic work. Ollama cloud models differ from local models; OpenCode-hosted models cannot be served through Ollama.</p>
+      </article>
+    </div>
   </section>
 
   <footer class="footnote">
@@ -2245,7 +2299,7 @@
         const sheet = document.getElementById("planSheet");
         const btn = document.getElementById("planBtn");
         const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
-        if (willOpen) toggleResearch(false);
+        if (willOpen) { toggleResearch(false); toggleChatSummary(false); }
         backdrop.hidden = !willOpen;
         sheet.hidden = !willOpen;
         btn.setAttribute("aria-pressed", String(willOpen));
@@ -2362,7 +2416,7 @@
         const sheet = document.getElementById("researchSheet");
         const btn = document.getElementById("researchBtn");
         const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
-        if (willOpen) togglePlan(false);
+        if (willOpen) { togglePlan(false); toggleChatSummary(false); }
         backdrop.hidden = !willOpen;
         sheet.hidden = !willOpen;
         btn.setAttribute("aria-pressed", String(willOpen));
@@ -2398,6 +2452,47 @@
       document.getElementById("researchBackdrop").addEventListener("click", function () { toggleResearch(false); });
       renderResearchSheet();
 
+      let lastFocusBeforeChatSummary = null;
+
+      function toggleChatSummary(forceState) {
+        const backdrop = document.getElementById("chatSummaryBackdrop");
+        const sheet = document.getElementById("chatSummarySheet");
+        const btn = document.getElementById("chatSummaryBtn");
+        const willOpen = typeof forceState === "boolean" ? forceState : sheet.hidden;
+        if (willOpen) { togglePlan(false); toggleResearch(false); }
+        backdrop.hidden = !willOpen;
+        sheet.hidden = !willOpen;
+        btn.setAttribute("aria-pressed", String(willOpen));
+        if (willOpen) {
+          lastFocusBeforeChatSummary = document.activeElement;
+          const first = sheet.querySelector(".plan-doc-link");
+          if (first) first.focus();
+        } else if (lastFocusBeforeChatSummary && typeof lastFocusBeforeChatSummary.focus === "function") {
+          lastFocusBeforeChatSummary.focus();
+          lastFocusBeforeChatSummary = null;
+        }
+      }
+
+      document.getElementById("chatSummarySheet").addEventListener("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        const sheet = e.currentTarget;
+        const focusables = Array.prototype.slice.call(sheet.querySelectorAll("button, a"));
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+
+      document.getElementById("chatSummaryBtn").addEventListener("click", function () { toggleChatSummary(); });
+      document.getElementById("closeChatSummaryBtn").addEventListener("click", function () { toggleChatSummary(false); });
+      document.getElementById("chatSummaryBackdrop").addEventListener("click", function () { toggleChatSummary(false); });
+
       /* ---------------- Keyboard ---------------- */
       window.addEventListener("keydown", function (e) {
         if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
@@ -2411,7 +2506,8 @@
         if (k === "h") toggleHeatmap();
         else if (k === "p") togglePlan();
         else if (k === "r") toggleResearch();
-        else if (k === "escape") { toggleCmdPalette(false); togglePlan(false); toggleResearch(false); }
+        else if (k === "c") toggleChatSummary();
+        else if (k === "escape") { toggleCmdPalette(false); togglePlan(false); toggleResearch(false); toggleChatSummary(false); }
         else if (k >= "1" && k <= "8") {
           const vk = "v" + k;
           if (VARIANTS[vk]) { brand.variant = vk; renderStudio(); }
@@ -2428,6 +2524,8 @@
       if (location.hash === "#plan") togglePlan(true);
       /* Deep link: ide-mobile-studio-v2.html#research (used by the v1 studio) */
       if (location.hash === "#research") toggleResearch(true);
+      /* Deep link: ide-mobile-studio-v2.html#chats (used by the v1 studio) */
+      if (location.hash === "#chats") toggleChatSummary(true);
     })();
   </script>
 </body>

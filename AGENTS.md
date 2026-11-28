@@ -29,6 +29,8 @@ The iOS build plan lives in `docs/IOS-PORT-PLAN.md` (architecture decision, App 
 
 The model research lives in `docs/CONVERSATION-EXPORT.md` (local Ollama shortlist per M1 memory tier, Groq and OpenCode price tables, Ollama-to-OpenCode routing). The **Research** sheet in `ide-mobile-studio-v2.html` (button `R`, deep link `#research`) renders the `RESEARCH` arrays as a view of it: update the export first, then those arrays.
 
+The concise chat overview lives in `docs/PROJECT-CHAT-SUMMARY.md`. The **Project Chats** sheet in `ide-mobile-studio-v2.html` (button `C`, deep link `#chats`) mirrors its captured topics; keep the scope note clear that unexported project threads are not included.
+
 The screen contract lives in `docs/DESIGN-PLAN.md` (16 screens, the 6×48pt grid, layout arithmetic, semantic colour aliases, per-phase design gate). The build plan wins on *what gets built*; the design plan wins on *what it looks and measures like*. If a colour alias from its §7 is adopted, add it to `brand/tokens.css` and `brand/design-tokens.json` in the same commit.
 
 - Primary controls stay in the bottom 35% thumb arc.
