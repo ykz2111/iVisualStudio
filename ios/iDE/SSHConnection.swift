@@ -431,6 +431,7 @@ final class SSHConnection: @unchecked Sendable {
 
 enum SSHError: LocalizedError {
     case commandFailed(String)
+    case workspaceAlreadyExists
     case untrustedHostKey(observed: String)
     case hostKeyChanged(expected: String, observed: String)
     case invalidPrivateKey
@@ -441,6 +442,8 @@ enum SSHError: LocalizedError {
         case .commandFailed(let output):
             let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
             return trimmed.isEmpty ? "The remote command failed." : trimmed
+        case .workspaceAlreadyExists:
+            return "This SSH workspace already has local data. Open it from Workspaces to avoid overwriting local edits."
         case .untrustedHostKey(let observed):
             return "This host key has not been verified. Compare \(observed) with the server operator, then trust it in Connections."
         case .hostKeyChanged(let expected, let observed):

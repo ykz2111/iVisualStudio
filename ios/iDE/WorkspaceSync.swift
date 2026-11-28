@@ -282,6 +282,11 @@ actor WorkspaceSync {
     ) async throws -> (name: String, fingerprint: String, files: [String]) {
         let library = WorkspaceLibrary.load()
         let id = "ssh:\(username)@\(host):\(port)/\(remotePath)"
+        let folder = WorkspaceStorage.workspaceDirectory(for: id)
+        try WorkspaceStorage.ensureDirectory(WorkspaceStorage.root)
+        guard !FileManager.default.fileExists(atPath: folder.path) else {
+            throw SSHError.workspaceAlreadyExists
+        }
         let known = trustedFingerprint ?? library.sshEntry(id: id)?.fingerprint
         let connection = try await SSHConnection.open(
             host: host,
@@ -291,36 +296,43 @@ actor WorkspaceSync {
             knownFingerprint: known
         )
 
-        let listing = try await connection.run(
-            "cd \(Self.quote(remotePath)) || exit 9; find . -type f -size -400k 2>/dev/null | sed 's|^\\./||' | head -2500"
-        )
-        guard listing.succeeded else {
-            await connection.close()
-            throw SSHError.commandFailed(listing.combined)
-        }
-
-        let paths = listing.stdout
-            .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { path in
-                !path.isEmpty && !path.split(separator: "/").contains { WorkspaceContent.ignoredDirectoryNames.contains(String($0)) }
+        do {
+            let listing = try await connection.run(
+                "cd \(Self.quote(remotePath)) || exit 9; find . -type f -size -400k 2>/dev/null | sed 's|^\\./||' | head -2500"
+            )
+            guard listing.succeeded else {
+                throw SSHError.commandFailed(listing.combined)
             }
 
-        let folder = WorkspaceStorage.workspaceDirectory(for: id)
-        try WorkspaceStorage.ensureDirectory(folder)
+            let paths = listing.stdout
+                .components(separatedBy: .newlines)
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { path in
+                    Self.isSafeRelativePath(path) &&
+                        !path.split(separator: "/").contains { WorkspaceContent.ignoredDirectoryNames.contains(String($0)) }
+                }
 
-        let contents = try await readRemote(paths: paths, remotePath: remotePath, connection: connection)
-        var mirror: WorkspaceLibrary.Mirror = [:]
-        for (path, text) in contents {
-            guard let text, WorkspaceContent.isLikelyTextPath(path) else { continue }
-            try? WorkspaceStorage.write(text, to: folder.appendingPathComponent(path))
-            mirror[path] = WorkspaceStorage.digest(text)
+            let stagingFolder = WorkspaceStorage.root.appendingPathComponent(".ssh-clone-\(UUID().uuidString)", isDirectory: true)
+            try WorkspaceStorage.ensureDirectory(stagingFolder)
+            defer { try? FileManager.default.removeItem(at: stagingFolder) }
+
+            let contents = try await readRemote(paths: paths, remotePath: remotePath, connection: connection)
+            var mirror: WorkspaceLibrary.Mirror = [:]
+            for (path, text) in contents {
+                guard let text, WorkspaceContent.isLikelyTextPath(path) else { continue }
+                try WorkspaceStorage.write(text, to: stagingFolder.appendingPathComponent(path))
+                mirror[path] = WorkspaceStorage.digest(text)
+            }
+            try FileManager.default.moveItem(at: stagingFolder, to: folder)
+            WorkspaceLibrary.saveMirror(mirror, id: id)
+
+            sessions[id] = connection
+            let name = (remotePath as NSString).lastPathComponent
+            return (name.isEmpty ? host : name, connection.fingerprint, Array(mirror.keys).sorted())
+        } catch {
+            await connection.close()
+            throw error
         }
-        WorkspaceLibrary.saveMirror(mirror, id: id)
-
-        sessions[id] = connection
-        let name = (remotePath as NSString).lastPathComponent
-        return (name.isEmpty ? host : name, connection.fingerprint, Array(mirror.keys).sorted())
     }
 
     /// Runs a command on an already-connected SSH workspace, for the terminal
