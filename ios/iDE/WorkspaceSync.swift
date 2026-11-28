@@ -548,7 +548,7 @@ actor WorkspaceSync {
         }
         let quotedPaths = paths.map(Self.quote).joined(separator: " ")
         let commit = try await connection.run(
-            "cd \(Self.quote(binding.remotePath)) && git add -A \(quotedPaths) && git -c user.name=\"iDE\" -c user.email=\"ide@localhost\" commit -m \(Self.quote(message)) && git push 2>&1 | tail -20"
+            "cd \(Self.quote(binding.remotePath)) && git add -A \(quotedPaths) && git -c user.name=\"iDE\" -c user.email=\"ide@localhost\" commit -m \(Self.quote(message)) && git push --porcelain 2>&1"
         )
         guard commit.succeeded else { throw SSHError.commandFailed(commit.combined) }
         return commit.combined
