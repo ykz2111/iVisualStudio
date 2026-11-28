@@ -58,6 +58,18 @@
       "reachableFromThisApp": true
     },
     {
+      "id": "gitlab-duo",
+      "declaredIn": "https://docs.gitlab.com/user/model_context_protocol/mcp_server/",
+      "type": "streamable-http",
+      "url": "https://gitlab.com/api/v4/mcp",
+      "auth": "OAuth dynamic client registration (mcp scope), or a fine-grained PAT with the MCP tool and Execute permission",
+      "headers": {
+        "X-Gitlab-Enabled-Mcp-Server-Toolsets": "core,merge_requests,work_items,repository,ci,duo_agent_platform"
+      },
+      "reachableFromThisApp": true,
+      "note": "GitLab.com instance matching this repo's gitlab remote. The remote still reads groove-labz/iVisual-Studio; GitLab redirects it to the canonical groovelabzzz/iVisual-Studio (project 89023092). Legacy, project and group access tokens are rejected with 403 insufficient_scope. Verified 19.7.0-pre: the foundational flows (developer, code_review, fix_pipeline, resolve_sast_vulnerability, ...) are startable, while agentic_chat/v1 reports can_start_session false."
+    },
+    {
       "id": "foundry",
       "declaredIn": "plugins/foundry-hosted-agent-copilotkit/mcp.json",
       "type": "streamable-http",
