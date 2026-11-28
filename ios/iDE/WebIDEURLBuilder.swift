@@ -25,8 +25,9 @@ enum WebIDEURLBuilder {
         var value = projectURL.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !value.isEmpty else { return nil }
         if !value.contains("://") {
-            let firstSegment = value.split(separator: "/").first.map(String.init) ?? ""
-            value = firstSegment.contains(".") ? "https://\(value)" : "https://gitlab.com/\(value)"
+            value = value.lowercased().hasPrefix("gitlab.com/")
+                ? "https://\(value)"
+                : "https://gitlab.com/\(value)"
         }
 
         guard var components = URLComponents(string: value),
